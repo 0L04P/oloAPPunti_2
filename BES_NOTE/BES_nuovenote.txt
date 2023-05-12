@@ -1,0 +1,164 @@
+besnote
+
+
+888) agg  $('#ctl00_content_txtAData').datepicker('destroy');
+            $('#ctl00_content_txtAData').datepicker();
+
+            $('#ctl00_content_txtDaData').datepicker('destroy');
+            $('#ctl00_content_txtDaData').datepicker(); 
+			se filtri data!!
+	
+1) se f2 o txtdata anche i js necessari per cancellare gli oggetti js..
+1bis) c'è uno spazio di troppo quando scrive nel textarea l'html
+
+3) poter usare una classe fittizia di tipo CBO.IClassi
+4) nella creazione controlli aggiungere il caso TextBox Multiline del tipo
+	<cbo:TextBox ID="txtNoteProduzione" runat="server" TypeControl="TextBox" TextMode="MultiLine" Rows="3" TypeData="Text"
+		DataField="NoteProduzione" IsKey="false" CssClass="form-control" height="70"></cbo:TextBox>
+
+5) nelle autorizzazioni scrivere invece
+   Autorizzazioni = New cAutorizzazioni(Connessione, Utente.UserID, "~/AssociaFasi_S.aspx")
+   
+6)!!!!!!!!!!!!!!!!!!!!!!!!
+gestione no screen, scrive " anizhxe "" e causa 
+  m_oBrowse.Init(m_ElencoErrori, Connessione, Me, "ard", ", "M")
+  
+8) screen (in Altro?) poter dire se in FD o meno
+
+8bis) nell'after update della screen mettere la possibilita se fd di avere
+ClientScript.RegisterStartupScript(Me.GetType, "close", "var wnd = GetRadWindow(); wnd.close();", True)  
+
+9) textbox ora oltre ai data
+
+9bis) Tipo Numeric assolyìutamente necessario!
+
+10) aggiungere check sui datafield
+-----inviate per mail
+11) al click sulle note poter fare un fade in e compressione su una riga....
+
+12) check sono filrei o campi normali: se Filtri rimuovo forzatamente i Datafield che creano problemi 
+DataField="[\w]+"
+
+14) Poter specificare la classe in fase di creazione nuovi controlli
+14bis) Quando aggiungo un checkbox poter specificare il testo
+14ter) Mettere un circoletto colorato ad inizio di ogni riga che separa i campi: al click la riga dicenta da bianca a gialla e 
+		nell'html vado a mettere u col-xs-12 di 10px
+15) QUando creo un F2 nell'InitComplete va messo (forse c'è già...) 
+txtArticolo.F2Param = "<CBOPAGESIZE>10</CBOPAGESIZE><ALLOWSORTING>1</ALLOWSORTING><ORDER>CodArt</ORDER><VALUE>" & dbMaster & "</VALUE>"
+
+15bis) Scrivere da qualche parte il solito blocco della cWinDef....
+
+) margin: 0 0 10px 0; nwll'aspx row well dei filtri
+
+16) una procedura che nella classe crea, a partire dalla struttura della tabella, il metodo PreparaDt
+ed anche per RiempiDtVerificaProtezioni
+es:
+1)
+Private Sub PreparaDtEsameDocumentale()
+        Dim column As DataColumn
+
+        m_dtEsameDocumentale = New DataTable
+
+        'CodIntervento        
+        column = New DataColumn()
+        column.DataType = System.Type.GetType("System.Int32")
+        column.ColumnName = "CodIntervento"
+        column.AutoIncrement = False
+        column.Caption = "CodIntervento"
+        column.ReadOnly = False
+        column.Unique = False
+        m_dtEsameDocumentale.Columns.Add(column)
+
+        'Riga        
+        column = New DataColumn()
+        column.DataType = System.Type.GetType("System.Int32")
+        column.ColumnName = "Riga"
+        column.AutoIncrement = False
+        column.Caption = "Riga"
+        column.ReadOnly = False
+        column.Unique = False
+        m_dtEsameDocumentale.Columns.Add(column)
+
+        'CodTipoEsameDoc        
+        column = New DataColumn()
+        column.DataType = System.Type.GetType("System.Int32")
+        column.ColumnName = "CodTipoEsameDoc"
+        column.AutoIncrement = False
+        column.Caption = "CodTipoEsameDoc"
+        column.ReadOnly = False
+        column.Unique = False
+        m_dtEsameDocumentale.Columns.Add(column)
+
+        'DescrizioneEsameDoc
+        column = New DataColumn()
+        column.DataType = System.Type.GetType("System.String")
+        column.ColumnName = "DescrizioneEsameDoc"
+        column.AutoIncrement = False
+        column.Caption = "DescrizioneEsameDoc"
+        column.ReadOnly = False
+        column.Unique = False
+        m_dtEsameDocumentale.Columns.Add(column)
+
+        'DataEmissione
+        column = New DataColumn()
+        column.DataType = System.Type.GetType("System.String")
+        column.ColumnName = "DataEmissione"
+        column.AutoIncrement = False
+        column.Caption = "DataEmissione"
+        column.ReadOnly = False
+        column.Unique = False
+        m_dtEsameDocumentale.Columns.Add(column)
+
+        'EmessaDa
+        column = New DataColumn()
+        column.DataType = System.Type.GetType("System.String")
+        column.ColumnName = "EmessaDa"
+        column.AutoIncrement = False
+        column.Caption = "EmessaDa"
+        column.ReadOnly = False
+        column.Unique = False
+        m_dtEsameDocumentale.Columns.Add(column)
+
+        'NomeFile
+        column = New DataColumn()
+        column.DataType = System.Type.GetType("System.String")
+        column.ColumnName = "NomeFile"
+        column.AutoIncrement = False
+        column.Caption = "NomeFile"
+        column.ReadOnly = False
+        column.Unique = False
+        m_dtEsameDocumentale.Columns.Add(column)
+    End Sub
+	
+2)     Private Sub RiempiDtVerificaProtezioni(ByRef connessione As CboUtil.Data.CCboConnection)
+        Dim dt As DataTable
+        Dim sSql As String = ""
+        Dim i As Integer = 0
+        Dim NewRow As DataRow
+
+        m_dtVerificaProtezioni.Clear()
+
+        sSql += "SELECT *" & vbCrLf
+        sSql += "FROM cerVerificaProtezioni" & vbCrLf
+        sSql += "WHERE CodIntervento = " & IIf(Not cFunzioni.cboEmpty(IClassi_Proprieta.Leggi("Codice")), IClassi_Proprieta.Leggi("Codice"), "-1") & vbCrLf
+        dt = cDBUtility.GetDataTable(sSql, connessione)
+
+        Do While i < dt.Rows.Count
+            NewRow = m_dtVerificaProtezioni.NewRow
+            NewRow("CodIntervento") = dt.Rows(i)("CodIntervento")
+            NewRow("Riga") = dt.Rows(i)("Riga")
+            NewRow("CodTipoEsameDoc") = dt.Rows(i)("CodTipoEsameDoc")
+            NewRow("DescrizioneEsameDoc") = dt.Rows(i)("DescrizioneEsameDoc")
+            NewRow("EmessaDa") = dt.Rows(i)("EmessaDa")
+            If IsDate(dt.Rows(i)("DataEmissione")) Then
+                NewRow("DataEmissione") = CDate(dt.Rows(i)("DataEmissione")).ToString("dd/MM/yyyy")
+            Else
+                NewRow("DataEmissione") = ""
+            End If
+
+            NewRow("NomeFile") = dt.Rows(i)("NomeFile")
+            m_dtEsameDocumentale.Rows.Add(NewRow)
+
+            i += 1
+        Loop
+    End Sub

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+ 
+	<style>
+	@import url('https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@300&display=swap');
+	</style>
+	<link rel="stylesheet" href="Aggiornamenti.css" ></link>
+	<script src="Aggiornamenti.js" ></script>
+	<link rel="icon" type="image/x-icon" src="https://drive.google.com/file/d/1GqvK_O28n_CfQOmr08z6ZBNBJpDI8AWL/view?usp=sharing">
+	
+	<link rel="icon" href="BeS_favicon.png" sizes="32x32"/>
+	<link rel="icon" href="BeS_favicon.png" sizes="192x192"/>
+	<link rel="apple-touch-icon" href="BeS_favicon.png"/>
+	<link rel="manifest" href="manifest.json">
+</head>
+ 
+ <body  style = "background-color:#16293c; color:#ffffff;"  >
+
+<div class="container-fluid" style="margin-left: 100px; margin-right: 100px;"> 
+	<h2 class="btn-titolo" onclick='window.location.reload(true);' style="text-align:center; margin-top: 0px; color: white; cursor:pointer; ">
+		Modifiche database
+	</h2>
+	<div class='col-xs-6'></div>
+	<div class='col-xs-6'>	
+		<a href="CreaFileVB.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Crea BeS</i></a>
+		<a href="Errori.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Errori comuni</i></a>
+	</div>
+
+	<div class='col-xs-12'>
+		<div class="col-xs-4">
+			<b>Database</b><br>			
+			<select id="cmbDB" class="form-control select" onchange="BindCMBSigle()"></select>
+		</div>
+		<div class="col-xs-3">
+			<b>Data Riferimento</b><br>						
+			<input  id="txtDataRif" type="date"/>	
+			<button id="oggi" class='btn btn-info' onclick='$("#txtDataRif").val(GetOggi());'>oggi</button>			
+		</div>
+		<div class="col-xs-12">
+			<div class='col-xs-5'>
+				<br><button class='btn btn-primary' style="margin-right:20px;" onclick='$("#divModTabelle").html("");GetModificheTabelle();'>Tabelle</button>
+				<button class='btn btn-success' style="margin-right:20px;" o onclick='$("#divModViste").html("");GetModificheViste();'>Viste</button>
+				<button class='btn btn-warning' style="margin-right:20px;" o onclick='$("#divModStoredProc").html("");GetModificheStoredProc();'>Stored Proc</button>
+			</div>
+			<div class='col-xs-7'>
+				<div class='col-xs-4'>
+					<b>Testo da controllare</b><br><input id="txtNomeRicerca" />
+				</div>
+				<div class='col-xs-4'>
+					<b>Sigla</b><br><select id="cmbDBSigle" class="form-control select" ></select>
+				</div>
+				<div class='col-xs-4'>
+					<br>
+					<button class='btn btn-info' onclick='$("#divCheckRboWin").html("");CheckRboWin();'>CheckRboWin</button>
+				</div>			
+			</div>								
+		</div>
+		<br/>
+		<div class='col-xs-12'>
+			<h3>Modifiche Tabelle</h3>
+			<div class='col-xs-12' id='divModTabelle'> 
+			
+			</div>
+		</div>
+			
+		<div class='col-xs-12'>
+			<h3>Modifiche Viste</h3>
+			<div class='col-xs-12' id='divModViste'> 
+			
+			</div>
+		</div>
+				
+		<div class='col-xs-12'>
+			<h3>Modifiche Stored Procedures</h3>
+			<div class='col-xs-12' id='divModStoredProc'> 
+			
+			</div>
+		</div>
+		
+		<div class='col-xs-12' style='margin-left: -50px; margin-right: -50px; width: 120%;'>
+			<h3 style='margin-left:50px;'>Check RBO_Win</h3>
+			<div class='col-xs-12' id='divCheckRboWin'> 
+			
+			</div>
+		</div>
+		
+	</div>
+	
+	<div class='col-xs-12' style='height:50px;'></div>	
+</div>
+  
+<script>
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js', { scope: '/' });
+}
+</script>
+
+</body>
+</html>

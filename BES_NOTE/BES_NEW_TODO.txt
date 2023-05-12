@@ -1,0 +1,118 @@
+1) c$METODITASCHE$ continua ad esserci
+2) se creo f2 typedata = Text
+    +
+	negli f2 mettere al click il giusto id in 
+	OnClientClick="$('#ctl00_body_btnF2_txtCodArt').click();return false;"> 
+	(manca ctl00)
+3) typedata = Text non funziona nella screen??
+
+
+4) scriver eil codice aspx base della browse
+    <cbo:GridView runat="server" ID="grdGriglia"></cbo:GridView>
+   <cbo:PlaceHolder ID="cboButtons" runat="server"></cbo:PlaceHolder>
+   
+   
+
+
+
+
+99) 	chiamare gli updatePanel negli f2 up e non p
+
+	    <div class="col col-xs-12 col-md-6 col-lg-4">
+		    <asp:UpdatePanel ID="upCodArt" runat="server">
+			    <ContentTemplate>
+				    <small><asp:Label ID='Label1' runat='server'>Cod Art </asp:Label></small><br />                             
+				    <asp:Panel ID="pF2CodArt" runat="server" CssClass="input-group add-on">
+					    <cbo:TextBox ID="txtCodArt" runat="server" TypeControl="TextBox" TypeData="Text"   IsKey="false" CssClass="form-control" CssClassDisable="cboTextBoxDisable" XCPconPost="true" ></cbo:TextBox>             
+					    <div class="input-group-btn" style="width: 41px">                            
+						    <asp:LinkButton ID="btnCodArt" runat="server" CssClass="btn btn-default" OnClientClick="$('#ctl00_body_btnF2_txtCodArt').click();return false;">
+						    <span class="glyphicon glyphicon-search"></span></asp:LinkButton>
+					    </div>   
+				    </asp:Panel> 
+					<br /><asp:Label ID="lblCodArt" runat="server"></asp:Label>   				    
+                    <asp:HiddenField ID="hidTxtCodArt" runat="server" />        
+			    </ContentTemplate>
+			    <Triggers>
+				    <asp:PostBackTrigger ControlID="btnF2_txtCodArt" /> 
+			    </Triggers>
+		    </asp:UpdatePanel>                             
+	    </div>
+		
+#Region "F2"
+    Private Sub m_oBrowse_F2CODE(ByRef control As Object, ByVal rigaSelezionata As CboUtil.BO.cProprieta) Handles m_oBrowse.F2CODE
+
+        Select Case control.name
+            Case "txtCodArt"
+                If txtCodArt.Text <> "" Then
+                    Dim opF2 As New cProprieta
+                    opF2.Scrivi("", txtCodArt.Text)
+                    txtCodArt.Text = opF2.Leggi("CodArt")
+                    lblCodArt.Text = opF2.Leggi("Descrizione")
+                Else
+                    txtCodArt.Text = ""
+                    lblCodArt.Text = ""
+                End If
+
+            Case "txtCodArtEquivalente"
+                If txtCodArtEquivalente.Text <> "" Then
+                    Dim opF2 As New cProprieta
+                    opF2.Scrivi("", txtCodArtEquivalente.Text)
+                    txtCodArtEquivalente.Text = opF2.Leggi("CodArt")
+                    lblCodArtEquivalente.Text = opF2.Leggi("Descrizione")
+                Else
+                    txtCodArtEquivalente.Text = ""
+                    lblCodArtEquivalente.Text = ""
+                End If
+        End Select
+    End Sub
+
+    Private Sub m_oBrowse_XCP(nomeControllo As String, ByRef erd As Boolean) Handles m_oBrowse.XCP
+        Select Case nomeControllo
+            Case "txtCodArt"
+                If txtCodArt.Text <> "" Then
+                    Dim op As New cProprieta
+                    Dim strSQL As String = ""
+                    Dim oRboWin As New CInfoDBWin
+                    oRboWin = CInfoDBWin.GetInfoDBWin(enuAppPlatform.Web, Connessione, "kai", CInfoDBWin.enuModalitaDBWin.F2, "~/ElencoArticoliEquivalenti_B.aspx", "txtCodArt", "1")
+                    strSQL = oRboWin.SQLString
+                    strSQL = strSQL.Replace("$txtValueHid$", DbMaster)
+                    strSQL = strSQL.Replace("$txtRicercaF2$", txtCodArt.Text)
+                    Dim dt As DataTable = cDBUtility.GetDataTable(strSQL, Connessione)
+
+                    If dt.Rows.Count = 1 Then
+                        txtCodArt.Text = dt(0)("CodArt")
+                        lblCodArt.Text = dt(0)("Descrizione")
+                    Else
+                        ScriptManager.RegisterClientScriptBlock(upCodArt, upCodArt.GetType, "F2Click", "$('#" & btnCodArt.ClientID & "').click();", True)
+                    End If
+
+                Else
+                    lblCodArt.Text = ""
+                End If
+
+            Case "txtCodArtEquivalente"
+                If txtCodArtEquivalente.Text <> "" Then
+                    Dim op As New cProprieta
+                    Dim strSQL As String = ""
+                    Dim oRboWin As New CInfoDBWin
+                    oRboWin = CInfoDBWin.GetInfoDBWin(enuAppPlatform.Web, Connessione, "kai", CInfoDBWin.enuModalitaDBWin.F2, "~/ElencoArticoliEquivalenti_B.aspx", "txtCodArtEquivalente", "1")
+                    strSQL = oRboWin.SQLString
+                    strSQL = strSQL.Replace("$txtValueHid$", DbMaster)
+                    strSQL = strSQL.Replace("$txtRicercaF2$", txtCodArtEquivalente.Text)
+                    Dim dt As DataTable = cDBUtility.GetDataTable(strSQL, Connessione)
+
+                    If dt.Rows.Count = 1 Then
+                        txtCodArtEquivalente.Text = dt(0)("CodArt")
+                        lblCodArtEquivalente.Text = dt(0)("Descrizione")
+                    Else
+                        ScriptManager.RegisterClientScriptBlock(upCodArtEquivalente, upCodArtEquivalente.GetType, "F2Click", "$('#" & btnCodArtEquivalente.ClientID & "').click();", True)
+                    End If
+
+                Else
+                    lblCodArtEquivalente.Text = ""
+                End If
+
+        End Select
+
+    End Sub
+#End Region		

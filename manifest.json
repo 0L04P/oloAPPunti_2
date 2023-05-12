@@ -1,0 +1,17 @@
+{
+    "lang": "en-us",
+    "name": "oloAPPunti",
+    "short_name": "oloAPPunti",
+    "description": "oloAPPunti",
+    "start_url": "/Errori.html",
+    "background_color": "#16293c",
+    "theme_color": "#16293c",
+    "orientation": "any",
+    "display": "fullscreen",
+    "icons": [
+        {
+            "src": "/Logo_512.png",
+            "sizes": "512x512"
+        }
+    ]
+}

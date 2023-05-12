@@ -1,0 +1,60 @@
+besnote
+
+1) scritta nrowse/screen nell'f2
+2) implemenatre scritte nell'f2
+
+3) filtri: aspx base
+4) agg F2 nell'EC
+
+
+rivedere screen in form dialog  ----> nel caso de checksu la M, al massimo IE, con IME non clicca la riga
+
++ agg codice sull'f5
+
+
+
+IMPORTANTE
+dopo la creazione della browse ho tirato su le source dei combobox, allora dop aver fatto ini della browse
+ If Not IsPostBack Then RiempiGriglia()
+ 
+ bes: i ' in fondo a tab...
+il nome nel webmethid
+indici 0 1 2 3 
+
+bes note
+classe ---> 'senza c davanti'
+autorizzazioni
+$BUTTONELIMINA$     
+"$CLASSE_SCREEN$"
+$TASCHE_6$
+_B_B
+
+TODO BES
+1)al click della gomma deve togliere il check sul btn SQL
+2) per la classe evidenzato backcolor #4b8d4d
+
+
+
+BES NOTE
+1)non compila l'idnon compila datafield  (corretto, to check)
+2)non scrive i nomi eventi nei metodi eventi ......
+3)Gestione iskey (tru/false/nessuno) e classe cssclassdisable="cboTextBoxdisable"
+4)autocompilazione del campo vicino all'id con l'id... e cambiarvi testo nella small che non si capisce cosa faccia...
+5) trim nei vari campo che se faccio copia ed incolla....
+6) hoscritto form-controi....
+7) nella creaa screenbrowse un check per la connessione se "Connessione" o "ConnessioneMaster"
+8)correggere  con CssClassDisable="cboTextBoxDisable"
+9) togliere eventuali _S o c iniziale (BeS)
+10) Anzichè fare m_oBrowse.AddImgButtonGrigliaWeb("btnbtnF11Documentazione", "F11Documentazione", System.Windows.Forms.Keys.F11)
+    fa m_oBrowse.AddImgButtonGrigliaWeb("btnbtnF12Altro", "12Altro", System.Windows.Forms.Keys.btnF12)
+11) gestione screen di arrivo...
+m_oBrowse.Init(m_AnaTest, Connessione, Me, "ard", "MasterHR_S", "IME")
+12) $METODITASCHE$ nel prerender
+13) non ci va numero alla fine
+        oTemplate.AddButton("btn11Documentazione", "btn btn-default", "<span class=""glyphicon glyphicon-print""></span>", , , "11Documentazione")
+
+14)  $SALVAFILTRI$,   $INIZIALIZZAFILTRI$ $CREAFILTRO$ $TASCHE_6$
+
+
+ALTRO
+sql sever come fare a lanciare una procedure cui passare parametro per la ricerca colonne/tabelle

@@ -1,0 +1,13 @@
+1) agg l apossibilità di creare l'oggetto che carica i file
+	<div class="col-xs-12" style="margin-top:10px; padding-left:0; padding-right:0">
+		<asp:updatepanel ID="upDoc" runat="server" updateMode="Conditional">
+			<ContentTemplate>
+				<asp:LinkButton ID="btnAggSchedaProdotto" TabIndex="-1" runat="server" CssClass="btn btn-primary" OnClientClick="verificaScheda();"><span class="glyphicon glyphicon-chevron-plus"></span>Aggiungi </asp:LinkButton>                                        
+				<cbo:GridView ID="grdSchedeProdott" runat="server"></cbo:GridView>
+			</ContentTemplate>
+		</asp:updatepanel>
+	</div>
+	
+	js utile
+	
+	$find('upDocumento').getUploadedFiles().length == 0

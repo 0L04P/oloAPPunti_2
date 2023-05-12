@@ -1,0 +1,37 @@
+1) su BesReact non evidenzia lo sfondo
+2) gestione nuove shortcut + ultime ricerche
+3) colore highlighting
+4) creare un'estensione per HR che copi in locale quando scrivo qualcosa
+5) agg l apossibilità di creare l'oggetto che carica i file
+	<div class="col-xs-12" style="margin-top:10px; padding-left:0; padding-right:0">
+		<asp:updatepanel ID="upDoc" runat="server" updateMode="Conditional">
+			<ContentTemplate>
+				<asp:LinkButton ID="btnAggSchedaProdotto" TabIndex="-1" runat="server" CssClass="btn btn-primary" OnClientClick="verificaScheda();"><span class="glyphicon glyphicon-chevron-plus"></span>Aggiungi </asp:LinkButton>                                        
+				<cbo:GridView ID="grdSchedeProdott" runat="server"></cbo:GridView>
+			</ContentTemplate>
+		</asp:updatepanel>
+	</div>
+	
+	js utile
+	
+	$find('upDocumento').getUploadedFiles().length == 0
+	
+	
+	
+    ''' Imposta la data secondo l'UTC e la restiruisce formattata come "2023-03-24T15:56:32+00:00"
+    ''' </summary>
+    ''' <param name="dateIta"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Shared Function pDateToISO8601(ByVal dateIta As DateTime) As String
+        ' https://code-maze.com/convert-datetime-to-iso-8601-string-csharp/
+        'uso \: sennò scrive le ore con il punto anzichè i :
+        'uso zzz perchè server per la formattare la time zone come +00.00 https://learn.microsoft.com/it-it/dotnet/standard/base-types/custom-date-and-time-format-strings#zzzSpecifier
+        'Data GIUSTA   2019-04-23T10:46:43+00:00
+        Dim sRet As String = dateIta.ToUniversalTime().ToString("yyyy-MM-ddTHH\:mm\:ss+00\:00")
+        Return sRet
+    End Function
+	
+		
+smb1.0 cos'è?
+

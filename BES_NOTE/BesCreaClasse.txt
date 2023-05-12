@@ -1,0 +1,126 @@
+1) Crea classe base
+NOMECLASSE (senza c)
+
+Imports CboUtil.Data
+
+Public Class cNOMECLASSE
+    Inherits CBO.IClassi
+
+    Public Sub New()
+        IClassi_sSql = " TODO  "
+    End Sub
+
+    Public Overrides Function IClassi_Read(ByRef connessione As CboUtil.Data.CCboConnection) As Boolean
+
+        Return MyBase.IClassi_Read(connessione)
+    End Function
+
+    Public Overrides Function IClassi_Update(ByRef connessione As CCboConnection) As Boolean
+
+        Return MyBase.IClassi_Update(connessione)
+    End Function
+
+    Public Overrides Function IClassi_Delete(ByRef connessione As CCboConnection) As Boolean
+      
+        Return MyBase.IClassi_Delete(connessione)
+    End Function
+End Class
+
+2) $CLASSE_SCREEN$
+ho creato browse con screen classica
+3) quando fa l'init e scrive 
+display: none
+senza spazio
+display:none
+
+4) senza tascge compare comunque
+$METODITASCHE$
+5) senza screen in fd compare cmq
+$ApriFD$
+
+6) sReturn += " 1=1 " con sapzio dopo l'1!
+7) i TypeData non vanno quando creo i campi!!!
+8) se btn elimina allinea a sx
+   m_oBrowse.BtnEliminaInizioRigaWeb = True
+9) Nella browse BtnCrea aspx con
+filtri +
+<cbo:GridView ID="grdGriglia" runat="server" />
+        
+<cbo:PlaceHolder ID="cboButtons" runat="server"></cbo:PlaceHolder>
+
+10) se creo la screen nella load devo avere
+Dim btn As CBO.Web.UI.WebControls.Button
+
+        btn = ControlFinder.PageFindControl(Me, "btnEsci")
+        If Not btn Is Nothing Then btn.Attributes.Add("style", "display: none")
+        btnAnnulla.OnClientClick = "$('#" & btn.ClientID & "').click();return false;"
+
+        btn = ControlFinder.PageFindControl(Me, "btnConferma")
+        If Not btn Is Nothing Then
+            btn.Attributes.Add("style", "display: none")
+            btnOk.OnClientClick = "$('#" & btn.ClientID & "').click();return false;"
+        End If
+11) se  creo un multiriga devo metterci
+		TextMode="MultiLine" Rows="3"	
+
+12) remove parole chiave quando scrive le etichette: flag, Data, ....
+
+13) se ho dei filtri nelle browse aggiungere il blocco
+    Private Sub btnFiltra_Click(sender As Object, e As EventArgs) Handles btnFiltra.Click
+        grdGriglia.CurrentPageIndex = 0
+        m_oBrowse.PremiButton(System.Windows.Forms.Keys.F10)
+    End Sub
+	
+14) classe base vuota
+
+Imports CboUtil.Data
+Imports CboUtil.BO
+Imports CBO
+
+Public Class cElencoStrumentazioniAssegnazioni
+    Inherits CBO.IClassi
+
+    Public Sub New()
+        IClassi_sSql = "SELECT * FROM kai_StrumentazioniAssegnazioni WHERE IdStruAss = $IdStruAss$  "
+    End Sub
+
+    'Public Overrides Function IClassi_Read(ByRef connessione As CboUtil.Data.CCboConnection) As Boolean
+
+    '    Return MyBase.IClassi_Read(connessione)
+    'End Function
+
+    Public Overrides Function IClassi_Update(ByRef connessione As CCboConnection) As Boolean
+        If IClassi_Proprieta.Leggi("IdStruAss") = "-1" Then
+            'calcolo il nuovo ID
+            Dim i As Integer = cFunzioni.Nz(cDBUtility.DMax(connessione, "IdStruAss", "kai_StrumentazioniAssegnazioni"), 0) + 1
+            IClassi_Proprieta.Scrivi("IdStruAss", CStr(i))
+        End If
+        Return MyBase.IClassi_Update(connessione)
+    End Function
+
+    'Public Overrides Function IClassi_Delete(ByRef connessione As CCboConnection) As Boolean
+
+    '    Return MyBase.IClassi_Delete(connessione)
+    'End Function
+End Function
+
+15) funzionalità che dato il nome del db ed il server mi dice
+possibili app nella mas_WebTabApp
+la seleizono
+dice - il codice per il webconfig
+	 - le credenziali per l'accesso alla app
+	 
+	 
+16) nell'f2 nell'OnClientClick="$('#ctl00_corpo_btnF2_txtCodAna')
+al momento scrivo senza la parte ctl00_corpo_
+	 
+	 
+17) se sono nella screen NON scrive 
+m_oScreen.F2GraficaWeb = m_F2Grafica	 
+ma m_oBrowse.F2GraficaWeb = m_F2Grafica	
+
+18) se ho il btn elimina NON devo avere la E di IME
+se voglio il click sulla riga NON devo avere la M di IME
+	 
+	 
+	 

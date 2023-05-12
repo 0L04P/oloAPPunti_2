@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+	<link rel="icon" href="BeS_favicon.png" sizes="32x32"/>
+	<link rel="icon" href="BeS_favicon.png" sizes="192x192"/>
+	<link rel="apple-touch-icon" href="BeS_favicon.png"/>
+	<link rel="manifest" href="manifest.json">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@300&display=swap');
+option{font-weight:bold;}
+.glyphicon-class{display: none}
+.bordato{border: solid 1px #ccc;
+    border-radius: 5px;
+    margin: 5px;
+    text-align: center;
+    font-size: 18px;
+	}
+</style>
+
+  <link rel="stylesheet" href="CreaFileVB.css">
+ <script src="CreaFileVB.js" ></script>
+ <script src="CreaFiltri.js" ></script>
+	
+ <link rel="icon" type="image/x-icon" src="https://drive.google.com/file/d/1GqvK_O28n_CfQOmr08z6ZBNBJpDI8AWL/view?usp=sharing">
+</head>
+ 
+ <body  style = "background-color:#16293c; color:#ffffff;"  >
+
+ <style>
+	*{ 
+		font-family: 'M PLUS 2', sans-serif;}	
+		font-weight:400;		
+	 }
+	input{
+		font-family:sans-serif
+		}
+	textarea{
+		font-family:sans-serif
+		}
+ 
+	select{
+		width:300px;
+		font-weight: bold;
+		padding: 0px 0 0 5px;
+		height: 30px;
+		background: #edeff1 !important;
+		color: #16293c !important;
+		cursor: pointer;
+	}
+	
+	#lblErrori{
+		color: #871111;
+		font-weight: bold;
+		background: #5fdd10;
+		font-size: 18px;
+	}
+	
+	.RigaSpazio{
+		width: 95%;
+		height:10px;		
+		margin-top: 10px;
+		margin-left: -40px;
+		border-top:solid 1px #ccc;	
+	}
+	.circoletto{
+		background: red; 
+		border: 1px solid rgb(204, 204, 204); 
+		border-radius:50%;
+		height:20px;
+		width:20px;
+	}
+ </style>
+ 
+<div class="container" > 
+	<h2 class="btn-titolo" onclick='window.location.reload(true);' style="text-align:center; margin-top: 0px; color: white; cursor:pointer; ">
+		CREA BROWSE e SCREEN
+	</h2>	
+	<div class='col-xs-6'>
+		<label id='lblErrori'></label>
+	</div>
+	<div class='col-xs-6'>
+		<a href="Errori.html"   style="margin-left:100px; color: #ccc; font-size:18px;"><i>Errori comuni</i></a>
+		<a href="Aggiornamenti.html"  style="margin-left:100px; color: #ccc; font-size:18px;"><i>Aggiornamenti</i></a>
+	</div>
+
+	<div class="col-xs-12 form-check divScelta">
+	  <input class="form-check-input pointer" type="radio" name="BROWSEoSCREEN" id="chkBROWSE" value="B" onchange="Cambia('BROWSE');">
+	  <label class="form-check-label pointer" for="chkBROWSE">
+		Browse
+	  </label>
+		&nbsp; &nbsp;&nbsp; &nbsp;
+	  <input class="form-check-input pointer" type="radio" name="BROWSEoSCREEN" id="chkSCREEN" value="S" onchange="Cambia('SCREEN');">
+	  <label class="form-check-label pointer" for="chkSCREEN">
+	   Screen
+	  </label>
+	  &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+	  <label id="lblTipoForm" style="font-style: italic; font-size: 22px;"></label>
+    </div>	  
+	  
+	<div class="col-xs-12 divFuoco" style="margin-top:10px; padding-top: 5px;">
+		<div class="col-xs-3">			
+			<div class="col-xs-9">
+				<b>Progetto</b><label style="color:#eee; font-weight: normal; font-style: italic;">&nbsp;(Inherits) </label><br/>
+				<input type="text" id="txtProgetto" onchange="SetMaiuscolaIniziale('txtProgetto')" style="width: 100%;" checked>
+			</div>
+			<div class="col-xs-3"style="padding:0;  margin-top: 10px;">
+				<input class="form-check-input" type="checkbox" id="chkWebUI" style="margin:0" tabindex="-1"></input>
+				<label class="form-check-label" for="chkWebUI"  style="padding:0;margin-top:28px; font-size: 11px;">.Web.UI.</label>	
+			</div>						
+		</div>
+		<div class="col-xs-3">
+			<b>Pagina</b><label style="color:#eee; font-weight: normal; font-style: italic;">&nbsp;(senza _B o _S)</label><br/>
+			<input type="text" id="txtPagina" onchange="SetMaiuscolaIniziale('txtPagina'); checkPagina()"checked>
+		</div>
+		<div class="col-xs-3">
+			<b>Classe</b><label style="color:#eee; font-weight: normal; font-style: italic;">&nbsp;(senza c)</label><br/>
+			<input type="text" id="txtClasse"  onchange="checkClasse(); SetMaiuscolaIniziale('txtClasse'); " checked>
+		</div>
+		<div class="col-xs-3">
+			<div class="col-xs-6">
+				<b>Sigla</b>&nbsp;(kai,...)<br/>
+				<input type="text" id="txtSigla"onchange="$('#txtSigla').val($('#txtSigla').val().toString().toLowerCase())" style="width:100%"  checked>
+			</div>
+			<div class="col-xs-6" style="padding:0;">
+				<input class="form-check-input" type="checkbox" id="chkCnnMaster"></input>
+				<label class="form-check-label" for="chkCnnMaster"  style="padding:0;margin-top:28px;" tabindex="-1">CnnMaster</label>	
+			</div>					
+		</div>				
+	  </div>
+	    	  
+	<div class="col-xs-9 divFuoco" style="margin-top:10px;">
+		<div class="col-xs-2"></div>
+		<div class="col-xs-2">
+			<b style="margin-left:20px; font-size:25px;">Eventi</b>
+		</div>
+		<div class="col-xs-12"></div>
+		
+		<div class="col-xs-4">
+			<div class="form-check">
+			  <input class="form-check-input" type="checkbox" value="" id="chkPREINIT" checked>
+			  <label class="form-check-label" for="chkPREINIT">
+				PreInit
+			  </label>
+			</div>
+					
+			<div class="form-check">
+			  <input class="form-check-input" type="checkbox" value="" id="chkINIT" checked>
+			  <label class="form-check-label" for="chkINIT">
+				Init
+			  </label>
+			</div>
+		 
+			<div class="form-check">
+			  <input class="form-check-input" type="checkbox" value="" id="chkINIT_COMPLETE" checked>
+			  <label class="form-check-label" for="chkINIT_COMPLETE">
+				Init Complete
+			  </label>
+			</div>
+		</div>
+		<div class="col-xs-4">
+			<div class="form-check">
+			  <input class="form-check-input" type="checkbox" value="" id="chkLOAD" checked>
+			  <label class="form-check-label" for="chkLOAD">
+				Load
+			  </label>
+			</div>
+			
+			<div class="form-check">
+			  <input class="form-check-input" type="checkbox" value="" id="chkPRE_RENDER" checked>
+			  <label class="form-check-label" for="chkPRE_RENDER">
+				PreRender
+			  </label>
+			</div>
+		</div>		
+		<div class="col-xs-4">			
+			<div class="form-check">
+			  <input class="form-check-input" type="checkbox" value="" id="chkFCODE" checked>
+			  <label class="form-check-label" for="chkFCODE">
+				FCODE
+			  </label>
+			</div>
+			
+			<div class="form-check">
+			  <input class="form-check-input" type="checkbox" value="" id="chkF2" checked>
+			  <label class="form-check-label" for="chkF2">
+				F2
+			  </label>
+			</div>
+						
+			<div class="form-check divScreen">
+			  <input class="form-check-input" type="checkbox" value="" id="chkAFTER_UPDATE" checked>
+			  <label class="form-check-label" for="chkAFTER_UPDATE">
+				After Update
+			  </label>
+			</div>
+			
+			<div class="form-check divScreen">
+			  <input class="form-check-input" type="checkbox" value="" id="chkIsFormDialog" checked>
+			  <label class="form-check-label" for="chkIsFormDialog">
+				Screen in Form Dialog
+			  </label>
+			</div>
+		</div>
+	</div>		
+	<!--uso sia i col-xs sia la width in % per poter formattare correttamente i div interni che usano i col-xs, usando solo la % non riuscirei...-->
+	<div class="col-xs-1" style="width:3%;"></div>
+	<div class="col-xs-3 divFuoco" style="width:22%; margin-left:0px;margin-top:10px;">
+		<div class="col-xs-2"></div>
+		<div class="col-xs-2">
+			<b style="margin-left:20px; font-size:25px;">IME</b>
+		</div>
+		<div class="col-xs-12" ></div>
+		
+		<div class="form-check col-xs-9">
+		  <input class="form-check-input" type="checkbox" value="" id="chkIME_I" checked>
+		  <label class="form-check-label" for="chkIME_I">
+			I (inserisci)
+		  </label>
+		</div>
+		
+		<div class="form-check col-xs-9">
+		  <input class="form-check-input" type="checkbox" value="" id="chkIME_M" checked>
+		  <label class="form-check-label" for="chkIME_M">
+			M (modifica)
+		  </label>
+		</div>
+		
+		<div class="form-check col-xs-9">
+		  <input class="form-check-input" type="checkbox" value="" id="chkIME_E" checked>
+		  <label class="form-check-label" for="chkIME_E">
+			E (elimina)
+		  </label>
+		</div>
+		
+	</div>
+	<div class="col-xs-12 divFuoco" style="margin-top:10px;padding-top:10px;">		
+		<div class="col-xs-2">
+			<b style="font-size:20px;">IClassiSsql</b>
+		</div>
+		<div class="col-xs-4">
+			<b>Database</b><br>			
+			<select id="cmbDB" class="form-control select" onchange='BindTabelle()'></select>
+		</div>
+		<div class="col-xs-4">
+			<b>Tabella</b><br>			
+			<select id="cmbTabelle" class="form-control select" onchange="GetIClassi()"></select>			
+		</div>
+		<div class="col-xs-2">
+		<br>
+			<button  id="btnGO" class="  btn btn-info" onclick="GetIClassi()">GO</button>
+			<image id="LoadingGIF" src="LoadingGIF.gif" style="display:none; height:40px;width:40px; margin-top: 10px;"/>
+		</div>
+		<div class="col-xs-12"></div>							
+		<div class="col-xs-11" style="padding-left:0; padding-right:0">
+			<!--button  id="btnGO" class="hidden btn btn-info" onclick="GetIClassi()">GO</button-->	
+			<input id="txtIClassiSsql" style="width:100%"/>
+		</div>			
+		<div class="col-xs-1">
+			<button  id="btnCopiaIclassi" class="btn btn-info" onclick="CopiaIclassi()">Copia</button>
+		</div>
+	</div>
+	<div class="col-xs-12 divFuoco" style="margin-top:10px;">
+		<div class="col-xs-2"></div>
+		<div class="col-xs-2">
+			<b style="margin-left:-20px; font-size:25px;">Altro</b>
+		</div>
+		<div class="col-xs-12"></div>
+		
+		<div class="form-check col-xs-3">
+		  <input class="form-check-input" type="checkbox" value="" id="chkAutorizzazioni" checked>
+		  <label class="form-check-label" for="chkAutorizzazioni">
+			Autorizzazioni
+		  </label>
+		</div>
+		
+		<div class="form-check col-xs-3">
+		  <input class="form-check-input" type="checkbox" value="" id="chkWEBMETHOD" checked>
+		  <label class="form-check-label" for="chkWEBMETHOD">
+			WebMethod
+		  </label>
+		</div>
+		
+		<div class="form-check col-xs-3 divBrowse">
+		  <input class="form-check-input" type="checkbox" value="" id="chkBTNELIMINA" checked>
+		  <label class="form-check-label" for="chkBTNELIMINA">
+			Button Elimina
+		  </label>
+		</div>
+		
+		<div class="form-check col-xs-3 divBrowse">
+		  <input class="form-check-input" type="checkbox" value="" id="chkFILTRI" checked>
+		  <label class="form-check-label" for="chkFILTRI">
+			Filtri
+		  </label>
+		</div>
+		
+		<div class="form-check col-xs-3 divBrowse">
+		  <input class="form-check-input" type="checkbox" value="" id="chkHamburger" checked onchange="VisualizzaDivHamburger();">
+		  <label class="form-check-label" for="chkHamburger">
+			Hamburger
+		  </label>
+		</div>				
+
+		<div class="form-check col-xs-3 divBrowse">
+		  <input class="form-check-input" type="checkbox" value="" id="chkFiltroAll" checked>
+		  <label class="form-check-label" for="chkFiltroAll">
+			Cerca in tutte le colonne
+		  </label>
+		</div>
+		
+		<div class="form-check col-xs-3 divBrowse">
+		  <input class="form-check-input" type="checkbox" value="" id="chkScreenClassica" checked onchange="chkscreen(this)">
+		  <label class="form-check-label" for="chkScreenClassica">
+			Screen Classica
+		  </label>
+		</div>
+				
+		<div class="form-check col-xs-3 divBrowse">
+		  <input class="form-check-input" type="checkbox" value="" id="chkScreenFD" checked onchange="chkscreen(this)">
+		  <label class="form-check-label" for="chkScreenFD">
+			Screen in FormDialog
+		  </label>
+		</div>			
+		
+		<div class="form-check col-xs-3 hidden divScreen">
+		  <input class="form-check-input" type="checkbox" value="" id="chkVisUnderscore" checked/>
+		  <label class="form-check-label" for="chkVisUnderscore">
+			Usa _S
+		  </label>
+		</div>
+
+		<div class="form-check col-xs-3 divScreen">
+		  <input class="form-check-input" type="checkbox" value="" id="chkTASCHE" checked onchange="VisualizzaDivTasche();"/>
+		  <label class="form-check-label" for="chkTASCHE">
+			Tasche
+		  </label>
+		</div>		
+	</div>
+	
+	<div class="col-xs-12 divFuocoHam" id="divHamburger" style="margin-top:10px; width: 100%; display:none;">
+		<b style="vertical-align: -8px;">Quanti pulsanti nel menu hamburger?&nbsp;</b><input id="txtNumHam" onchange="ImpostaHamburger();" style="width:50px;">
+		<span class="glyphicon glyphicon-ok-sign" style="color:#2df12d;font-size:20px; vertical-align:-12px; margin-left:20px;"></span>
+		<div class="col-xs-1"></div>
+		<div id="divHam" class="col-xs-10" style="background-color:#0c1b2a;border-radius: 10px; padding:10px; display:none">
+
+		</div>
+		<div class="col-xs-1"></div>
+		<div class="col-xs-12" style="height:10px;"></div>
+	</div>
+	
+	<div class="col-xs-12 divFuocoTasche" id="divTasche" style="margin-top:10px; width: 100%; display:none;">
+		<b style="vertical-align: -8px;">Quante tasche?&nbsp;</b><input id="txtNumTasche" type="number" onchange="ImpostaTasche();" style="width:50px;">
+		<span class="glyphicon glyphicon-ok-sign" style="color:#2df12d;font-size:20px; vertical-align:-12px; margin-left:20px;"></span>
+		<div class="col-xs-1"></div>
+		<div id="divTas" class="col-xs-10" style="background-color:#0c1b2a;border-radius: 10px; padding:10px; display:none">
+			
+		</div>
+		<div class="col-xs-1"></div>		
+		<div class="col-xs-12" style="height:10px;"></div>
+	</div>
+	
+	<div class='col-xs-12 divFuoco divFuocoFiltri' style="margin-top:10px; width: 100%; display:none;">
+		<h4>Filtri Browse/Campi Screen</h4>
+		<input type='number' id='txtNumeroFiltri' style='vertical-align: -1px; width: 100px;'
+			onchange='EliminaFiltri();'
+		></input>
+		<button class="btn btn-success" onclick="creaFiltri($('#txtNumeroFiltri').val()); $('.btnfiltri').removeClass('hidden'); ">OK</button>
+		<button class="btn" style="background: #65219d;" onclick="$('#divFiltri').html(''); $('#txtPropertyFiltri').val(''); $('#txtHTMLFiltri').val('');">
+			<span class='glyphicon glyphicon-remove'></span>
+		</button>
+	
+		<div id="divFiltri" class='col-xs-12'>
+		
+		</div>
+		<div class='col-xs-12 hidden btnfiltri'>
+			<div class='col-xs-8'>
+				<button id="btnGeneraHTMLfiltri" class="btn btnBROWSE " onclick="generaHTMLfiltri();">Genera HTML filtri</button></button>
+				<button id="btnGeneraJS" class="btn btnBROWSE " onclick="generaJS();">Copia javascript</button></button><br>
+				<textarea id="txtJSFiltri" class='hidden'></textarea>
+				<textarea id="txtHTMLFiltri" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>	
+			</div>
+			
+			<div class='col-xs-4'>
+				<button id="btnGeneraHTMLfiltri" class="btn btnBROWSE " onclick="copiaproperty();">Copia Property</button></button><br>
+				<textarea id="txtPropertyFiltri" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			</div>
+			
+			<textarea id="txtSalvaFiltri" class= 'hidden' style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<textarea id="txtCreaFiltro" class= 'hidden' style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<textarea id="txtInizializzaFiltri" class= 'hidden' style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			
+		</div>		
+	</div>
+	
+	<div class="col-xs-12 divFuoco" style="margin-top:10px;">
+		<div class="col-xs-12" style="margin-top:10px;"> 
+			
+			<div class="col-xs-3">
+				<button id="btnGenera" class="btn " onclick="GeneraPagina();">Genera <label id="lblTipoFormBtn" style="font-weight: normal;"></label></button>&nbsp;&nbsp;
+			</div>
+			<div class="col-xs-3">
+				<br/>
+				<label class="lblWarning" style="display:none;">Testo copiato negli appunti</label>
+			</div>								
+			<textarea id="txtTesto" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<div style="height:10px;"></div>
+			<h4>Html Tasche</h4><h5>Aggiungere <i>responsive-tabs.js</i></h5>
+			<button class="btn btn-warning"id="btnCopiaHtml" onclick="copia_2('txtTestoHtmlTasche')">Copia html</button>
+			<textarea id="txtTestoHtmlTasche" class="hidden tasche" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<div style="height:10px;"></div>
+			<h4>Script Tasche</h4><button class="btn btn-warning"id="btnCopiaHtml" onclick="copia_2('txtTestoScriptTasche')">Copia script</button>
+			<textarea id="txtTestoScriptTasche" class="hidden tasche"  style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<div style="height:10px;"></div>
+		</div>		
+	</div>
+
+<div class='row' style='width:800px; height:600px; background:#ffa500; display:none; position: absolute;' id='divS'>
+<div class='col-xs-12' style='height:580px; overflow: auto;'>
+	<div class='col-xs-12'>
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-asterisk" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class" >glyphicon glyphicon-asterisk</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-plus" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-plus</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-euro" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-euro</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-eur" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-eur</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-minus" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-minus</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-cloud" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-cloud</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-envelope" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-envelope</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-pencil" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-pencil</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-glass" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-glass</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-music" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-music</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-search" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-search</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-heart" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-heart</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-star" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-star</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-star-empty" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-star-empty</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-user" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-user</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-film" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-film</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-th-large" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-th-large</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-th" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-th</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-th-list" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-th-list</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-ok" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-ok</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-remove" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-remove</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-zoom-in" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-zoom-in</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-zoom-out" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-zoom-out</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-off" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-off</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-signal" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-signal</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-cog" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-cog</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-trash" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-trash</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-home" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-home</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-file" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-file</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-time" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-time</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-road" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-road</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-download-alt" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-download-alt</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-download" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-download</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-upload" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-upload</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-inbox" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-inbox</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-play-circle" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-play-circle</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-repeat" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-repeat</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-refresh" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-refresh</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-list-alt" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-list-alt</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-lock" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-lock</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-flag" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-flag</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-headphones" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-headphones</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-volume-off" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-volume-off</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-volume-down" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-volume-down</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-volume-up" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-volume-up</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-qrcode" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-qrcode</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-barcode" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-barcode</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-tag" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-tag</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-tags" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-tags</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-book" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-book</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-bookmark" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-bookmark</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-print" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-print</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-camera" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-camera</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-font" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-font</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-bold" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-bold</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-italic" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-italic</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-text-height" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-text-height</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-text-width" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-text-width</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-align-left" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-align-left</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-align-center" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-align-center</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-align-right" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-align-right</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-align-justify" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-align-justify</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-list" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-list</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-indent-left" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-indent-left</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-indent-right" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-indent-right</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-facetime-video" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-facetime-video</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-picture" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-picture</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-map-marker" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-map-marker</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-adjust" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-adjust</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-tint" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-tint</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-edit" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-edit</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-share" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-share</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-check" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-check</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-move" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-move</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-step-backward" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-step-backward</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-fast-backward" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-fast-backward</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-backward" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-backward</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-play" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-play</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-pause" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-pause</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-stop" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-stop</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-forward" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-forward</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-fast-forward" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-fast-forward</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-step-forward" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-step-forward</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-eject" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-eject</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-chevron-left" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-chevron-left</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-chevron-right" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-chevron-right</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-plus-sign" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-plus-sign</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-minus-sign" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-minus-sign</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-remove-sign" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-remove-sign</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-ok-sign" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-ok-sign</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-question-sign" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-question-sign</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-info-sign" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-info-sign</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-screenshot" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-screenshot</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-remove-circle" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-remove-circle</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-ok-circle" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-ok-circle</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-ban-circle" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-ban-circle</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-arrow-left" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-arrow-left</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-arrow-right" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-arrow-right</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-arrow-up" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-arrow-up</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-arrow-down" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-arrow-down</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-share-alt" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-share-alt</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-resize-full" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-resize-full</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-resize-small" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-resize-small</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-exclamation-sign" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-exclamation-sign</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-gift" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-gift</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-leaf" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-leaf</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-fire" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-fire</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-eye-open" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-eye-open</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-eye-close" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-eye-close</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-warning-sign" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-warning-sign</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-plane" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-plane</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-calendar" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-calendar</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-random" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-random</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-comment" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-comment</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-magnet" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-magnet</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-chevron-up" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-chevron-up</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-chevron-down" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-chevron-down</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-retweet" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-retweet</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-shopping-cart" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-shopping-cart</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-folder-close" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-folder-close</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-folder-open" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-folder-open</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-resize-vertical" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-resize-vertical</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-resize-horizontal" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-resize-horizontal</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-hdd" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-hdd</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-bullhorn" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-bullhorn</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-bell" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-bell</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-certificate" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-certificate</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-thumbs-up" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-thumbs-up</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-thumbs-down" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-thumbs-down</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-hand-right" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-hand-right</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-hand-left" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-hand-left</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-hand-up" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-hand-up</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-hand-down" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-hand-down</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-circle-arrow-right" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-circle-arrow-right</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-circle-arrow-left" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-circle-arrow-left</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-circle-arrow-up" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-circle-arrow-up</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-circle-arrow-down" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-circle-arrow-down</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-globe" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-globe</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-wrench" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-wrench</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-tasks" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-tasks</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-filter" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-filter</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-briefcase" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-briefcase</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-fullscreen" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-fullscreen</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-dashboard" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-dashboard</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-paperclip" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-paperclip</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-heart-empty" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-heart-empty</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-link" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-link</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-phone" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-phone</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-pushpin" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-pushpin</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-usd" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-usd</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-gbp" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-gbp</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sort" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sort</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sort-by-alphabet" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sort-by-alphabet</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sort-by-alphabet-alt" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sort-by-alphabet-alt</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sort-by-order" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sort-by-order</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sort-by-order-alt" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sort-by-order-alt</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sort-by-attributes" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sort-by-attributes</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sort-by-attributes-alt" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sort-by-attributes-alt</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-unchecked" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-unchecked</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-expand" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-expand</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-collapse-down" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-collapse-down</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-collapse-up" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-collapse-up</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-log-in" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-log-in</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-flash" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-flash</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-log-out" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-log-out</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-new-window" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-new-window</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-record" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-record</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-save" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-save</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-open" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-open</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-saved" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-saved</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-import" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-import</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-export" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-export</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-send" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-send</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-floppy-disk" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-floppy-disk</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-floppy-saved" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-floppy-saved</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-floppy-remove" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-floppy-remove</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-floppy-save" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-floppy-save</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-floppy-open" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-floppy-open</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-credit-card" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-credit-card</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-transfer" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-transfer</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-cutlery" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-cutlery</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-header" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-header</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-compressed" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-compressed</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-earphone" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-earphone</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-phone-alt" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-phone-alt</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-tower" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-tower</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-stats" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-stats</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sd-video" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sd-video</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-hd-video" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-hd-video</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-subtitles" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-subtitles</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sound-stereo" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sound-stereo</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sound-dolby" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sound-dolby</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sound-5-1" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sound-5-1</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sound-6-1" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sound-6-1</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sound-7-1" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sound-7-1</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-copyright-mark" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-copyright-mark</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-registration-mark" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-registration-mark</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-cloud-download" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-cloud-download</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-cloud-upload" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-cloud-upload</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-tree-conifer" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-tree-conifer</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-tree-deciduous" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-tree-deciduous</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-cd" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-cd</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-save-file" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-save-file</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-open-file" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-open-file</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-level-up" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-level-up</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-copy" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-copy</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-paste" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-paste</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-alert" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-alert</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-equalizer" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-equalizer</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-king" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-king</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-queen" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-queen</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-pawn" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-pawn</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-bishop" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-bishop</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-knight" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-knight</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-baby-formula" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-baby-formula</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-tent" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-tent</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-blackboard" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-blackboard</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-bed" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-bed</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-apple" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-apple</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-erase" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-erase</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-hourglass" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-hourglass</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-lamp" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-lamp</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-duplicate" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-duplicate</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-piggy-bank" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-piggy-bank</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-scissors" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-scissors</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-bitcoin" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-bitcoin</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-btc" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-btc</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-xbt" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-xbt</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-yen" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-yen</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-jpy" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-jpy</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-ruble" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-ruble</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-rub" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-rub</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-scale" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-scale</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-ice-lolly" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-ice-lolly</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-ice-lolly-tasted" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-ice-lolly-tasted</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-education" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-education</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-option-horizontal" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-option-horizontal</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-option-vertical" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-option-vertical</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-menu-hamburger" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-menu-hamburger</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-modal-window" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-modal-window</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-oil" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-oil</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-grain" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-grain</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-sunglasses" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-sunglasses</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-text-size" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-text-size</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-text-color" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-text-color</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-text-background" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-text-background</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-object-align-top" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-object-align-top</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-object-align-bottom" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-object-align-bottom</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-object-align-horizontal" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-object-align-horizontal</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-object-align-left" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-object-align-left</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-object-align-vertical" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-object-align-vertical</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-object-align-right" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-object-align-right</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-triangle-right" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-triangle-right</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-triangle-left" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-triangle-left</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-triangle-bottom" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-triangle-bottom</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-triangle-top" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-triangle-top</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-console" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-console</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-superscript" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-superscript</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-subscript" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-subscript</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-menu-left" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-menu-left</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-menu-right" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-menu-right</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-menu-down" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-menu-down</span>
+        </div>
+
+        <div class='col-xs-1 bordato'>
+          <span class="glyphicon glyphicon-menu-up" onclick='setGlyphicon(this)'></span>
+          <span class="glyphicon-class">glyphicon glyphicon-menu-up</span>
+        </div>
+
+    </div>
+
+    </div>
+</div>
+
+
+	<!--div style="background-color: #ccc; border-radius:10px; color:black; padding:5px;height:140px; width:300px; border: solid 1px grey; position:absolute; z-index:99;">
+		<b>Server</b> <input id="txtServer" type="text"><br>
+		<b>user</b> <input id="txtUser" type="text"><br>
+		<b>pwd</b> <input id="txtPwd" type="text"><br>
+		</div-->	
+	
+	<div class='col-xs-12' style='height:50px;'></div>	
+	
+</div>
+   
+<script>
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js', { scope: '/' });
+}
+</script>
+
+</body>
+</html>
