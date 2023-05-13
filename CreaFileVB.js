@@ -1,7 +1,7 @@
 var url = 'http://localhost:1994/WS/Bes.svc/'
 
 $(document).ready(function(){
-		ForzaZoom()
+		ForzaZoom();
 		
 	    $('#txtProgetto').focus();	    
  	    
@@ -205,7 +205,7 @@ function CopiaIclassi(){
 	navigator.clipboard.writeText(copyText.value);	
 }
 
-function copia_2(id) {  
+function copia_ById(id) {  
 		var copyText = document.getElementById(id);
 	    copyText.select();
 	    copyText.setSelectionRange(0, 99999); /* For mobile devices */
@@ -326,16 +326,10 @@ function VisualizzaDivTasche(){
 		$('#chkWEBMETHOD').attr('checked', true)		
 }
 
-function SetMaiuscolaIniziale(id){
-	
-	$('#'+id).val($('#'+id).val().substring(0,1).toUpperCase() + $('#'+id).val().substring(1))
-	
+function SetMaiuscolaIniziale(id){	
+	$('#'+id).val($('#'+id).val().substring(0,1).toUpperCase() + $('#'+id).val().substring(1))	
 }
 
-//NUOVA FUNZIONE
-const arrValoriImport = ['Imports CBO','Imports CboUtil.BO','Imports CboUtil.Data','Imports CBO.Web.UI', 'Imports Telerik.Web.UI'];
-var arrBoolImport;
-//NEW
 function GeneraPagina(){
 let startTime = performance.now()
 
@@ -367,9 +361,11 @@ let startTime = performance.now()
 	arrBoolImport = [1,1,1,1,1];
 	//distinguo
 	if (pagina.isBrowse){
-		pagina.testo = CONSTBrowseTesto				
+		pagina.testo = CONSTBrowseTesto;
+		$('#txtTestoAspx').val(aspx_BROWSE);
 	}else{
-		pagina.testo = CONSTScreenTesto	 	
+		pagina.testo = CONSTScreenTesto;
+		$('#txtTestoAspx').val(aspx_SCREEN);
 	}
 			
 	GestioneSpunteEventi(pagina);//chkFCODe, chkPREINIT, chkINIT
@@ -389,12 +385,12 @@ let startTime = performance.now()
 	//qualora non avessi gestito un $...$ lo pulisco. Tolgo eventuali doppi a capo NON PIU' (9mar2022)
 	pagina.testo = pagina.testo.replace(/\$[\w]+\$/, 'g')//.replaceAll(/\n[\w\W]?\n/g, '\n').replaceAll(/\n[\s]+\n/g, '\n');
 	pagina.testo = pagina.testo.replaceAll('£', '$')
-	$('#txtTesto').val(pagina.testo)
-			
+	$('#txtTesto').val(pagina.testo);
+				
 	copia();		
 		
-let endTime = performance.now()
-console.log(`GeneraPagina (NUOVA) took ${endTime - startTime} milliseconds`)	
+	let endTime = performance.now()
+	console.log(`GeneraPagina (NUOVA) took ${endTime - startTime} milliseconds`)	
 }
 
 function PopolaIClassi(pagina){
@@ -442,7 +438,7 @@ function GestioneSpunteEventi(pagina){
 		}    	    	    
 	}
 	else{
-			if (pagina.isBrowse){
+		if (pagina.isBrowse){
 			pagina.testo = pagina.testo.replaceAll('$INIT$','');				
 		}else{
 			pagina.testo = pagina.testo.replaceAll('$INIT_S$','');		
@@ -494,8 +490,13 @@ function GestioneSpunteEventi(pagina){
 			pagina.testo = pagina.testo.replaceAll('$INITCOMPLETE$','');	    
 	} 
 			
-	if($('#chkLOAD').prop('checked') == true){
-			pagina.testo = pagina.testo.replaceAll('$LOADEVENT$',testoLOADEVENT);	    	    	    	    	    	    
+	if($('#chkLOAD').prop('checked') == true){			
+		if (pagina.isBrowse){			
+		pagina.testo = pagina.testo.replaceAll('$LOADEVENT$',testoLOADEVENT);
+		}
+		else{
+			pagina.testo = pagina.testo.replaceAll('$LOADEVENT$',testoLOADEVENT_SCREEN);
+		}
 	}
 	else{
 			pagina.testo = pagina.testo.replaceAll('$LOADEVENT$','');     	    
@@ -514,7 +515,11 @@ function GestioneSpunteAltre(pagina){
 	if($('#chkF2').prop('checked') == true){
 			pagina.testo = pagina.testo.replaceAll('$F2GRAFICA_1$',Gr1);
 			pagina.testo = pagina.testo.replaceAll('$F2GRAFICA_2$',Gr2);
-			pagina.testo = pagina.testo.replaceAll('$F2GRAFICA_3$',Gr3);
+			if (pagina.isBrowse){
+				pagina.testo = pagina.testo.replaceAll('$F2GRAFICA_3$',Gr3_BROWSE);
+			}else{
+				pagina.testo = pagina.testo.replaceAll('$F2GRAFICA_3$',Gr3_SCREEN);
+			}
 			pagina.testo = pagina.testo.replaceAll('$F2GRAFICA_4$',Gr4);	    	    	    	    	    
 	}
 	else{
@@ -548,6 +553,7 @@ function GestioneTasche(pagina){
 		pagina.testo = pagina.testo.replaceAll('$WMSETTAB$','');							
 		pagina.testo = pagina.testo.replaceAll('$TASCHE_2$','');
 		pagina.testo = pagina.testo.replaceAll('$TASCHE_4$','');
+		pagina.testo = pagina.testo.replaceAll('$METODITASCHE$','');
 	}else{
 		//se Screen Popolo i campi tasche
 		if($('#chkTASCHE').prop('checked') == true){
@@ -739,7 +745,7 @@ function GestioneFiltri(pagina){
 		if ($('#txtInizializzaFiltri').val()) pagina.testo = pagina.testo.replaceAll('$INIZIALIZZAFILTRI$',$('#txtInizializzaFiltri').val());	
 		if ($('#txtSalvaFiltri').val()) pagina.testo = pagina.testo.replaceAll('$SALVAFILTRI$',$('#txtSalvaFiltri').val());	
 		//click btnFiltra
-		pagina.testo = pagina.testo.replaceAll('$btnFiltra$',pagina.testoFiltra);					
+		pagina.testo = pagina.testo.replaceAll('$btnFiltra$', testoFiltra);					
 	}else{
 		pagina.testo = pagina.testo.replaceAll('$CREAFILTRO$','');
 		pagina.testo = pagina.testo.replaceAll('$PROPERTYFILTRI$','');		
@@ -781,9 +787,51 @@ function GestioneScreen(pagina){
 	}
 	
 }
+	
+function checkPagina(){
+	
+	let Regex = new RegExp('\_S', 'gi')	
+	if (Regex.test($('#txtPagina').val())){
+		let a = $('#txtPagina').val().replace(Regex, '')
+		$('#txtPagina').val(a)
+	}
+	
+	Regex = new RegExp('\_B', 'gi')	
+	if (Regex.test($('#txtPagina').val())){
+		let a = $('#txtPagina').val().replace(Regex, '')
+		$('#txtPagina').val(a)
+	}
+}		
 
+function checkClasse(){
+	
+	let Regex = new RegExp('^c[A-Z]', 'g')	
+	if (Regex.test($('#txtClasse').val())){
+		let a = $('#txtClasse').substring(1)
+		$('#txtClasse').val(a)
+	}
 
+}
 
+function GetPagevalueFromChiavi(Chiavi){
+	let pv = '';
+	Chiavi.forEach(chiave => pv += `op.Scrivi("${chiave}", m_oBrowse.GetRigaSelezionata.Leggi("${chiave}"))\n`)
+	
+	return pv;
+}
+
+function chkscreen(a){
+	if (a.id == 'chkScreenFD'){
+		$('#chkScreenClassica').prop('checked', '')
+	} else if(a.id == 'chkScreenClassica'){
+		$('#chkScreenFD').prop('checked', '')
+	}
+}
+
+/************************************* Variabili *****************************************************/
+const arrValoriImport = ['Imports CBO','Imports CboUtil.BO','Imports CboUtil.Data','Imports CBO.Web.UI', 'Imports Telerik.Web.UI'];
+var arrBoolImport;
+let Chiavi = [];
 var WM = `
 	#Region "WebServices"   
 	<System.Web.Services.WebMethod()> _ 
@@ -808,7 +856,8 @@ var Gr1 = `
 	    
 var Gr2 =`m_F2Grafica = New cF2Grafica`
 	    
-var Gr3 =`m_oBrowse.F2GraficaWeb = m_F2Grafica`	    
+var Gr3_BROWSE =`m_oBrowse.F2GraficaWeb = m_F2Grafica`
+var Gr3_SCREEN =`m_oScreen.F2GraficaWeb = m_F2Grafica`	    
 
 var Gr4 = `Private Sub m_oScreen_F2CODE(ByRef control As Object, ByVal rigaSelezionata As CboUtil.BO.cProprieta) Handles m_oScreen.F2CODE
 			   If control.name = "txt" Then
@@ -821,7 +870,8 @@ var Gr4 = `Private Sub m_oScreen_F2CODE(ByRef control As Object, ByVal rigaSelez
 			End Sub
 			`
 	    
-var Elim = `m_oBrowse.ImgButtonEliminaWeb = "~/Images/btnElimina.png"`
+var Elim = `m_oBrowse.ImgButtonEliminaWeb = "~/Images/btnElimina.png"
+m_oBrowse.BtnEliminaInizioRigaWeb = True`
 
 const CONSTBrowseTesto= `$IMPORTS$
 
@@ -912,7 +962,7 @@ let testoINITCOMPLETE = ` Private Sub $PAGINA$#SIGLAFORM$_InitComplete(sender As
         Dim btn As CBO.Web.UI.WebControls.Button
 
         btn = ControlFinder.PageFindControl(Me, "btnEsci")
-        If Not btn Is Nothing Then btn.Attributes.Add("style", "display: none")
+        If Not btn Is Nothing Then btn.Attributes.Add("style", "display:none")
 
         $IME_I$
 		$IME_M$
@@ -964,6 +1014,20 @@ let testoLOADEVENT = `    Private Sub $PAGINA$#SIGLAFORM$_Load(sender As Object,
         Dim ctl As CBO.Web.UI.WebControls.Button = ControlFinder.PageFindControl(Me, "btnConferma")
         If Not ctl Is Nothing Then ctl.Enabled = True
     End Sub`
+	
+let testoLOADEVENT_SCREEN = `    Private Sub $PAGINA$#SIGLAFORM$_Load(sender As Object, e As EventArgs) Handles Me.Load
+	Dim btn As CBO.Web.UI.WebControls.Button
+
+	btn = ControlFinder.PageFindControl(Me, "btnEsci")
+	If Not btn Is Nothing Then btn.Attributes.Add("style", "display: none")
+	btnAnnulla.OnClientClick = "$('#" & btn.ClientID & "').click();return false;"
+
+	btn = ControlFinder.PageFindControl(Me, "btnConferma")
+	If Not btn Is Nothing Then
+		btn.Attributes.Add("style", "display: none")
+		btnOk.OnClientClick = "$('#" & btn.ClientID & "').click();return false;"
+	End If
+End Sub`
 
 let testoPRERENDER = `Private Sub $PAGINA$#SIGLAFORM$_PreRender(sender As Object, e As EventArgs) Handles Me.PreRender
        
@@ -987,7 +1051,7 @@ let testoSUBPRIVATE = `Private Sub RiempiGriglia()
     Private Function CreaFiltro() As String
         Dim sReturn As String = ""
 
-        sReturn += " 1=1"
+        sReturn += " 1=1 "
 	    	    
 	    $CREAFILTRO$
 
@@ -1233,34 +1297,7 @@ GestioneScriptTab()`
 		||||||| ||||||| ||||||| ||   || ||      ||		
 */
 		
-		
-		
-function checkPagina(){
-	
-	let Regex = new RegExp('\_S', 'gi')	
-	if (Regex.test($('#txtPagina').val())){
-		let a = $('#txtPagina').val().replace(Regex, '')
-		$('#txtPagina').val(a)
-	}
-	
-	Regex = new RegExp('\_B', 'gi')	
-	if (Regex.test($('#txtPagina').val())){
-		let a = $('#txtPagina').val().replace(Regex, '')
-		$('#txtPagina').val(a)
-	}
-}		
 
-
-function checkClasse(){
-	
-	let Regex = new RegExp('^c[A-Z]', 'g')	
-	if (Regex.test($('#txtClasse').val())){
-		let a = $('#txtClasse').substring(1)
-		$('#txtClasse').val(a)
-	}
-
-}
-let Chiavi = []
 let ApriFD = `
 	RemovePageValue("~/FormDialog/$PAGINA$_S.aspx")
 	Dim op As New cProprieta
@@ -1273,50 +1310,17 @@ let ApriFD = `
 	cWindowHelper.Create(Me, "~/FormDialog/$PAGINA$_S.aspx", "$find('ctl00_raLoadingPanel').show('contentBody'); document.forms[0].submit();", "80%,80%")						
 `
 
-function GetPagevalueFromChiavi(Chiavi){
-	let pv = '';
-	Chiavi.forEach(chiave => pv += `op.Scrivi("${chiave}", m_oBrowse.GetRigaSelezionata.Leggi("${chiave}"))\n`)
-	
-	return pv;
-}
-
-
-function chkscreen(a){
-	if (a.id == 'chkScreenFD'){
-		$('#chkScreenClassica').prop('checked', '')
-	} else if(a.id == 'chkScreenClassica'){
-		$('#chkScreenFD').prop('checked', '')
-	}
-}
-
-
-let testoFiltra = `
+const testoFiltra = `
     Private Sub btnFiltra_Click(sender As Object, e As EventArgs) Handles btnFiltra.Click
         grdGriglia.CurrentPageIndex = 0
         m_oBrowse.PremiButton(System.Windows.Forms.Keys.F10)
     End Sub`
 	
 	
-let ChiudiFD = `ClientScript.RegisterStartupScript(Me.GetType, "close", "var wnd = GetRadWindow(); wnd.close();", True) `
+const ChiudiFD = `ClientScript.RegisterStartupScript(Me.GetType, "close", "var wnd = GetRadWindow(); wnd.close();", True) `
 
+const aspx_BROWSE = `<cbo:GridView ID="grdGriglia" runat="server" />
+        
+<cbo:PlaceHolder ID="cboButtons" runat="server"></cbo:PlaceHolder>`
 
-
-
-/*
-function prova(w){
-	 console.log("PRIMA")
-	 console.log(w)
-	w.testo = "prova";
-	w.i = 98;
-	console.log("DOPO")
-	console.log(w)
-		
-}
-
-function prova2(){
-	var OGGETTO = {testo : "aaa", i : 13}
-	prova(OGGETTO)	
-}
-*/
-
-
+const aspx_SCREEN = `<cbo:PlaceHolder ID="cboButtons" runat="server"></cbo:PlaceHolder>`

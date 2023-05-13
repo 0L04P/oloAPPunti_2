@@ -243,7 +243,7 @@
 			case "7":	
 			//textarea
 				let tipoDati2 = $('#cmbTipoDati_' + id)
-				filtri += generaTXT(id, datafield, datatextfield, datavaluefield,'','', iskey, classe.trim(), tipoDati2, 'TextMode="MultiLine" Rows="5"');
+				filtri += generaTXT(id, datafield, datatextfield, datavaluefield,'','', iskey, classe.trim(), tipoDati2, 'TextMode="MultiLine" Rows="3"');
 				InizializzaFiltri += 'txt' + id + '.Text = m_Filtro' + id +'\n';
 				SalvaFiltri += 'm_Filtro' + id + ' = txt' + id + '.Text \n';				
 				CreaFiltro += `
@@ -333,7 +333,7 @@ return DropDownList;
 	 let altro = '';
 	 switch(tipoDati){
 		 case '':
-		 tipo = '';
+		 tipo = 'Text';
 			break;
 		 case '1':
 		 tipo = 'Text';
@@ -341,8 +341,7 @@ return DropDownList;
 		 case '2':
 		 tipo = 'Numeric';
 		 altro = ' SeparatoreMigliaia = "true" '
-			break;
-		 
+			break;		 
 	 }
 	 
 	 if (isData == 'true'){	
@@ -469,5 +468,7 @@ function SpezzaCaMel(p){
 		ret +=  parola.substr(arr[j], lungh ) + ' ';		
 	}
 	ret +=  parola.substr(arr[j]) + ' ';
-	return ret
+	
+	//Rimuovo certe parole chiave dall'inizio parola (Flag,...)
+	return ret.replace(/^(TXT|CHK|LBL|CMB|FLAG)/gi,'')	
 }

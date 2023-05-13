@@ -27,6 +27,7 @@ option{font-weight:bold;}
   <link rel="stylesheet" href="CreaFileVB.css">
  <script src="CreaFileVB.js" ></script>
  <script src="CreaFiltri.js" ></script>
+ <script src="CreaClasse.js" ></script>
 	
  <link rel="icon" type="image/x-icon" src="https://drive.google.com/file/d/1GqvK_O28n_CfQOmr08z6ZBNBJpDI8AWL/view?usp=sharing">
 </head>
@@ -102,6 +103,7 @@ option{font-weight:bold;}
 	  </label>
 	  &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
 	  <label id="lblTipoForm" style="font-style: italic; font-size: 22px;"></label>
+	  <button class='btn btn-danger' style='float: right;' onclick='TestFast();'>TEST</button>
     </div>	  
 	  
 	<div class="col-xs-12 divFuoco" style="margin-top:10px; padding-top: 5px;">
@@ -408,14 +410,20 @@ option{font-weight:bold;}
 			<div class="col-xs-3">
 				<br/>
 				<label class="lblWarning" style="display:none;">Testo copiato negli appunti</label>
-			</div>								
+			</div>	
+			<div class="col-xs-3">
+				<button id="btnGeneraClasse" class="btn btn-warning" onclick="generaClasse();" style="background-color: #5db718bd; box-shadow: 3px 3px #5db718;">Crea classe</button>&nbsp;&nbsp;
+			</div>			
 			<textarea id="txtTesto" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
 			<div style="height:10px;"></div>
+			<textarea id="txtTestoAspx" style="color:#000000;width:90%;height:80px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<button class='btn btnBROWSE ' onclick="copia_ById('txtTestoAspx');" style="float: right; margin-top: 35px; background-color: #5db718bd; box-shadow: 3px 3px #5db718;">Copia Aspx</button>
+			<div style="height:10px;"></div>
 			<h4>Html Tasche</h4><h5>Aggiungere <i>responsive-tabs.js</i></h5>
-			<button class="btn btn-warning"id="btnCopiaHtml" onclick="copia_2('txtTestoHtmlTasche')">Copia html</button>
+			<button class="btn btn-warning"id="btnCopiaHtml" onclick="copia_ById('txtTestoHtmlTasche')">Copia html</button>
 			<textarea id="txtTestoHtmlTasche" class="hidden tasche" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
 			<div style="height:10px;"></div>
-			<h4>Script Tasche</h4><button class="btn btn-warning"id="btnCopiaHtml" onclick="copia_2('txtTestoScriptTasche')">Copia script</button>
+			<h4>Script Tasche</h4><button class="btn btn-warning" id="btnCopiaHtml" onclick="copia_ById('txtTestoScriptTasche')">Copia script</button>
 			<textarea id="txtTestoScriptTasche" class="hidden tasche"  style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
 			<div style="height:10px;"></div>
 		</div>		
