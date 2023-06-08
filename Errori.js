@@ -51,7 +51,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 const  arrTrovati = [];
 function Ricerca(){	
-	let TestoRicerca = $('#txtCerca').val();
+	let TestoRicerca = pFormattaPerRegex($('#txtCerca').val());
 
 	if(TestoRicerca == '' && $('.evidenziato').length == 0){		
 		crea();
@@ -75,11 +75,16 @@ function Ricerca(){
 				$(`#sp${i}`).css('display','block').addClass('cercato');
 				arrTrovati.push(i);						
 				let str = array[i];
-				//splitto la stringa				
-				let aux_str = str.substring(/label>/.exec(str).index+6).trim()
-				let auxRegex = new RegExp(TestoRicerca, "ig")
-				let new_str = `<b>${i})</b> ` + aux_str.replaceAll(auxRegex, '<b class="evidenziato">' + TestoRicerca +'</b>');
-				$(`#sp${i}`).html(new_str)					
+				//splitto la stringa
+				try{
+					let aux_str = str.substring(/label>/.exec(str).index+6).trim()
+					let auxRegex = new RegExp(TestoRicerca, "ig")
+					let new_str = `<b>${i})</b> ` + aux_str.replaceAll(auxRegex, '<b class="evidenziato">' + pFormattaEvidenziazione(TestoRicerca) +'</b>');
+					$(`#sp${i}`).html(new_str)
+				}	catch(exc){
+					debugger;
+					
+				}							
 			}
 		}	
 	} 
@@ -87,7 +92,7 @@ function Ricerca(){
 }
 
 function Ricerca2(){
-	let TestoRicerca = $('#txtCerca2').val();
+	let TestoRicerca = pFormattaPerRegex($('#txtCerca2').val());
 
 	if(TestoRicerca!=''){
 		$('#txtCerca').attr('disabled', true)
@@ -104,13 +109,17 @@ function Ricerca2(){
 			$(`#sp${arrTrovati[i]}`).css('display','block');					
 			//NEW														
 			let str = array[arrTrovati[i]];
-			//splitto la stringa				
-			let aux_str = str.substring(/label>/.exec(str).index+6).trim()
-			let auxRegex0 = new RegExp($('#txtCerca').val(), "ig");
-			let auxRegex1 = new RegExp(TestoRicerca, "ig");
-			let aux_str_postRicerca1 = aux_str.replaceAll(auxRegex0, '<b class="evidenziato">' + $('#txtCerca').val() +'</b>');
-			let new_str = `<b>${i})</b> ` + aux_str_postRicerca1.replaceAll(auxRegex1, '<b class="evidenziato2">' + TestoRicerca +'</b>');
-			$(`#sp${arrTrovati[i]}`).html(new_str);				
+			//splitto la stringa	
+			try{
+					let aux_str = str.substring(/label>/.exec(str).index+6).trim()
+				let auxRegex0 = new RegExp(pFormattaPerRegex($('#txtCerca').val()), "ig");
+				let auxRegex1 = new RegExp(TestoRicerca, "ig");
+				let aux_str_postRicerca1 = aux_str.replaceAll(auxRegex0, '<b class="evidenziato">' + $('#txtCerca').val() +'</b>');
+				let new_str = `<b>${i})</b> ` + aux_str_postRicerca1.replaceAll(auxRegex1, '<b class="evidenziato2">' + pFormattaEvidenziazione(TestoRicerca) +'</b>');
+				$(`#sp${arrTrovati[i]}`).html(new_str);	
+			}catch(exc){
+				debugger;				
+			}					
 		}
 		else{
 			$(`#sp${arrTrovati[i]}`).css('display','none');			
@@ -244,4 +253,12 @@ function TogliSpaziWhitePre(){
 		i+=1;
 		id = `sp${i}`;
 	}
+}
+
+//paolo 8/6/2023
+function pFormattaPerRegex(s){	
+	return s.replaceAll('(', '\\(').replaceAll(')', '\\)').replaceAll('[', '\\[').replaceAll(']', '\\]').replaceAll('.', '\\.').replaceAll('\'', '\\\'').replaceAll('"', '\\"').replaceAll(',', '\\,')	
+}
+function pFormattaEvidenziazione(s){	
+	return s.replaceAll('\\(', '(').replaceAll('\\)', ')').replaceAll('\\[', '\\[').replaceAll('\\]', ']').replaceAll('\\.', '.').replaceAll('\\\'', '\'').replaceAll('\\"', '"').replaceAll('\\,', ',')	
 }
