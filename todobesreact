@@ -1,0 +1,21 @@
+IN react
+1) AGG FONT
+2) TXT RICERCA NON RSPONSIVE
+3) HOVER PER EVIDENZIARE CELLA
+---
+agg alla calsse minimizzato
+cursor: zoom-in !important;
+----
+c'è già il dbclick per ridimensionare!
+----
+4) AGG class ontainer-flui con margin-left/right al 10%
+---
+5) i btn copia
+6) minimizzato:HOVER da gestire
+7) evidenziare testo cercato???https://www.npmjs.com/package/react-highlight-words
+
+NEL BES VANILLA
+gesione dei filtri rapidi SQL,... fa vedere i dati doppi
+----
+get plain text from a div (no highlightings)
+$('#sp124').text()
