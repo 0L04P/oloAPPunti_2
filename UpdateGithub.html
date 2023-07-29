@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src='https://unpkg.com/@popperjs/core@2'></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>	
+	<link rel="icon" href="BeS_favicon.png" sizes="32x32"/>
+	<link rel="icon" href="BeS_favicon.png" sizes="192x192"/>
+	<link rel="apple-touch-icon" href="BeS_favicon.png"/>
+	<script src='UpdateGithub.js'></script>
+	<style>
+	@import url('https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@300&display=swap');
+	option{font-weight:bold;}
+	</style>
+
+</head>
+ 
+<body  style = "background-color:#16293c; color:#ffffff;">
+
+<style>
+	*{ 
+	font-family: 'M PLUS 2', sans-serif;
+	font-weight:400;
+	}
+	input, textarea{
+	  color:#000;
+	  border: none;  
+      border:solid 1px #ccc;
+      border-radius: 10px;
+	  padding-left: 10px;
+	  font-size: 20px;
+	  font-weight: bold;
+	  overflow: hidden; /*serve pù che altro per la textarea*/
+	}
+	.remove{
+		color:#ffa500;
+		font-size: 25px;
+		vertical-align: -12px;
+	}
+	.btn-upload{
+		font-size: 20px;
+		background-color:#c8c2d5;
+		color:#000;
+	}
+	.btn-sha{
+		font-size: 20px;
+		background-color:#c8c2d5;
+		color:#000;
+	}	
+	.spanCarica{
+		vertical-align: 6px;
+		font-weight: bold;
+		padding-right: 10px;
+	}
+	select{		
+		width: 100%;
+		color: #000;
+		font-weight: bold;
+		padding: 5px;
+		border-radius: 5px;
+	}
+	.loader{
+	    scale: 0.5;
+		margin: auto; 
+		display: block; 
+		shape-rendering: auto;
+	}
+	label{
+		white-space: pre-wrap;	
+	}
+</style>
+
+<div class="container" style="margin-bottom:100px;">
+	<div class="col-xs-12">	
+		<h3>Aggiorna file su Github</h3><br><br>
+	</div>
+	<div class="col-xs-1">
+		<span class='glyphicon glyphicon-remove remove' onclick='RimuoviFile();'></span>
+	</div>
+	<div class="col-xs-11 col-md-6 col-lg-3">	
+		<input id='txtFile' type='file' onchange='uploadImage(event)'/>
+	</div>	
+	<div class="col-xs-12"></div>
+	<div class="col-xs-12 col-md-6 col-lg-6">
+		<b>Repository</b>
+		<input id='txtNomeRepo' style='display:none;' />
+		<select id='cmbRepo' onchange='Agg(this)'></select>
+	</div>
+	<div class="col-xs-12 col-md-6 col-lg-6">
+		<b>Nome file (con estensione)</b>
+		<div class='col-xs-10'>
+			<input id='txtNomeFile' style='width:100%; pointer-events:none; cursor: not-allowed;'/>
+			<div class='col-xs-12' style='height:10px'></div>
+			<input id='txtSHA' style='width:100%; font-size: 15px;'/>
+		</div>
+		<div class='col-xs-2'>
+		<button id='btnGetSHA' onclick='getSHA()' class='btn btn-sha'>SHA</button>
+		</div>
+	</div>
+	<div class="col-xs-12">
+		<b>Note</b>
+		<textarea id='txtMessage' style='width:100%' rows='3'></textarea>
+	</div>
+	
+	<div class="col-xs-12 text-center" style='margin-top:50px;'>		
+		<button id='btnUpload' class='btn btn-upload' onclick='Carica()'>
+			<span class='spanCarica'>Carica</span>
+			<svg height="32" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="32" data-view-component="true" class="octicon octicon-mark-github v-align-middle color-fg-default">
+				<path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
+			</svg>
+		</button>
+		<div class='col-xs-12 text-center' >
+			<label id='lblEsito' style='font-size: 20px; padding-top: 15px;'></label>
+		</div>
+		<div class='col-xs-12 text-center' id='divLoading' style='display:none;'>
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class='loader' width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+			<g transform="translate(50 42)">
+			  <g transform="scale(0.8)">
+				<g transform="translate(-50 -50)">
+				  <polygon fill="#e15b64" points="72.5 50 50 11 27.5 50 50 50">
+					<animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 38.5;360 50 38.5" keyTimes="0;1"></animateTransform>
+				  </polygon>
+				  <polygon fill="#f8b26a" points="5 89 50 89 27.5 50">
+					<animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 27.5 77.5;360 27.5 77.5" keyTimes="0;1"></animateTransform>
+				  </polygon>
+				  <polygon fill="#abbd81" points="72.5 50 50 89 95 89">
+					<animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 72.5 77.5;360 72 77.5" keyTimes="0;1"></animateTransform>
+				  </polygon>
+				</g>
+			  </g>
+			</g>
+			<!-- [ldio] generated by https://loading.io/ --></svg>
+		</div>
+	</div>
+	
+</div>		
+		  
+</body>
+</html>
