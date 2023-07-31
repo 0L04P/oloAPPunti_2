@@ -15,7 +15,7 @@ function Agg(q){
 
 const txtFile = document.getElementById("txtFile");
 var BASE64;
-GITHUB_TOKEN = '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';
+GITHUB_TOKEN = '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'; //SCADUTO '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';
 
 const uploadImage = async (event) => {
     const file = event.target.files[0];	 
@@ -55,7 +55,15 @@ function Carica(){
 	
 	MyJson = JSON.stringify(oJson);
 	
-	if (!BASE64 || BASE64 == '' || $('#txtNomeRepo').val() == '' || $('#txtNomeFile').val() == '' || $('#txtSHA').val() == ''){
+	
+	if ($('#txtSHA').val() == ''){
+		let errore = '';		
+		errore +="\n\nSHA non verificato!!!\n";		
+		$('#lblEsito').text(errore)	
+		return false;
+	}
+	
+	if (!BASE64 || BASE64 == '' || $('#txtNomeRepo').val() == '' || $('#txtNomeFile').val() == ''){
 		let errore = '';
 		errore += '\nBASE64:\n';
 		errore += BASE64;
@@ -63,9 +71,7 @@ function Carica(){
 		errore += $('#txtNomeRepo').val();
 		errore += "\n\nNome file:\n";
 		errore += $('#txtNomeFile').val();
-		if($('#txtSHA').val() == ''){
-			errore +="\n\nSHA non verificato!!!\n";
-		}
+
 		$('#lblEsito').text(errore)
 		/*alert("Dati mancanti: vedi console per i dettagli")
 		console.error("BASE64:")
@@ -93,7 +99,7 @@ function Carica(){
 function pCarica(MyJson){
 
 	$.ajax({		 
-		"crossDomain": true,
+		"crossDomain": false,
 		"async": false,
 		"url": `https://api.github.com/repos/0L04P/${$('#txtNomeRepo').val()}/contents/${$('#txtNomeFile').val().trim()}`,
 		"method": "PUT",
@@ -121,7 +127,7 @@ function pCarica(MyJson){
 
 function GetAllRepos(){	
 	$.ajax({		 
-		"crossDomain": true,
+		"crossDomain": false,
 		"async": false,
 		"url": `https://api.github.com/users/0L04P/repos`,
 		"method": "GET",
