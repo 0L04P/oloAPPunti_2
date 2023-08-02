@@ -15,9 +15,7 @@ function Agg(q){
 
 const txtFile = document.getElementById("txtFile");
 var BASE64;
-var GITHUB_TOKEN_FIRST_HALF = 'ghp_GSzhx43hMrKfMO'
-var GITHUB_TOKEN_SECOND_HALF = '3cXdbMAc4jX5N7BG2d2W3c';
-var GITHUB_TOKEN = GITHUB_TOKEN_FIRST_HALF+GITHUB_TOKEN_SECOND_HALF
+
 
 const uploadImage = async (event) => {
     const file = event.target.files[0];	 
@@ -132,8 +130,8 @@ function GetAllRepos(){
 			
 		},
 		success: function(arrayDB, status, xhr) {	
-			let nomeRepo = '';		
-			$("#cmbRepo").append($("<option style='font-weight: bold;'></option>").val(nomeRepo).html(nomeRepo));			
+			let nomeRepo = 'oloAPPunti_2';		
+			$("#cmbRepo").append($("<option style='font-weight: bold;'>oloAPPunti_2</option>").val(nomeRepo).html(nomeRepo));			
 			arrayDB.forEach(function(e,i){ 
 				nomeRepo = e['full_name'].replace('0L04P\/','');
 				$("#cmbRepo").append($("<option style='font-weight: bold;'></option>").val(nomeRepo).html(nomeRepo));
