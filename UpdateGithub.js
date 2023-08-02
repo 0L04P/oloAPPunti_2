@@ -130,8 +130,8 @@ function GetAllRepos(){
 			
 		},
 		success: function(arrayDB, status, xhr) {	
-			let nomeRepo = 'oloAPPunti_2';		
-			$("#cmbRepo").append($("<option style='font-weight: bold;'>oloAPPunti_2</option>").val(nomeRepo).html(nomeRepo));			
+			let nomeRepo = '';		
+			$("#cmbRepo").append($("<option style='font-weight: bold;'></option>").val(nomeRepo).html(nomeRepo));			
 			arrayDB.forEach(function(e,i){ 
 				nomeRepo = e['full_name'].replace('0L04P\/','');
 				$("#cmbRepo").append($("<option style='font-weight: bold;'></option>").val(nomeRepo).html(nomeRepo));
