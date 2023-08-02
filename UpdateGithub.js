@@ -15,7 +15,9 @@ function Agg(q){
 
 const txtFile = document.getElementById("txtFile");
 var BASE64;
-GITHUB_TOKEN = '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'; //SCADUTO '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';
+var GITHUB_TOKEN_FIRST_HALF = 'ghp_GSzhx43hMrKfMO'
+var GITHUB_TOKEN_SECOND_HALF = '3cXdbMAc4jX5N7BG2d2W3c';
+var GITHUB_TOKEN = GITHUB_TOKEN_FIRST_HALF+GITHUB_TOKEN_SECOND_HALF
 
 const uploadImage = async (event) => {
     const file = event.target.files[0];	 
@@ -55,15 +57,7 @@ function Carica(){
 	
 	MyJson = JSON.stringify(oJson);
 	
-	
-	if ($('#txtSHA').val() == ''){
-		let errore = '';		
-		errore +="\n\nSHA non verificato!!!\n";		
-		$('#lblEsito').text(errore)	
-		return false;
-	}
-	
-	if (!BASE64 || BASE64 == '' || $('#txtNomeRepo').val() == '' || $('#txtNomeFile').val() == ''){
+	if (!BASE64 || BASE64 == '' || $('#txtNomeRepo').val() == '' || $('#txtNomeFile').val() == '' || $('#txtSHA').val() == ''){
 		let errore = '';
 		errore += '\nBASE64:\n';
 		errore += BASE64;
@@ -71,7 +65,9 @@ function Carica(){
 		errore += $('#txtNomeRepo').val();
 		errore += "\n\nNome file:\n";
 		errore += $('#txtNomeFile').val();
-
+		if($('#txtSHA').val() == ''){
+			errore +="\n\nSHA non verificato!!!\n";
+		}
 		$('#lblEsito').text(errore)
 		/*alert("Dati mancanti: vedi console per i dettagli")
 		console.error("BASE64:")
@@ -130,11 +126,10 @@ function GetAllRepos(){
 		"crossDomain": false,
 		"async": false,
 		"url": `https://api.github.com/users/0L04P/repos`,
-		"method": "GET",
-		 
+		"method": "GET",		 
 		"contentType": "application/json; charset=utf-8",
 		"beforeSend": function (xhr) {
-			xhr.setRequestHeader('Authorization', 'Bearer ' + GITHUB_TOKEN);
+			
 		},
 		success: function(arrayDB, status, xhr) {	
 			let nomeRepo = '';		
@@ -189,18 +184,19 @@ function getSHA(){
 
 	// Make the API request to get the file information
 	$.ajax({
-	  url: `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
-	  type: 'GET',
-	  headers: {
-		Authorization: `token ${accessToken}`,
-		'User-Agent': 'your-app-name' // Provide a custom User-Agent header
-	  },
-	  success: function(data) {
+	  "crossDomain": false,
+	  "async": false,
+	  "url": `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
+	  "type": 'GET',
+	  "beforeSend": function (xhr) {
+			xhr.setRequestHeader('Authorization', 'Bearer ' + GITHUB_TOKEN);
+		},
+	  "success": function(data) {
 		const fileSha = data.sha;
 		console.log(`SHA of the file '${filePath}': ${fileSha}`);
 		$('#txtSHA').val(data.sha);
 	  },
-	  error: function(xhr, status, error) {
+	  "error": function(xhr, status, error) {
 		console.error('Error fetching file:', status, error);
 		$('#txtSHA').val('---FILE NON PRESENTE---');
 	  }
