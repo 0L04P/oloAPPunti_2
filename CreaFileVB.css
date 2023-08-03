@@ -1,3 +1,46 @@
+	*{ 
+		font-family: 'M PLUS 2', sans-serif;}	
+		font-weight:400;		
+	 }
+	input{
+		font-family:sans-serif
+		}
+	textarea{
+		font-family:sans-serif
+		}
+ 
+	select{
+		width:300px;
+		font-weight: bold;
+		padding: 0px 0 0 5px;
+		height: 30px;
+		background: #edeff1 !important;
+		color: #16293c !important;
+		cursor: pointer;
+	}
+	
+	#lblErrori{
+		color: #871111;
+		font-weight: bold;
+		background: #5fdd10;
+		font-size: 18px;
+	}
+	
+	.RigaSpazio{
+		width: 95%;
+		height:10px;		
+		margin-top: 10px;
+		margin-left: -40px;
+		border-top:solid 1px #ccc;	
+	}
+	.circoletto{
+		background: red; 
+		border: 1px solid rgb(204, 204, 204); 
+		border-radius:50%;
+		height:20px;
+		width:20px;
+	}
+
 .pointer {cursor: pointer;}
 
 .lblFadingOutWarning{
