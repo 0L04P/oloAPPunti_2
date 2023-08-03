@@ -41,3 +41,20 @@ a {
 
 b{font-size:16px;}
 .btn{font-size:16px;}
+
+.btnRefreshSigla{
+	font-size: 10px;
+    padding: 4px;
+    margin-top: -18px;
+}
+
+.spanRefreshSigla{
+font-size: 15px;
+    padding: 0;
+}
+
+.Titolo{
+    font-size: 20px;
+    font-weight: bold;
+    color: #8cdf62;
+}
