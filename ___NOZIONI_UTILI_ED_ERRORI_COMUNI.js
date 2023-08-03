@@ -329,7 +329,9 @@ ITEM <label class="argomento"></label> la screen non tira su i valori perchè no
      mi devo spostare su Master usando la ConnessioneMaster nell'Init della Screen !!!!	 
 
 ITEM <label class="argomento"></label> se non va un codice javascript che utilizza un webmethod verificare sia importato il riferimento a Functions.js dove è definito il metodo EsguiPageMethod!!	
-ITEM <label class="argomento"></label> nella GestioneTabelle non funziona il Delete perchè non si era impostato il vincolo di primary key su sql in fase di creazione della tabella!!!!	
+ITEM <label class="argomento"></label> Errore nella GestioneTabelle:
+- non funziona il Delete perchè non si era impostato il vincolo di primary key su sql in fase di creazione della tabella!!!!	
+- non funziona la modifica perchè la tabella manca del campo AggID
 ITEM <label class="argomento"></label> usando un javascript:__doPostBack(.....) non funziona perchè ho cambiato gli underscore con i $, va benissimo lasciare i dollari,
 	  (anche se sto usando il controllo in codice html generato a runtime da vb!)	  	  
 ITEM <label class="argomento"></label> errore chiamata web method: il nome della firma deve essere lo stesso neò javascript e nella definizione vb!	  
@@ -774,30 +776,50 @@ Il servizio da errore se la connessione non contiene la password del server!
 Impostare i parametri (TRS!)
 ITEM <label class="argomento SQL"></label> Query utili:
 
------ Cercare  NOME TABELLA con nome desiderato
+<button class='btn btnCopia' onclick='CopiaDaDiv("q1")'>copia</button>
+<div class='divCopia' id='q1'>
+/****** Clear cache **************************/
+DBCC FREEPROCCACHE
+</div>
+<button class='btn btnCopia' onclick='CopiaDaDiv("q2")'>copia</button>
+<div class='divCopia' id='q2'>
+/****** Cercare  NOME TABELLA con nome desiderato ***********/
 SELECT TABLE_NAME  
 FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='Demo_MasterLift'
 AND TABLE_NAME like '%contr%'
-
------ Cercare in tutto il database una COLONNA (e relativa tabella di appartenenza) con nome di colonna desiderato
-
+</div>
+<button class='btn btnCopia' onclick='CopiaDaDiv("q3")'>copia</button>
+<div class='divCopia' id='q3'>
+/******** Cercare in tutto il database una COLONNA (e relativa tabella di appartenenza) con nome di colonna desiderato  *********/
 SELECT      c.name  AS 'Colonna'
-            ,t.name AS 'TABELLA'
+            ,t.name AS 'TABELLA',
+		    INFORMATION_SCHEMA.COLUMNS.DATA_TYPE + ' ('+
+			CASE WHEN INFORMATION_SCHEMA.COLUMNS.DATA_TYPE = 'numeric' THEN 				
+				CAST(c.precision AS varchar(10))  +', '+  CAST(c.scale AS varchar(10))				
+			ELSE CAST(c.max_length AS varchar(10))			
+			END +')' AS [Tipo]
 FROM        sys.columns c
 JOIN        sys.tables  t   ON c.object_id = t.object_id
-WHERE       c.name LIKE '%%'   ----qui va il pezzo di nome della colonna cercata
+LEFT JOIN INFORMATION_SCHEMA.COLUMNS ON INFORMATION_SCHEMA.COLUMNS.table_name =  t.name
+									AND INFORMATION_SCHEMA.COLUMNS.COLUMN_NAME = c.name	 
+WHERE       c.name LIKE '%lotto%'   ---qui va il pezzo di nome della colonna cercata
 ORDER BY    Colonna,TABELLA;
 
---------- Ritrovare la query in una finestra appena chiusa
+ 
+</div>
+<button class='btn btnCopia' onclick='CopiaDaDiv("q4")'>copia</button>
+<div class='divCopia' id='q4'>
+/*******  Ritrovare la query in una finestra appena chiusa *****************/
 SELECT txt.TEXT               AS [SQL Statement]
      , qs.LAST_EXECUTION_TIME AS [Last Time Executed]
 FROM SYS.DM_EXEC_QUERY_STATS  AS [qs]
     CROSS APPLY SYS.DM_EXEC_SQL_TEXT(qs.SQL_HANDLE) AS txt
 ORDER BY qs.LAST_EXECUTION_TIME DESC;
-
----------COntrollo tabelle:
-/*TABELLE SENZA AGGID o CON AGGID che NON è timestamp*/
+</div>
+<button class='btn btnCopia' onclick='CopiaDaDiv("q5")'>copia</button>
+<div class='divCopia' id='q5'>
+/******* TABELLE SENZA AGGID o CON AGGID che NON è timestamp *********/
 SELECT TABLE_NAME  as name
 FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_CATALOG='ardes_Produzione' AND TABLE_TYPE = 'BASE TABLE'
@@ -806,8 +828,10 @@ SELECT t.name
 FROM sys.tables t
 LEFT JOIN sys.columns c ON c.object_id = t.object_id
 WHERE UPPER(c.name) = 'AGGID' AND system_type_id = '189'
-
-/*TABELLE SENZA PRIMARY KEY*/
+</div><br>
+<button class='btn btnCopia' onclick='CopiaDaDiv("q6")'>copia</button>
+<div class='divCopia' id='q6'>
+/**** TABELLE SENZA PRIMARY KEY*****************/
 SELECT C.TABLE_NAME, COUNT(C.TABLE_NAME)
 FROM  INFORMATION_SCHEMA.TABLE_CONSTRAINTS T  
 JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE C  
@@ -815,7 +839,57 @@ ON C.CONSTRAINT_NAME=T.CONSTRAINT_NAME
 WHERE T.CONSTRAINT_TYPE='PRIMARY KEY'  
 GROUP BY C.TABLE_NAME
 HAVING COUNT(C.TABLE_NAME) = 0
+</div><br>
+<button class='btn btnCopia' onclick='CopiaDaDiv("q7")'>copia</button>
+<div class='divCopia' id='q7'>
+/***** Cerca tutte le colonne di tipo Varchar(MAX) **********/
+DECLARE @NomeDatabase as varchar(100)
+SET @NomeDatabase = 'ARDES_Produzione'
 
+SELECT TABLE_NAME, COLUMN_NAME, *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_CATALOG = @NomeDatabase
+AND DATA_TYPE = 'varchar'
+AND CHARACTER_MAXIMUM_LENGTH = '-1'
+</div><br>
+ITEM <label class="argomento SQL"></label>Esempi Query Insert/Update:
+/********INSERT INTO***********/
+INSERT INTO fla_Produzioni_D
+(Tipo, Anno, Numero, Riga)
+ 
+SELECT 
+DOrd.Tipo, DOrd.Anno, DOrd.Numero, DOrd.Riga
+FROM FLAMOR.dbo.mag_DOrdini DOrd
+LEFT JOIN FLAMOR.dbo.mas_Articoli Art ON Art.CodArt = DOrd.CodArt
+WHERE 1=1
+
+/*OPPURE*/
+
+INSERT INTO fla_Produzioni_D
+(Tipo, Anno, Numero, Riga)
+VALUES('ORC', '2023', '120', 30)
+
+/***************UPDATE***************/
+UPDATE fla_Produzioni_D 
+SET CodArt = DOrd.CodArt, QtaProd = DOrd.Qta_Ord, DescArt = DOrd.Descrizione,
+CodAna = DOrd.Codana
+FROM fla_Produzioni_D ProdD 
+LEFT JOIN FLAMOR.dbo.mag_DOrdini DOrd   
+	ON ProdD.Tipo = Dord.Tipo AND ProdD.Anno = Dord.Anno  AND ProdD.Numero = Dord.Numero AND  ProdD.Riga = Dord.Riga 
+WHERE 1=1
+
+/****UPDATE con CASE WHEN *****/
+UPDATE trs_Viaggi
+SET Imp_StatoViaggio = CASE 
+						WHEN DataViaggio < '2023-05-12 00:00:00.000' THEN 'P'
+						ELSE 'X' END
+
+/***********DELETE***********/
+DELETE fla_Produzioni_D
+FROM fla_Produzioni_D ProdD 
+LEFT JOIN FLAMOR.dbo.mag_DOrdini DOrd   
+	ON ProdD.Tipo = Dord.Tipo AND ProdD.Anno = Dord.Anno  AND ProdD.Numero = Dord.Numero AND  ProdD.Riga = Dord.Riga 
+WHERE 1=1
 ITEM <label class="argomento SQL"></label>  DECLARE @Today DATETIME;  
 SET @Today = '2021-08-09';  
   
@@ -867,7 +941,7 @@ comuqnue verificare referenzi il campo Codice nella mas_WebTabApp)
 
 CREAZIONE DEL WS (Progetto con i Webservice)
 0) Aggiungere un nuovo progetto <b style="text-decoration:underline">Libreria di classi</b> ProgettoDLL
-1) Aggiungere un nuovo progetto (Visual Basic) <b style="text-decoration:underline">Applicazione WEB ASP.NET</b> ProgettoWS
+1) Aggiungere un nuovo progetto (Visual Basic) <b style="text-decoration:underline">Applicazione WCF</b> ProgettoWS
 
 OSS: nei riferimenti del WS aggiungere ProgettoDLL (MyProject -> Riferimenti -> Aggiungi -> Soluzione)
 
@@ -880,8 +954,6 @@ OSS: nei riferimenti del WS aggiungere ProgettoDLL (MyProject -> Riferimenti -> 
 3) prendo dal MyProject la porta del localhost e la scrivo nell'app.js
 4) creo la CnnString 
 
-
-
 CREAZIONE DI UN PROGETTO (FRONTEND/BACKEND)
 1)Aggiungere le cartelle Fonts, Images, Scripts, ClassVB
 e riempirle di conseguenza!
@@ -890,12 +962,17 @@ IMPORTANTE NEL we.Config del BACKEND
 &lt;authentication mode="Forms"&gt;
       &lt;forms name=".AUTCLKGES" loginUrl="gesLogin.aspx" timeout="480"/&gt;
     &lt;/authentication&gt;	
-ITEM <label class="argomento"></label> per aggiornare master devo
+ITEM <label class="argomento"></label> Per aggiornare Master devo:
 - se va aggiornata la struttura del database lanciato prima il server e poi il client
-- se (come nel caso di noiin sviluppo) il db è gia aggiornato, lanci osolo il client
+- se (come nel caso di noi in sviluppo) il db è gia aggiornato, lancio solo il client
 
+OSS: noi scriviamo il numero di versione di Master nella TTW_LoginDatabase nella HTTP_REFERER
 
-gli aggiornamenti si trovano su serverad/CdMaster!
+Gli eseguibili per l'aggiornamento si trovano su \\\\serverad\\CD-MASTER\\SETUP_MASTER
+
+Se dopo che ho fatto l'aggiornamento al click sul pulsante per lanciare Master ho
+<b>"Errore di run-time 432 Impossibile trovare nome di file o nome di classe durante un'operazione di automazione"</b>
+verificare che il file Master.udl sia presente nella cartella di versione (e punti al giusto server SQL)
 ITEM <label class="argomento"></label>Classi CBO utili per Browse e Screen 
 CssClass="form-control" 
 
@@ -1175,13 +1252,15 @@ ITEM <label class="argomento JS"></label> Sostiyuire testo tramite Regex:
 p.replace(regex, 'testo')
 ITEM <label class="argomento telefono"></label> NUMERI DI TELEFONO RAPIDI:
 Migliorini (Lercari):	0105446690 / 3385802066
-De Caro (CF genova): 3427789387 / 0106121695
-Morlacchi (CF milano): 3357788179
+Andrea De Caro (CF genova): 3427789387 / 0106121695
+G. Morlacchi (CF milano): 3357788179
+Chiara Calabretta (CF genova): 328/9069370
 Ferretti Luca (CBOX genova): 0104074238
 INVAT : 0143 823358
 ARDES : 0109643197
-
-ANDREA SCALABRINI : 3297786400
+Marco Pace (Pittaluga): 010/2750739
+	oppure				010/2750731
+ANDREA SCALABRINI : 329/7786400
 ITEM <label class="argomento VB"></label> 
 UpdatePanel:
 Per scatenare i post back DELL'INTERA PAGINA ad ogni click di un pulsante all'interno dell'UpdatePanel devo usare i Triggers e l'attributo UpdateMode="Conditional"
@@ -1450,7 +1529,7 @@ e la popola:
 	End If
 	m_sqlGraficiCorrenti.Scrivi(sIdGrafico, strSql)
 ITEM <label class="argomento VB"></label> Errore nel catch dell'IClassi_Update "Connessione chiusa": aprire il MyProject e verificare che sia presente in tutte le connection string la spunta "Salva Password"!
-ITEM <label class="argomento VB"></label> Come popolare le tabelle cha per <b>aggiungere nuovo grafico<b>:
+ITEM <label class="argomento VB"></label> Come popolare le tabelle cha per <b>aggiungere nuovo grafico</b>:
 1)	Agg riga nella cha_TabGraficiSezioni
 2)	Agg. Righe del dettaglio nella cha_TabGraficiElencoTest (sta per Testata!)
 3)	Nella TabGraficiElencoDett vanno le query + un codice identificativo del grafico (verificare che non sia già presente né qui né in altre tabelle cha_)
@@ -1534,38 +1613,6 @@ Lato aspx
 	TypeData="numeric" Decimali="2"
 Lato html/js	
 	type="numeric" step="0.01"
-ITEM <label class="argomento VB"></label> 	
-<b style="font-size:16px;">Gestione Tabelle</b>
-
-0) nella Page del progetto aggiungere la properyty
-	Public Shared Property GestioneTabelle() As cGestioneTabelle
-	....
-
-1) Nel progetto aggiungere la classe MasterPageTabelle (MasterPage nidificata che ha come MasterPage quella classica)
-
-2) Aggiungere le tabelle con il codice corretto (cfr. Query Insert già pronta)
-	xxx_ElencoTabelle
-	xxx_ElencoTabelle_C
-	xxx_ElencoTabelle_D
-	xxx_ElencoTabelle_F
-	
-3) Creare i form:
-	frmGestioneTabelle_B.aspx (ha come masterPage quella nuova)
-	frmGestioneTabelle_S.aspx (ha come masterPage quella classica)
-
-
-4) Attenziona alla riga 
-lButton.Attributes("href") = "javascript:__doPostBack('ctl00$ctl00$ZZZZZZ$btnMenu_" & Mnu.NomeTabella & "','')" nella MasterPageTabelle.Master.vb
-
-Fare attenzione a mettere in ZZZZZZ il valore presente nella MasterPage nell'ID alla riga
- <asp:ContentPlaceHolder ID="corpo" runat="server">
-Di default c'è content, noi mettiamo corpo o body, tale valore va messo anche al posto di ZZZZZZ e va richiamatao correttamente nella MasterPage nidificata che ho creato
-da comunque errore se presente il valore di default e io lo ho cambiato....)
-
-
-5) Tramite la CboUtility --> Gestione tabelle inserisco i dati
-IMPORTANTE: nell'iclassi_sSQL ci va una query del tipo SELECT * FROM TABELLA WHERE CHIAVE = $CHIAVE$,
-se non metto il select * ma select con i nomi delle colonne da errore in fase di update!
 ITEM <label class="argomento"></label> 
 Non riesco ad aprire un txt da qualche parte sul server, file does not exist
 ---> ho notepad aperto in modalità amministratore! Aprire col blocco note
@@ -1667,7 +1714,13 @@ in sOrder vanno i nomi delle colonne separati da virgola
 	Dim s as string = foundRows(iRiga)(iCol)
 	
 Per avere un datatable filtrato per valori unici:
-	Dim distinctDT As DataTable = myDT.DefaultView.ToTable(True, "name")	
+	Dim distinctDT As DataTable = myDT.DefaultView.ToTable(True, "name")
+
+------
+esempi:
+If m_Articolo.dtArticoli.Select("CodStru = '" & r("CodStru") & "'").Length > 0 Then
+	Continue For
+End If	
 ITEM <label class="argomento VB"></label>
 Se volessi cambiare la source della griglia filtrando tramite Select il datatable posso usare CopyToDataTable per tornare da un array di datarow a datatable
 es
@@ -1905,8 +1958,9 @@ da comunque errore se presente il valore di default e io lo ho cambiato....)
 5) Tramite la CboUtility --&gt; Gestione tabelle inserisco i dati
 IMPORTANTE: nell'iclassi_sSQL ci va una query del tipo SELECT * FROM TABELLA WHERE CHIAVE = $CHIAVE$,
 se non metto il select * ma select con i nomi delle colonne da errore in fase di update!
+
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img4.png'/>
 ITEM <label class="argomento VB"></label> Screen come crearla:
-creare una screen
 
 LATO HTML
 0) mettere nel nome della pagina aspx il suffisso _S
@@ -2568,26 +2622,11 @@ VB
         m_oBrowse.PopolaGriglia()
     End Sub
 	
-
-
-
 JAVACSRIPT
 var timer;
 var pause;
 var lockTimer = 0;
 var TimeOut;
-
-function ApriFiltri() {
-    $("#ctl00_corpo_divFiltri").toggle("fast", function () {
-        if ($('#ctl00_corpo_divFiltri').is(":hidden")) {
-            $('#ctl00_corpo_btnApriFiltri').html('Filtri <span class="glyphicon glyphicon-menu-down"></span>');
-            $('#ctl00_corpo_hidStatoFiltri').val('0');
-        } else {
-            $('#ctl00_corpo_btnApriFiltri').html('Filtri <span class="glyphicon glyphicon-menu-up"></span>');
-            $('#ctl00_corpo_hidStatoFiltri').val('1');
-        }
-    });
-}
 
 $(document).ready(function () {
     ImpostaTimer('');
@@ -2855,39 +2894,7 @@ function FormattaNumeriInput(numeroDecimali = '') {
             $(this).val('')
         }
     });
-}
-ITEM <label class="argomento SQL"></label>Esempi Query:
-/********INSERT INTO***********/
-INSERT INTO fla_Produzioni_D
-(Tipo, Anno, Numero, Riga)
- 
-SELECT 
-DOrd.Tipo, DOrd.Anno, DOrd.Numero, DOrd.Riga
-FROM FLAMOR.dbo.mag_DOrdini DOrd
-LEFT JOIN FLAMOR.dbo.mas_Articoli Art ON Art.CodArt = DOrd.CodArt
-WHERE 1=1
-
-/*OPPURE*/
-
-INSERT INTO fla_Produzioni_D
-(Tipo, Anno, Numero, Riga)
-VALUES('ORC', '2023', '120', 30)
-
-/***************UPDATE***************/
-UPDATE fla_Produzioni_D 
-SET CodArt = DOrd.CodArt, QtaProd = DOrd.Qta_Ord, DescArt = DOrd.Descrizione,
-CodAna = DOrd.Codana
-FROM fla_Produzioni_D ProdD 
-LEFT JOIN FLAMOR.dbo.mag_DOrdini DOrd   
-	ON ProdD.Tipo = Dord.Tipo AND ProdD.Anno = Dord.Anno  AND ProdD.Numero = Dord.Numero AND  ProdD.Riga = Dord.Riga 
-WHERE 1=1
-
-/***********DELETE***********/
-DELETE fla_Produzioni_D
-FROM fla_Produzioni_D ProdD 
-LEFT JOIN FLAMOR.dbo.mag_DOrdini DOrd   
-	ON ProdD.Tipo = Dord.Tipo AND ProdD.Anno = Dord.Anno  AND ProdD.Numero = Dord.Numero AND  ProdD.Riga = Dord.Riga 
-WHERE 1=1	
+}	
 ITEM <label class="argomento VB"></label> 
 Come si crea un Enumeratore
     Public Enum enuTipiStatiSegnalazione
@@ -2932,14 +2939,16 @@ CONVERT(varchar(10), DATEADD(day,1, pre_RepTur.Giorno), 111) + ' ' + CONVERT(var
 ITEM <label class="argomento JS"></label> Aggiungere tooltip
 i) per aggiungere il tooltip base usare l'attributo title
 ii) per personalizzarlo usare popper.min.js:
-	a) aggiungeo il file
-	b) aggiungo il riferimento 
+	a) aggiungo il file al progetto
+	b) aggiungo il riferimento alla pagina
 	c) nella pagina inizializzo i tooltip con 
-			$(function () {
+		$(function () {
 		  $('[data-toggle="tooltip"]').tooltip()
 		})
 	d) aggiungo il tooltip inserendo gli attributi
-		data-toggle="tooltip" data-placement="top" title="Tooltip on top"
+		data-toggle="tooltip" data-placement="top" data-html="true" title="Tooltip on top"
+		
+		(avendo data-html="true" posso usare i tag html, ad es &lt;br&gt; per andare a capo)
 	e) per personalizzare l'html: 
 		.tooltip{
            font-size: 16px;
@@ -3555,10 +3564,19 @@ ITEM <label class="argomento VB"></label> Datatable to Dictionary
             End If
         Catch ex As Exception
             Return Nothing
-        End Try
-        
+        End Try        
+    End Function
+	
+	oppure
+	
+	Public Shared Function DtTodictionary(ByVal dt As DataTable, ByVal nomeColChiave As String, ByVal nomeColValore As String) As Dictionary(Of String, String)
+        Dim dict As New Dictionary(Of String, String)
 
-        End Function
+        For Each r As DataRow In dt.Rows
+            dict.Add(r(nomeColChiave), r(nomeColValore))
+        Next
+        Return dict
+    End Function
 ITEM <label class="argomento"></label> Non va il click sulla voce di menù ----> mancano riferimenti al CSS o al JS di bootstrap!
 ITEM <label class="argomento VB"></label> Nuovo progetto con CBO del 2022: 
 - in CBO e CBOUtil verificare che non sia presente la spunta MyProject/COmpilazione Registra per interoperabilità COM
@@ -3646,40 +3664,59 @@ ITEM <label class="argomento VB"></label> Impostare manualmente i valori del Rad
             &lt;/telerik:radcomboBox&gt;
 ITEM <label class="argomento JS"></label> telerik:RadWindow, finestra da usare invece dei Form Dialog ove possibile
 ASPX:   
-		&lt;telerik:RadWindow ID="RadWindow" runat="server" DestroyOnClose="true" Title=" " Behaviors="Move, Resize, Close"&gt;
-            &lt;ContentTemplate&gt;
-                &lt;asp:Panel ID="pPanel" runat="server"&gt;     
-
-				&lt;/asp:Panel&gt;
-            &lt;/ContentTemplate&gt;
-        &lt;/telerik:RadWindow&gt; 
+	&lt;telerik:RadWindow ID="RadWindow" runat="server" DestroyOnClose="true" Title="TITLE" Behaviors="Move, Resize, Close"&gt;
+		&lt;ContentTemplate&gt;
+			&lt;asp:Panel ID="pPanel" runat="server" style="font-size:16px"&gt;   
+				&lt;div class="col-xs-12"  style="width:100%; height:10px"&gt;&lt;/div&gt;
+				&lt;h4&gt;Modifica la quantità prodotta e rigenera i documenti di produzione&lt;/h4&gt;
+				&lt;div class="col-xs-12"&gt;
+					&lt;cbo:TextBox ID="txtIdProduzione" CssClass="hidden form-control" runat="server"&gt;&lt;/cbo:TextBox&gt;  
+				&lt;/div&gt;   
+				&lt;div class="col-xs-12" style="width:100%; height:10px"&gt;&lt;/div&gt;
+				&lt;div class="col-xs-6"&gt;
+					&lt;b&gt;Quantità salvata&lt;/b&gt;&lt;br /&gt;
+					&lt;asp:Label runat="server" ID="lblQtaSalvata"&gt;&lt;/asp:Label&gt;
+				&lt;/div&gt;			                                 
+				&lt;div class="col-xs-12" style="width:100%; height:20px"&gt;&lt;/div&gt;
+				&lt;div class="col-xs-6"&gt;                   
+				   &lt;button id="btnChiudi" class="btn btn-success" style="width:100%"&gt;
+						&lt;span class="glyphicon glyphicon-remove"&gt;&lt;/span&gt;
+					&lt;/button&gt;
+				&lt;/div&gt;
+				&lt;div class="col-xs-6"&gt;
+					&lt;button id="btnSalvaQta" class="btn btn-success" style="width:100%"&gt;
+						&lt;span class="glyphicon glyphicon-ok"&gt;&lt;/span&gt;
+					&lt;/button&gt;
+				&lt;/div&gt;                             
+			&lt;/asp:Panel&gt;
+		&lt;/ContentTemplate&gt;
+	&lt;/telerik:RadWindow&gt; 
 
 JS :
-///gestione form in sovraimpression e per scrittura info relative al documento
-function ApriFormDialog(IdProd, Riga, DataIni, causale,note) {   
-    if (event) event.preventDefault();
+///gestione form in sovraimpressione
+$(document).ready(function () {
 
-    $('#ctl00_content_RadWindow_C_txtIdProduzione').val(IdProd);
-    
     $('#btnSalva').on('click', function () {
         if (event) event.preventDefault();
-        
-        let a = "{'riga':'" + $('#ctl00_content_RadWindow_C_txtRiga').val() + "'}"
-        
-        let b = eseguiPageMethod("ExtraProduzione_B.aspx", "ForzaData", a)
-        if (b) {
-            ChiudiFormDialog();
-            PulisciCampi()
-            javascript: __doPostBack('ctl00$content$btnFiltra', '');
-        }else{
-            alert('Anomalia in fase di forzatura orario');
-        }
+        Salva();
     });
 
-    $('.rwCloseButton').on('click', PulisciCampi()) //per chiudere al click su x e pulire i campi
+    $('#btnChiudi').on('click', function () {
+        ChiudiFormDialog();
+        PulisciCampi();
+    });
+})
 
-SetGraficaFormDialog()
-$find('ctl00_content_RadWindow').show();
+///gestione form in sovraimpressione 
+function ApriFormDialog(IdProd, Utente, DataOra, QtaSalvata) {
+    if (event) event.preventDefault();
+	PulisciCampi(); //se chiudo dalla X può essere non pulisca i dati
+
+    $('#ctl00_content_RadWindow_C_txtIdProduzione').val(IdProd);
+    $('#ctl00_content_RadWindow_C_lblQtaSalvata').text(QtaSalvata);
+
+    SetGraficaFormDialog()
+    $find('ctl00_content_RadWindow').show();
 }
 
 function ChiudiFormDialog() {
@@ -3690,17 +3727,32 @@ function ChiudiFormDialog() {
 
 function SetGraficaFormDialog() {
     //Configuro graficamente il form
-    $find('ctl00_content_RadWindow').set_height(250); //imposto altezza
-    $find('ctl00_content_RadWindow').set_width(500); //imposto altezza           
-    $find('ctl00_content_RadWindow').set_visibleTitlebar(true);
-    $find('ctl00_content_RadWindow').set_visibleStatusbar(false);
-    $find('ctl00_content_RadWindow').set_centerIfModal(true);
-    $find('ctl00_content_RadWindow').set_modal(true);
+	let rwScheda = $find('ctl00_content_RadWindow');
+    if (rwScheda) {
+		rwScheda.set_height(350); //imposto altezza
+		rwScheda.set_width(700); //imposto altezza           
+		rwScheda.set_visibleTitlebar(true);
+		rwScheda.set_visibleStatusbar(false);
+		rwScheda.set_centerIfModal(true);
+		rwScheda).set_modal(true);		
+	}   
 }
 
-function PulisciCampi() {
+function PulisciCampi() {    
     $('#ctl00_content_RadWindow_C_txtIdProduzione').val('');
+    $('#ctl00_content_RadWindow_C_lblQtaSalvata').text('');
+}
 
+function SalvaQta() {
+    let json = "{'sIdProd':'" + $('#ctl00_content_RadWindow_C_txtIdProduzione').val() + "', 'iNuovaQta':'" + $('#ctl00_content_RadWindow_C_txtQtaNuova').val() + "'}"
+
+    let b = eseguiPageMethod("StampaEtichettePF_B.aspx", "AggiornaQtaWS", json)
+    if (b) {
+        ChiudiFormDialog();
+        PulisciCampi()
+    } else {
+        alert('Anomalia in fase di forzatura orario');
+    }
 }
 
 ITEM <label class="argomento JS"></label> $('#ctl00_corpo_lblNoFoto').is(':visible')
@@ -3910,6 +3962,7 @@ iii) Creo un ordine: 	Ordini Gestione Oridni (f2 sul tipo) specifico l'azienda f
    Evado un ordine: Magazzino gestione Movimenti f2 sul cliente e seleziono l'ordine f4 importa e poi seleziono gli articoli arrivati:
    SE L'ARTICOLO è CONFIGURATO A LOTTI POSSO SPECIFICARE LOTTO A E LOTTO B
    (Anagrafica articolo -> pagina 2 spunta Gestione lotti)
+   Dopo che ho cfeato l'ordine ed aggiunto righe di dettaglio devo cliccare su stampa per confermare l'ordine (e impostare Stato = 'C' nella mag_Dordini)!
 
 iv) Per verificare il dettaglio di un ordine 
 	Magazzino/Scheda Articolo/ Da Lotto (compilo) A Lotto (. + tab per usare lo stesso)
@@ -4234,9 +4287,17 @@ ITEM <label class="argomento VB"></label>Chiamare una API da VB.NET
 		opRet.Scrivi("Esito", "400")
 		opRet.Scrivi("Messaggio", ex.Message)
 	End Try
-ITEM <label class="argomento VB"></label>    Private Shared Function pDateToISO8601(ByVal dateIta As DateTime) As DateTime
+ITEM <label class="argomento VB"></label>        
+	''' Imposta la data secondo l'UTC e la restituisce formattata come "2023-03-24T15:56:32+00:00"
+    ''' </summary>
+    ''' <param name="dateIta"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Shared Function pDateToISO8601(ByVal dateIta As DateTime) As String
         ' https://code-maze.com/convert-datetime-to-iso-8601-string-csharp/
-        Return dateIta.ToUniversalTime().ToString("u").Replace(" ", "T")
+        'uso \: sennò scrive le ore con il punto anzichè i :        
+        Dim sRet As String = dateIta.ToUniversalTime().ToString("yyyy-MM-ddTHH\:mm\:ss+00\:00")
+        Return sRet
     End Function
 ITEM <label class="argomento VB"></label>La query da risultati doversi tra SQL e VB => manca il Current Language=US_English nella Connection String
 ITEM <label class="argomento VB"></label> Colorare il background del logo:
@@ -4247,6 +4308,12 @@ ITEM <label class="argomento VB"></label> Colorare il background del logo:
 ITEM <label class="argomento VB"></label> RegExp
 - Selezionare un testo che non contiene una data stringa
 	[^DA_ESCLUDERE]TESTO_DA_CERCARE
+ITEM <label class="argomento VB"></label>Come aprire un accdb:<br>
+premo shift + invio per aprire il file 
+componenti aggiuntivi e scelgo la voce di menu (non richeide login)
+dal menu a dx tasto destro sulla pagina: Visualizza Struttura
+OPPURE
+CLICK SULLA PAGINA E POI TASTO DX SULLL'ELEMENTO VISUALIZZA STRUTTURA	
 ITEM <label class="argomento VB"></label> Aggiornare MasterLift Desk:
 0) Sostitusco i file accdb e accde con quelli aggiornati
 1)lancio il .bat che deregistra COME AMMINISTRATORE
@@ -4424,7 +4491,11 @@ se dopo che la ho creata tramite script ricevo il messaggio di errore
 è perchè quando la chiamo devo anteporre <b>dbo.</b> al nome della funzione!
 ITEM <label class="argomento VB"></label> Master per cambiare/visualizzare le credenziali e la password di un untete:
 Servizi -> Configurazione -> Utenti
-ITEM <label class="argomento VB"></label>Per creare in modo "giusto" lato VB delle tabelle temporanee ##TMP_Scadenzario e fare riferimento alla classe di MasterHR cRinnovoScadContratti
+ITEM <label class="argomento VB"></label>Tabelle temporanee:
+le tabelle con nome ##myTab sono tabelle temporanee globali visibili a tutti gli utenti,
+quelle locali invece sono visibili solo nel contesto in cui soni state create
+ITEM <label class="argomento VB"></label>Tabelle temporanee:
+Per creare in modo "giusto" lato VB delle tabelle temporanee ##TMP_Scadenzario e fare riferimento alla classe di MasterHR cRinnovoScadContratti
 Nella cUtilitySqlTmp posso poi trovare il metodo per ottenere il nome completo della tabella tmp a partire dal nome base (il nome della tabella è formato da nome + user + numeri random)
 <br>Le tabelle temporanee sono poi visibili sotto <b> System Databases &gt; tempdb &gt; Temporary Tables </b>
 ITEM <label class="argomento VB"></label> Nei report per associare il datasource devo fare:
@@ -4459,6 +4530,495 @@ pline
 cf
 cbox
 de negri
+ITEM <label class="argomento VB"></label>Per mettere gli a capo in Notepad++
+<img class='ImgAppunti' loading='lazy' src='Immagini\\acapo.png'/>
+ITEM <label class="argomento VB"></label>nel base.css
+/************Nascondo il testo in fondo al FormDialog *******/
+.rwStatusBar {
+    display:none !important;
+}
+ITEM <label class="argomento VB"></label> Nel Web.Config per aumentare la durata della sessione modificare il tag <i>httpRuntime</i>: 
+&lt;httpRuntime targetFramework="4.5.1" executionTimeout="600" /&gt;
+ITEM <label class="argomento VB"></label> 'Personalizzare la gestione tabelle esempio:
+
+Ho 2 campi chiave:
+Uno visibile e obbligatorio     [TipoTank]
+Uno nascosto e NON obbligatorio [IdSpecifica]
+
+Private Sub Page_PreRender2(sender As Object, e As EventArgs) Handles Me.PreRender
+	Select Case GestioneTabelle.MenuSelezionato
+		Case "tnk_TabSpecificaTank"
+			Dim txt As New CBO.Web.UI.WebControls.TextBox
+			txt = ControlFinder.PageFindControl(Me, "IdSpecifica")
+			If txt.Text = "" Then
+				'Sono in inserimento chiavi   - forzo in questo evento la scrittura a 0 sennò poi da errore in fase di salvataggio              
+				txt.Text = "0"
+			Else
+				'sono in modifica
+			End If
+	End Select
+End Sub	
+	
+Private Sub m_ScreenTabelle_FCODE(ByRef keyPress As Integer, ByRef shift As Integer) Handles m_ScreenTabelle.FCODE
+	If keyPress = System.Windows.Forms.Keys.F10 Then
+
+		Select Case GestioneTabelle.MenuSelezionato
+			Case "tnk_TabSpecificaTank"
+				Dim txt As New CBO.Web.UI.WebControls.TextBox
+				txt = ControlFinder.PageFindControl(Me, "IdSpecifica")
+				Dim cmb As New CBO.Web.UI.WebControls.DropDownList
+				cmb = ControlFinder.PageFindControl(Me, "TipoTank")
+
+				Dim op As cProprieta = GestioneTabelle.oScreen.Classe.IClassi_Proprieta
+				If txt.Text = "0" Then
+					Dim iIdSpecifica As Integer = cFunzioni.Nz(cDBUtility.DMax(Connessione, "IdSpecifica", "tnk_TabSpecificaTank", "TipoTank = '" & cmb.SelectedValue & "'"), 0) + 1
+					txt.Text = iIdSpecifica
+				End If
+		End Select
+	End If
+End Sub
+ITEM <label class="argomento QUERY_UTILI"></label> 
+Query utile per PULIRE IL DATABASE DALLE PRODUZIONI su Flamor
+
+DECLARE @Lotto as varchar(20)
+SET @Lotto = '''2300012'''
+DECLARE @sSQL as varchar(MAX)
+DECLARE @IsSacca as bit
+SET @IsSacca = 0
+
+SET @sSQL = (
+SELECT CASE @IsSacca
+WHEN 1 THEN 'UPDATE fla_Produzioni_D
+SET Eseguito = 0,
+DataFineProd = NULL,
+DataIniProd = NULL,
+OraFineProd = NULL,
+OraIniProd = NULL
+WHERE NumeroLotto = ' + @Lotto
+ELSE
+'UPDATE fla_Produzioni_D
+SET Eseguito = 0,
+DataFineProd = NULL,
+DataIniProd = NULL,
+OraFineProd = NULL,
+OraIniProd = NULL
+FROM fla_Produzioni_D
+LEFT JOIN fla_Zaini ON fla_Zaini.IdLinea = fla_Produzioni_D.IdLinea
+AND fla_Zaini.IdRiga = fla_Produzioni_D.IdRiga
+WHERE fla_Zaini.NumeroLotto = ' + @Lotto 
+END AS sSQL)
+ 
+EXEC(@sSQL)
+EXEC('DELETE FROM fla_DBaseProduzioni_T WHERE Lotto = ' + @Lotto)
+EXEC('DELETE FROM fla_DBaseProduzioni_D WHERE Lotto = ' + @Lotto) 
+ITEM <label class="argomento VB"></label> Passare da codice un ReportParameter:
+
+1)  Dim opParam As New cProprieta	
+	opParam.Scrivi("DbMaster", dbMaster)
+	cStampa.ApriStampa("Produzione", "Elenco", opParam)
+	
+2) Sul report lo passo poi al subreport:
+
+	Dim sReportParamater As String = "DbMaster"
+	If Not SrRigheProduzione1.ReportParameters.Contains(sReportParamater) Then
+		Dim p As New ReportParameter
+		p.Value = IStampe_StringoneParam.Leggi(sReportParamater)
+		p.Name = sReportParamater
+		SrRigheProduzione1.ReportParameters.Add(p)
+	End If  
+	
+3) Per 	poi ottenere il valore del parametro:
+	Dim rp As ReportParameter
+	rp = Me.ReportParameters("DbMaster")
+	Dim dbMaster As String = rp.Value
+ITEM <label class="argomento VB"></label> Array in VB.NET
+Nel costruttore passo n -> crea un array di lunghezza n+1
+
+Dim arr(2) As String
+	arr(0) = r("LottoProd")
+	arr(1) = r("Inizio")
+	arr(2) = r("UltimaStampata")
+ITEM <label class="argomento VB"></label>Dictionary di array:	
+m_DictStampate = New Dictionary(Of String, String())
+If m_DictStampate.ContainsKey("valore_chiave") Then
+	Dim arr As String() = m_DictStampate("valore_chiave")
+
+	e.Item.Cells(Indici.PrimaStampata).Text = arr(1)
+	...
+End If	
+ITEM <label class="argomento VB"></label>Se ho una query che va a toccare dati su due tabelle  che riseidono su server distinti:
+1) nella pagina
+Public m_DictStampate As Dictionary(Of String, String())
+
+2) Nell'Init
+	apro la connessione all'atro server
+    popolo un Dictionary con tutti i dati che mi servono:
+	
+	Dim CnnStringE As String = cFunzioni.Nz(cDBUtility.DLookUp(Connessione, "Valore", "inv_TabConfigurazione", "Codice = 'CnnStringE'"), "")
+	Dim m_ConnShibaura As CCboConnection = New CCboConnection(CnnStringE)
+	m_ConnShibaura.Open()
+	
+	m_DictStampate = New Dictionary(Of String, String()) 'pulisco il dictionary
+	Dim oRboWin As CInfoDBWin = CInfoDBWin.GetInfoDBWin(enuAppPlatform.Web, Connessione, "inv", CInfoDBWin.enuModalitaDBWin.F2, "GiacenzaWMS_B.aspx", "CassoniMaturi", "1")
+	Dim sSQL As String = oRboWin.SQLString
+	Dim dt As DataTable = cDBUtility.GetDataTable(sSQL, m_ConnShibaura)
+	m_ConnShibaura.Close()
+
+	'Passo i dati dal dt al Dictionary (per comodità sarà poi più utile questo che un datatable)
+	For Each r As DataRow In dt.Rows
+		Dim arr(5) As String
+		arr(0) = r("LottoProd")
+		arr(1) = r("Inizio")
+		arr(2) = r("UltimaStampata")
+		arr(3) = r("Stampate")
+		arr(4) = r("StampateOk")
+		arr(5) = r("StampateNotGood")
+		m_DictStampate.Add(r("LottoProd"), arr)
+	Next
+	
+3) Nell'ItemDataBound o nella cWinDef compilo a mano le colonne inserite, ma lasciate vuote nella query:
+
+	Private Sub grdGriglia_ItemDataBound(sender As Object, e As GridItemEventArgs) Handles grdGriglia.ItemDataBound
+		If m_DictStampate.ContainsKey("valore_chiave") Then
+			Dim arr As String() = m_DictStampate("valore_chiave")
+
+			e.Item.Cells(Indici.PrimaStampata).Text = arr(1)
+			e.Item.Cells(Indici.UltimaStampata).Text = arr(2)
+			e.Item.Cells(Indici.StampateTotale).Text = arr(3)
+			e.Item.Cells(Indici.StampataOK).Text = arr(4)
+			e.Item.Cells(Indici.StampateNG).Text = arr(5)
+		End If
+	End Sub
+	
+	oppure nella cWinDef
+	
+	Private Sub GiacenzaWMS_B__grdGriglia__1__Righe(ByRef item As Telerik.Web.UI.GridDataItem, ByRef CboObject As Object)
+		'Paolo 30/5/23 aggiungo l'info dei cassoni e pezzi maturati
+		If GiacenzaWMS_B.m_dictArticolimaturi.ContainsKey(item("#idarticolo").Text) Then
+			Dim arr As String() = GiacenzaWMS_B.m_dictArticolimaturi(item("#idarticolo").Text)
+			item("QtaMaturata").Text = FormatNumber(cFunzioni.Nz(arr(0), "0"), 0, , , TriState.True)
+			item("CassoniMaturati").Text = FormatNumber(cFunzioni.Nz(arr(1), "0"), 0, , , TriState.True)
+		End If
+	End Sub
+ITEM <label class="argomento VB"></label>Invio mail con link per aprire pagina:	
+    Private Shared Sub pInviaMailTermineVerifica(ByRef oConnessione As CCboConnection, ByRef oConnessioneMaster As CCboConnection, ByVal sEmail As String, ByVal codPersona As String, ByRef opverifica As cProprieta)
+		Dim sTestoMail As String = ""
+        
+        'Creo il link : cerco le credenziali per l'autologin
+        Dim sUserId As String = cFunzioni.Nz(cDBUtility.DLookUp(Connessione, "UtenteWeb", "AnaPersone", "Cod_Persona='" & codPersona & "'"), "")
+        Dim sPassword As String = cFunzioni.Nz(cDBUtility.DLookUp(Connessione, "PasswordWeb", "AnaPersone", "Cod_Persona='" & codPersona & "'"), "")
+
+        Dim opParam As New cProprieta
+        opParam.Scrivi("UserId", sUserId)
+        opParam.Scrivi("Password", sPassword)
+        opParam.Scrivi("Pagina_aspx", "VerificheElenco_B.aspx")
+		'properrty da passare alla pagina e da intercettare nell'Autologin() della Login.aspx!
+        
+        Dim slink As String = cUtilityProduzione.rilparT("PRO", Connessione) 'url del programma
+        If Right(slink, 1) &lt;&gt; "/" Then slink += "/"
+        slink += "Login.aspx?cboValueDesktop=" & HttpUtility.UrlEncode(cCryptography.EncryptTo3DES(opParam.Leggi, CBO.Comune.CRYPTKEY))
+		'OSS: su Invat è cboValueDesktop, di solito invece è cboValue
+
+        sTestoMail += "&lt;br/&gt;"
+        sTestoMail += "&lt;a href=""" & slink & """&gt;Clicca qui per visualizzare la verifica pezzi&lt;/a&gt;"
+
+        'preparo oggetto mail
+        Dim objMail As New cMail
+        objMail.Mittente = CboUtil.BO.cFunzioni.CboAppSetting("Mail")
+        objMail.DescrizioneMittente = CboUtil.BO.cFunzioni.CboAppSetting("MailDesc")
+        objMail.IndirizziCCn = CboUtil.BO.cFunzioni.CboAppSetting("MailCcn")
+        objMail.SmtpServer = CboUtil.BO.cFunzioni.CboAppSetting("SmtpServer")
+        objMail.SmtpPort = CboUtil.BO.cFunzioni.CboAppSetting("SmtpPort")
+        objMail.SmtpUser = CboUtil.BO.cFunzioni.CboAppSetting("SmtpUser")
+        objMail.SmtpPassword = CboUtil.BO.cFunzioni.CboAppSetting("SmtpPassword")
+        objMail.SmtpEnableSsl = CBool(CboUtil.BO.cFunzioni.CboAppSetting("SmtpEnableSsl"))
+        objMail.Destinatario = sEmail
+        objMail.Oggetto = "Notifica Fine verifica pezzi"
+        objMail.Mail = sTestoMail
+
+        'invio la mail
+        Dim bInvioMail As Boolean = objMail.InviaMail()
+        If bInvioMail Then
+            cEventi.Registra(InvatProduzione.Page.Connessione, InvatProduzione.Page.Utente.UserID, "CassoniVerificheMobile_S", "Invio mail fine verifica pezzi a [" & sEmail & "]")
+        Else
+            cEventi.Registra(InvatProduzione.Page.Connessione, InvatProduzione.Page.Utente.UserID, "CassoniVerificheMobile_S", "Anomalia Invio mail fine verifica pezzi a [" & sEmail & "]")
+        End If
+	End Sub 
+ITEM <label class="argomento VB"></label> Da numero a data:
+DateTime.FromOADate(Double d)
+The d parameter is a double-precision floating-point number that represents a date as the number of days before or after the base date, midnight, 30 December 1899.
+ITEM <label class="argomento VB"></label>'LETTURA FILE EXCEL ==============================
+	Dim formatProvider As XlsxFormatProvider = New XlsxFormatProvider()
+	fs = File.Open(opParam.Leggi("PathFile"), FileMode.Open)
+	Dim workbook As Workbook = formatProvider.Import(fs)
+	Dim worksheet = TryCast(workbook.Sheets(0), Worksheet)
+
+	fs.Close()
+
+	'salto la prima riga con l'intestazione
+	Dim iRow As Integer = 0 'lavora in base 0 
+
+	Dim bEndOfRows As Boolean = False
+
+	Dim iRigheVuote As Integer = 0
+	Do While iRigheVuote < 3
+		Dim opAltriDati As New cProprieta
+		iRow += 1
+		
+		'leggo tramite pReadCell(worksheet, iRow, 12))
+	Next
+			
+	Private Shared Function pReadCell(ByRef WorkSheet As Telerik.Windows.Documents.Spreadsheet.Model.Worksheet, ByVal iRiga As Integer, ByVal iCol As Integer) As String        
+        Return WorkSheet.Cells(iRiga, iCol).GetValue().Value.RawValue.ToString().Trim()
+    End Function
+ITEM <label class="argomento VB"></label> Importare pagine da un altro progetto
+Dopo aver creato le nuove pagine ed avervi incollato aspx/vb
+1) replace delle sigle ('kai' con 'tnk')
+2) replace del nome della pagina se modificato
+3) nell'aspx modificare la testata con i valori corretti di CodeBehind e di Inherits
+3*)nell'aspx e in ID="Content2" attenzione a ContentPlaceHolderID che abbia il valore corretto
+4) nel vb adeguare l'Inherits
+5) Riportare la classe VB base dei form 
+5) Riportare eventuali rbowin collegate
+6) riportare eventuali file js (attenzione ad eventuali _corpo_ o _body_, vedi (3*))
+7) Riportare metodi nella cWinDef
+8) Attenzione agli ShowLoading che siano definiti
+ITEM <label class="argomento VB"></label>RadBinaryImage
+<i>aspx</i><br>&lt;RadBinaryImage ID="ImgLogo" runat="server" style="height:auto;width:50% !important;margin:auto;" /&gt;
+<br><br><i>vb</i>
+If System.IO.File.Exists("PATH") Then
+	Dim Img As System.Drawing.Image = System.Drawing.Image.FromFile("PATH")
+	Dim ImgConv As New System.Drawing.ImageConverter()
+
+	ImgLogo.DataValue = ImgConv.ConvertTo(Img, GetType(Byte()))
+	ImgLogo.DataBind()
+End If
+ITEM <label class="argomento VB"></label>Gestione Apri/Chiudi filtri
+
+1)  &lt;asp:LinkButton ID="btnApriFiltri" runat="server" OnClientClick="ApriFiltri(); return false;"&gt;&lt;/asp:LinkButton&gt;
+    &lt;asp:TextBox ID="hidStatoFiltri" runat="server" style="display: none"&gt;&lt;/asp:TextBox&gt;
+    &lt;div id="divFiltri" runat="server" class="row well divFiltri"&gt;
+	....
+	&lt;/div&gt;
+2)  function ApriFiltri() {
+            $("#ctl00_corpo_divFiltri").toggle("fast", function () {
+                if ($('#ctl00_corpo_divFiltri').is(":hidden")) {
+                    $('#ctl00_corpo_btnApriFiltri').html('Filtri &lt;span class="glyphicon glyphicon-menu-down"&gt;&lt;/span&gt;');
+                    $('#ctl00_corpo_hidStatoFiltri').val('0');
+                } else {                                       
+                    $('#ctl00_corpo_btnApriFiltri').html('Filtri &lt;span class="glyphicon glyphicon-menu-up"&gt;&lt;/span&gt;');
+                    $('#ctl00_corpo_hidStatoFiltri').val('1');
+                }
+            });
+        }
+3) Nella Load
+
+	If Not IsPostBack Then hidStatoFiltri.Text = "0"
+	If hidStatoFiltri.Text = "0" Then
+		btnApriFiltri.Text = "Filtri &lt;span class=""glyphicon glyphicon-menu-down""&gt;&lt;/span&gt;"
+		divFiltri.Style.Clear()
+		divFiltri.Style.Add("display", "none")
+	Else
+		btnApriFiltri.Text = "Filtri &lt;span class=""glyphicon glyphicon-menu-up""&gt;&lt;/span&gt;"
+		divFiltri.Style.Clear()
+		divFiltri.Style.Add("display", "block")
+	End If
+	divFiltri.Style.Add("margin-bottom", "0")
+ 
+ITEM <label class="argomento VB"></label>Callback after __doPostBack()
+
+https://stackoverflow.com/questions/7615691/callback-after-dopostback
+
+Sys.WebForms.PageRequestManager.getInstance().add_beginRequest(BeginRequestHandler);
+Sys.WebForms.PageRequestManager.getInstance().add_endRequest(EndRequestHandler);
+function BeginRequestHandler(sender, args)
+{
+    //
+}
+function EndRequestHandler(sender, args)
+{
+    //request is done
+}
+ITEM <label class="argomento VB"></label>In una browse per lanciare una funziona js al click (f5) sulla riga basta nell'evento F5 
+mettere la chiamata con telerik....e poi keypress = 0 (cfr Parametri Master trasp)
+ITEM <label class="argomento VB"></label>Creare menu a discesa in cascata:
+1)creo le rbowin delle DropDownList racchiudendo tra dollari l'ID del controllo di cui devo leggere il valore per cui filtrare<br>	
+	SELECT '' AS Anno 
+	UNION ALL
+	SELECT DISTINCT(Anno) FROM tnk_MovimentiTest
+	WHERE Tipo = '$cmbTipo$'
+	
+2) Nell'aspx:
+	&lt;asp:UpdatePanel ID="upKey" runat="server" class="col-xs-9"&gt;
+		&lt;ContentTemplate&gt;
+			&lt;div class="row"&gt;
+				&lt;div class="col-xs-12 col-sm-6 col-md-4"&gt;
+					&lt;small&gt;Tipo &lt;/small&gt;&lt;br /&gt;
+					&lt;cbo:DropDownList ID="cmbTipo" runat="server" IsKey="false" Width="100%" TypeControl="ComboBox" TypeData="Text" CssClass="form-control" DataTextField="Tipo" DataValueField="Tipo" onchange="ChangeTipo()"&gt;&lt;/cbo:DropDownList&gt;  
+				&lt;/div&gt;
+				&lt;div class="col-xs-12 col-sm-6 col-md-4"&gt;
+					&lt;small&gt;Anno &lt;/small&gt;&lt;br /&gt;
+					&lt;cbo:DropDownList ID="cmbAnno" runat="server" IsKey="false" Width="100%" TypeControl="ComboBox" TypeData="Text" CssClass="form-control" DataTextField="Anno" DataValueField="Anno" onchange="ChangeAnno()"&gt;&lt;/cbo:DropDownList&gt;  
+				&lt;/div&gt;
+				&lt;div class="col-xs-12 col-sm-6 col-md-4"&gt;
+					&lt;small&gt;Numero &lt;/small&gt;&lt;br /&gt;
+					&lt;cbo:DropDownList ID="cmbNumero" runat="server" IsKey="false" Width="100%" TypeControl="ComboBox" TypeData="Text" CssClass="form-control" DataTextField="Numero" DataValueField="Numero" &gt;&lt;/cbo:DropDownList&gt;  
+				&lt;/div&gt;                    
+			&lt;/div&gt; 
+
+			&lt;%--btn per la gestione  dei cmb--%&gt;
+			&lt;asp:LinkButton ID="btnUpdateTipo" runat="server" Text="Update Tipo" style="display:none" /&gt;  
+			&lt;asp:LinkButton ID="btnUpdateAnno" runat="server" Text="Update Anno" style="display:none" /&gt; 
+		&lt;/ContentTemplate&gt;
+	&lt;/asp:UpdatePanel&gt;	
+	
+3) Nel javascript:
+		function ChangeTipo() {
+			javascript: __doPostBack('ctl00$corpo$btnUpdateTipo', '');
+		}
+		function ChangeAnno() {
+			javascript: __doPostBack('ctl00$corpo$btnUpdateAnno', '');
+		}	
+
+3) Nel vb:
+	
+    Private Sub pPopolaFiltri()
+        cmbTipo.Enabled = True
+        cmbAnno.Enabled = True
+        cmbNumero.Enabled = True
+
+        cmbTipo.SelectedValue = m_FiltroTipo
+        If m_FiltroTipo &lt;&gt; "" Then
+            cmbAnno.AggiornaDataSource()
+            'prima di assegnare un valore verifico sia incluso nella source del cmb
+            If cmbAnno.Items.FindByValue(m_FiltroAnno) IsNot Nothing Then
+                cmbAnno.Text = m_FiltroAnno
+            Else
+                cmbAnno.Text = ""
+                m_FiltroAnno = ""
+                m_FiltroNumero = "0"
+            End If
+
+            If cmbAnno.Text &lt;&gt; "" Then
+                cmbNumero.AggiornaDataSource()
+                If cmbNumero.Items.FindByValue(m_FiltroNumero) IsNot Nothing Then
+                    cmbNumero.Text = m_FiltroNumero
+                Else
+                    cmbNumero.Text = "0"
+                    m_FiltroNumero = "0"
+                End If
+            Else
+                cmbNumero.Enabled = False
+            End If
+        Else
+            cmbAnno.Enabled = False
+            cmbNumero.Enabled = False
+        End If
+    End Sub
+	
+	e chiamo la pPopolaFiltri nel PreRender
+	
+	Private Sub btnUpdateTipo_Click(sender As Object, e As EventArgs) Handles btnUpdateTipo.Click
+        'SalvaFiltri() 'non serve, non uso le properyt nella pPopolaFiltri....
+        cmbAnno.SelectedValue = ""
+        cmbAnno.AggiornaDataSource()
+    End Sub
+
+    Private Sub btnUpdateAnno_Click(sender As Object, e As EventArgs) Handles btnUpdateAnno.Click
+        'SalvaFiltri() 'non serve, non uso le properyt nella pPopolaFiltri....
+        cmbNumero.SelectedValue = "0"
+        cmbNumero.AggiornaDataSource()
+    End Sub
+ITEM <label class="argomento VB"></label>In un servizio Windows per gestire un parametro di avvio
+Nell'OnStart:
+	If My.Application.CommandLineArgs.Count <> 1 Then
+		'Registro evento parametro avvio mancante
+		Me.Stop()
+	End If
+
+	m_ParametroAvvio = My.Application.CommandLineArgs(0)
+ITEM <label class="argomento VB"></label>cWinDef regione base
+    '#Region "PAGINA"
+    '    Private Sub PAGINA__grdGriglia__1(ByRef CboObject As Object)
+    '        m_GrigliaWeb.AllowPaging = True
+    '        m_GrigliaWeb.PageSize = 20
+    '    End Sub
+    '
+    '    Private Sub PAGINA__grdGriglia__1__Righe(ByRef item As Telerik.Web.UI.GridDataItem, ByRef CboObject As Object)
+
+    '    End Sub
+    '#End Region
+ITEM <label class="argomento VB"></label>        ''' <summary>
+    ''' Funzione che conta quanti a capo ci sono
+    ''' </summary>
+    ''' <param name="sStringa"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Function pCountACapi(ByVal sStringa As String) As Integer
+        Dim iRet As Integer
+        iRet = System.Text.RegularExpressions.Regex.Matches(sStringa, "\n").Count() + 1 'conto anche l'a capo di fine stringa
+        Return iRet
+    End Function
+ITEM <label class="argomento SQL"></label>Esempio while in SQL:
+  /*creo una tabella temporanea globale*/
+	DROP TABLE ##codart_2022
+	CREATE TABLE ##codart_2022 (
+		CodArt VARCHAR(20),
+		Cursore numeric(9,0)
+	)
+	INSERT INTO ##codart_2022
+		SELECT CodArt, ROW_NUMBER() OVER(ORDER BY CodArt ASC) AS Cursore
+		FROM INVATNEW.dbo.mas_Articoli
+		WHERE Descrizione like '%sup%2022%' ---todo sono 83 righe 
+	-------------------------------
+	DECLARE @CodArt as varchar(20)
+	DECLARE @MyCursor numeric(9,0)
+	DECLARE @MAXCursor numeric(9,0)
+	SET @MyCursor = 1
+	SET @MAXCursor = (SELECT COUNT(*) FROM ##codart_2022)
+
+	WHILE @MyCursor <= @MAXCursor
+		BEGIN       /*fondamentale, senza non funziona */
+			SET @CodArt = (SELECT CodArt FROM ##codart_2022 WHERE Cursore = @MyCursor)
+			PRINT('===' + @CodArt + ' =====') 
+			DELETE  FROM inv_TabControlliArticoli WHERE CodArticolo = @CodArt
+			INSERT INTO inv_TabControlliArticoli
+			(CodArticolo, CodControllo, Ordine, ProgPerTurno)
+			---0
+					  SELECT @CodArt AS CodArticolo, 'PASSA' AS CodControllo, 1 AS Ordine, 0 AS ProgPerTurno
+			UNION ALL SELECT @CodArt AS CodArticolo, 'PESO' AS CodControllo, 2 AS Ordine, 0 AS ProgPerTurno
+			UNION ALL SELECT @CodArt AS CodArticolo, 'VISIVO' AS CodControllo, 3 AS Ordine, 0 AS ProgPerTurno
+			--1
+			UNION ALL SELECT @CodArt AS CodArticolo, 'VISIVO' AS CodControllo, 1 AS Ordine, 1 AS ProgPerTurno
+			
+			SET @MyCursor = @MyCursor + 1	  
+	END 
+
+	DROP TABLE ##codart_2022
+ITEM <label class="argomento VB"></label> use INVATNEW_MasterLift
+update pre_RepTur SET Giorno = '2023-07-26' /*OGGI*/
+WHERE IdRepTur = 5831
+ITEM <label class="argomento VB"></label>Genoatank piazzale
+/*query pulizia*/
+  delete from tnk_LayoutMov  
+  delete from tnk_LayoutStato
+UPDATE tnk_MovimentiTest
+SET Park_Area='',Park_Riga='',Park_Colonna='',Park_Altezza='',
+Park_Tipologia='',Park_TargaSemiRimorchio='',CodPark_Area= 0
+
+/*query ricerca*/
+  select * from tnk_LayoutMov  
+  select * from tnk_LayoutStato
+  select [Park_Area],[Park_Riga],[Park_Colonna], IdP
+      ,[Park_Altezza],[Park_Tipologia]
+      ,[Park_TargaSemiRimorchio]
+      ,[CodPark_Area], *
+	  from tnk_MovimentiTest
+   where Park_Altezza <>''
+ITEM <label class="argomento VB"></label>
+ITEM <label class="argomento VB"></label>
+ITEM <label class="argomento VB"></label>
+ITEM <label class="argomento VB"></label>
 ITEM <label class="argomento VB"></label>
 ITEM <label class="argomento VB"></label>
 `
@@ -4468,7 +5028,14 @@ ITEM <label class="argomento VB"></label>
 <img class='ImgAppunti' loading='lazy' src='Immagini\\img1.png'/>
 */
 
+/*
 
+<button class='btn btn-info btnCopia' onclick='CopiaDaDiv("q1")'>copia</button>
+<div class='col-xs-12' id='q1'>
+DBCC FREEPROCCACHE
+</div><br>
+
+*/
 
 
 
