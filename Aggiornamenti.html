@@ -12,6 +12,7 @@
 	@import url('https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@300&display=swap');
 	</style>
 	<link rel="stylesheet" href="Aggiornamenti.css" ></link>
+	<script src="app.js" ></script>
 	<script src="Aggiornamenti.js" ></script>
 	<link rel="icon" type="image/x-icon" src="https://drive.google.com/file/d/1GqvK_O28n_CfQOmr08z6ZBNBJpDI8AWL/view?usp=sharing">
 	
@@ -26,11 +27,11 @@
 <div class="container-fluid" style="margin-left: 100px; margin-right: 100px;"> 
 	<h2 class="btn-titolo" onclick='window.location.reload(true);' style="text-align:center; margin-top: 0px; color: white; cursor:pointer; ">
 		Modifiche database
-	</h2>
-	<div class='col-xs-6'></div>
-	<div class='col-xs-6'>	
+	</h2>	
+	<div class='col-xs-12 text-right'>	
 		<a href="CreaFileVB.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Crea BeS</i></a>
 		<a href="Errori.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Errori comuni</i></a>
+		<a href="UpdateGithub.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Carica su GitHub</i></a>
 	</div>
 
 	<div class='col-xs-12'>
@@ -41,7 +42,7 @@
 		<div class="col-xs-3">
 			<b>Data Riferimento</b><br>						
 			<input  id="txtDataRif" type="date"/>	
-			<button id="oggi" class='btn btn-info' onclick='$("#txtDataRif").val(GetOggi());'>oggi</button>			
+			<button id="oggi" class='btn btn-info' onclick='$("#txtDataRif").val(GetOggi());'>Oggi</button>			
 		</div>
 		<div class="col-xs-12">
 			<div class='col-xs-5'>
@@ -54,7 +55,7 @@
 					<b>Testo da controllare</b><br><input id="txtNomeRicerca" />
 				</div>
 				<div class='col-xs-4'>
-					<b>Sigla</b><br><select id="cmbDBSigle" class="form-control select" ></select>
+					<b>Sigla</b> <button class='btn btn-info btnRefreshSigla' onclick='BindCMBSigle();'><span class='glyphicon glyphicon-refresh spanRefreshSigla'></span></button>  <br><select id="cmbDBSigle" class="form-control select" ></select>
 				</div>
 				<div class='col-xs-4'>
 					<br>
