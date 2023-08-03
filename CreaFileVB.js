@@ -1,5 +1,3 @@
-var url = 'http://localhost:1994/WS/Bes.svc/'
-
 $(document).ready(function(){
 		ForzaZoom();
 		
@@ -23,13 +21,12 @@ $(document).ready(function(){
 		BindCMB();
  }());
  function ForzaZoom(){
-	 try {
+	 /*try {
 		  document.body.style.zoom = "120%";//forzo lo zoom del browser
 		}
 		catch(err) {
 		  console.log('Errore zoom:' + err)
-		}
-	 
+		}*/	 
  }
   
  function BindCMB(){
@@ -58,7 +55,6 @@ $(document).ready(function(){
  }
  
  function GetTablesFromDB(t){
-	 //let t = $('#cmbDB').val();
 	 let MyJson = `{
 		"Database":"${t}"
 		}`	
@@ -86,10 +82,9 @@ $(document).ready(function(){
  
  function GetIClassi(){	 
 	 if ($('#cmbTabelle').val()!='' && $('#cmbDB').val()!=''){
-		 //$('#LoadingGIF').css('display','')
-		let myTimeout = setTimeout($('#txtIClassiSsql').val(GetIClassiSsql($('#cmbDB').val(), $('#cmbTabelle').val())), 1000)		 
+		$('#txtIClassiSsql').val(GetIClassiSsql($('#cmbDB').val(), $('#cmbTabelle').val()));		 
 	 }else{
-		 alert('campi non compilati')
+		 alert('campi non compilati');
 	 }
  }
  
@@ -182,35 +177,20 @@ $(document).ready(function(){
  }
  
 function copia() {
-
-	    var copyText = document.getElementById("txtTesto");
-
-	    copyText.select();
-	    copyText.setSelectionRange(0, 99999); /* For mobile devices */
-
-	    navigator.clipboard.writeText(copyText.value);
-	    //effetto grafico
-	    $('.lblWarning').removeClass('lblFadingOutWarning');
-	    setTimeout(function () { 
-	    	    $('.lblWarning').css('display','block').addClass('lblFadingOutWarning');
-	    }, 200);   
+	Copia("txtTesto")		
+	//effetto grafico
+	$('.lblWarning').removeClass('lblFadingOutWarning');
+	setTimeout(function () { 
+			$('.lblWarning').css('display','block').addClass('lblFadingOutWarning');
+	}, 200);   
 }
 
 function CopiaIclassi(){
-	var copyText = document.getElementById("txtIClassiSsql");
-
-	copyText.select();
-	copyText.setSelectionRange(0, 99999); /* For mobile devices */
-
-	navigator.clipboard.writeText(copyText.value);	
+	Copia("txtIClassiSsql")
 }
 
 function copia_ById(id) {  
-		var copyText = document.getElementById(id);
-	    copyText.select();
-	    copyText.setSelectionRange(0, 99999); /* For mobile devices */
-
-	    navigator.clipboard.writeText(copyText.value);  
+	Copia(id);
 }
 
 function verificaDati(){
@@ -380,6 +360,7 @@ let startTime = performance.now()
 	GestioneHamburger(pagina);
 	GestioneFiltri(pagina);
 	GestioneImports(pagina);
+	GestioneScreen(pagina);
 
 
 	//qualora non avessi gestito un $...$ lo pulisco. Tolgo eventuali doppi a capo NON PIU' (9mar2022)
@@ -756,11 +737,10 @@ function GestioneFiltri(pagina){
 }
 
 function GestioneScreen(pagina){
-	
+	debugger;
 	if($('#chkScreenClassica').prop('checked') == true){
 		pagina.testo = pagina.testo.replaceAll('$CLASSE_SCREEN$',$('#txtPagina').val() + '_S');	    	    	    
-		}
-	if ($('#chkScreenFD').prop('checked')){
+	}else if ($('#chkScreenFD').prop('checked')){
 		pagina.testo = pagina.testo.replaceAll('$CLASSE_SCREEN$','QQQ');
 		pagina.testo = pagina.testo.replace('"QQQ"', '')				
 		if(pagina.arrChiavi.length >0){
@@ -769,11 +749,10 @@ function GestioneScreen(pagina){
 		}else{
 			pagina.testo = pagina.testo.replaceAll('$ApriFD$', '')
 		}
-	}else{
-		pagina.testo = pagina.testo.replaceAll('$CLASSE_SCREEN$','QQQ');
-		pagina.testo = pagina.testo.replace('"QQQ"', '')	
-		pagina.testo = pagina.testo.replaceAll('$ApriFD$', '')				
-	}
+	}	
+	pagina.testo = pagina.testo.replaceAll('$CLASSE_SCREEN$','QQQ');
+	pagina.testo = pagina.testo.replace('"QQQ"', '')	
+	pagina.testo = pagina.testo.replaceAll('$ApriFD$', '')					 
 	
 	if($('#chkScreenClassica').prop('checked') == true){
 	if($('#chkIsFormDialog').prop('checked') == true){
