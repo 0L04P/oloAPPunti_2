@@ -196,7 +196,7 @@
 				break;
 			case "2":
 			//txt generico
-				let tipoDati = $('#cmbTipoDati_' + id)
+				let tipoDati = $('#cmbTipoDati_' + id).val();
 				filtri += generaTXT(id, datafield, datatextfield, datavaluefield,'','', iskey, classe.trim(), tipoDati);
 				InizializzaFiltri += 'txt' + id + '.Text = m_Filtro' + id +'\n';
 				SalvaFiltri += 'm_Filtro' + id + ' = txt' + id + '.Text \n';				
@@ -242,7 +242,7 @@
 				break;
 			case "7":	
 			//textarea
-				let tipoDati2 = $('#cmbTipoDati_' + id)
+				let tipoDati2 = $('#cmbTipoDati_' + id).val();
 				filtri += generaTXT(id, datafield, datatextfield, datavaluefield,'','', iskey, classe.trim(), tipoDati2, 'TextMode="MultiLine" Rows="3"');
 				InizializzaFiltri += 'txt' + id + '.Text = m_Filtro' + id +'\n';
 				SalvaFiltri += 'm_Filtro' + id + ' = txt' + id + '.Text \n';				
@@ -331,19 +331,19 @@ return DropDownList;
 	 let txt = '';	 	
 	 let tipo = '';
 	 let altro = '';
-	 switch(tipoDati){
-		 case '':
-		 tipo = 'Text';
-			break;
+	 switch(tipoDati){		 
 		 case '1':
-		 tipo = 'Text';
+			tipo = 'Text';
 		    break;
 		 case '2':
-		 tipo = 'Numeric';
-		 altro = ' SeparatoreMigliaia = "true" '
-			break;		 
+			 tipo = 'Numeric';
+			 altro = ' SeparatoreMigliaia = "true" '
+			break;
+		default:
+			tipo = 'Text';
+			break;			
 	 }
-	 
+	 console.log('TIPO="' +tipo+'"')
 	 if (isData == 'true'){	
 		 tipo = 'Data';	 
 		  txt = `
