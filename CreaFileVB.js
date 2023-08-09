@@ -581,7 +581,7 @@ function GestioneTasche(pagina){
 			
 			TASCHESCRIPT = TASCHESCRIPT.replaceAll('$PAGINA$',$('#txtPagina').val());					
 			TASCHESCRIPT = TASCHESCRIPT.replaceAll('#SIGLAFORM$','_S');
-			$('#txtpagina.testoScriptTasche').val(TASCHESCRIPT);
+			$('#txtTestoScriptTasche').val(TASCHESCRIPT);
 			let htmlaux1 = '<ul class="nav nav-tabs responsive" id="myTab">\n';							
 			let htmlaux2 = '';
 			
@@ -603,7 +603,7 @@ function GestioneTasche(pagina){
 			}
 			htmlaux1 += '</ul>\n';
 			
-			$('#txtpagina.testoHtmlTasche').val(htmlaux1 +'\n'+ htmlaux2);
+			$('#txtTestoHtmlTasche').val(htmlaux1 +'\n'+ htmlaux2);
 			$('.tasche').removeClass('hidden');
 		}else{
 			pagina.testo = pagina.testo.replaceAll('$METODITASCHE$','');
