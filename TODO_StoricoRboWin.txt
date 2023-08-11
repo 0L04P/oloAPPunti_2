@@ -1,0 +1,18 @@
+Note per la gestione dello storico delle RboWin:
+
+select cast(aggid as datetime) from ard_rbo_win
+where Campo like '%pPopolaPagina_MP_Ordini%'
+--0x00000000001CD0F8
+--0x00000000001CD0F9
+
+/*1a tabella - oloElencoRboWin*/
+Prefisso, Procedura, Campo, Seq, LAST_AggID /* 3 chiavi: le 3 della tabella rbo_win */
+/*2a tabella*/
+Prefisso,
+Procedura, Campo, Seq, ID_Storico /* 4 chiavi: le 3 della tabella rbo_win + la nuova ID_Storico, a 0 quando la inserisco */
+,[StringaSQL]
+,[Pointer]
+,[ValoreRitorno]
+,[Titolo]
+,[Note]
+,[AggID]
