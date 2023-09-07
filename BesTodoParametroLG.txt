@@ -1,0 +1,7 @@
+funzione che dato in input il nome del cliente cerca (da cmb popolato tramite l'elenco dei nomi delle cartelle nel path \\serversviluppo\Resource-SourceSafe\AppWeb\MasterHR\LoghiClienti)
+restituisce il cProprieta con i file vari (quantomeno i tag LOGIN e MENU)
+
+es.
+<LOGIN><PATH>\\serversviluppo\Resource-SourceSafe\AppWeb\MasterHR\LoghiClienti\Denegri\ImgLogin.png</PATH><WIDTH>300</WIDTH></LOGIN>
+<MENU><PATH>\\serversviluppo\Resource-SourceSafe\AppWeb\MasterHR\LoghiClienti\Denegri\ImgMenu.png</PATH></MENU>
+<REPORT><PATH>\\serversviluppo\Resource-SourceSafe\AppWeb\MasterHR\LoghiClienti\Denegri\ImgStampa.png</PATH><WIDTH>155</WIDTH><HEIGHT>75</HEIGHT></REPORT>
