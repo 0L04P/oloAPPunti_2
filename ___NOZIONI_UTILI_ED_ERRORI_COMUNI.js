@@ -1259,7 +1259,7 @@ Ferretti Luca (CBOX genova): 0104074238
 INVAT : 0143 823358
 ARDES : 0109643197
 Marco Pace (Pittaluga): 010/2750739
-	oppure				010/2750731
+	    				010/2750731
 ANDREA SCALABRINI : 329/7786400
 ITEM <label class="argomento VB"></label> 
 UpdatePanel:
@@ -1277,9 +1277,11 @@ Senza i postback continuano ad essere parziali!
 		per gli F2 i pulsanti btnF2_txt sono creati dalle CBO--&gt;
 	&lt;/Triggers&gt;  
 &lt;/asp:UpdatePanel&gt;  
-ITEM <label class="argomento VB"></label> Non funziona l'AddFuturePageValue ---> il nome passato non contiene il .aspx
-oppure
-Nella browse è già scritta la screen di destinazione e le CBO sovrascrivono il pagevalue che passo
+ITEM <label class="argomento VB"></label> AddFuturePageValue:
+		<b>AddFuturePageValue("~/Pagina.aspx", pv)</b>        	 
+	ATTENZIONE: non funziona se il nome passato non contiene la tilde o il .aspx!
+				oppure
+				nella browse è già scritta la screen di destinazione e le CBO sovrascrivono il pagevalue che passo
 ITEM <label class="argomento VB"></label> 
 Da errore il servizio dopo il caricamento di una applicazione in https:
 nel web config per ogni pagina del progetto servizio va scritto nel tag services (li scrive di defualt per l'http in fase di scrittura codice, sono quelli commentati...)
@@ -1373,9 +1375,11 @@ Negli F2 ho due eventi distinti:
 - F2code generato dopo aver selezionato la riga (passando alla lente di ingrandiemento)
 - XCP: nel caso fosse abilitata la possibilità di scrivere nell'F2 è generato all'invio
 ITEM <label class="argomento VB"></label> F2: cose utili
-1) txt.F2Param = "<CBOPAGESIZE>8</CBOPAGESIZE><ALLOWSORTING>1</ALLOWSORTING><ORDER>CodAna</ORDER><VALUE>" & DbMaster & "</VALUE>"
-
-2)  //nascondo i pulsanti degli F2
+1) txt.F2Param = "&lt;CBOPAGESIZE&gt;8&lt;/CBOPAGESIZE&gt;&lt;ALLOWSORTING&gt;1&lt;/ALLOWSORTING&gt;&lt;ORDER&gt;CodAna&lt;/ORDER&gt;&lt;VALUE&gt;" & DbMaster & "&lt;/VALUE&gt;"
+2) Nella query dell'F2 devo usare 
+	- LIKE '%$txtRicercaF2$%' e non l'id del mio campo per poter eseguire le ricerche
+	- $txtValueHid$ che andrà sostituito con il nome del database master specificato nel tag &lt;Value&gt;  
+3)  //nascondo i pulsanti degli F2
 	 (function () {
 		 $('#ctl00_body_btnF2_txtCodArt').css('display', 'none');            
 	 })();
@@ -1715,6 +1719,9 @@ in sOrder vanno i nomi delle colonne separati da virgola
 	
 Per avere un datatable filtrato per valori unici:
 	Dim distinctDT As DataTable = myDT.DefaultView.ToTable(True, "name")
+	
+Per trasformare un array di datarow indatatable:
+dt.Select(...).CopyToDataTable()	
 
 ------
 esempi:
@@ -3514,10 +3521,34 @@ una rbowin (personalizzata) non funziona: ho messo giusto il "campo " ed il valo
 ITEM <label class="argomento "></label> Un'applicazione su IIS da un errore: il Pool è stato configurato correttamente?
 ITEM <label class="argomento VB"></label> Auto Complete
 	&lt;cbo:RadAutoCompleteBox ID="txtPark_TargaSemirimorchio" runat="server" TypeControl="TextBox" TypeData="Text" DataField="Park_TargaSemirimorchio" Width="100%"                                 
-		InputType="Text" TextSettings-SelectionMode="Single" HighlightFirstMatch="true" 
+		InputType="Text" TextSettings-SelectionMode="Single" HighlightFirstMatch="true" MinFilterLength="3"
 		DataValueField="TargaCnt" DataTextField="TargaCnt" OnF2="txtCtrl"&gt;&lt;/cbo:RadAutoCompleteBox&gt;
 	
-	ed aggiungere una rbowin con controllo txtCtrl (specificato nell'ONF2) per tirare su la source (così posso avere più controlli ed 1 sola rbowin)
+	Aggiungere una rbowin con controllo txtCtrl (specificato nell'ONF2) per tirare su la source (così posso avere più controlli ed 1 sola rbowin)
+	IMPORTANTE: valorizzare il valore Ritorno dell'rbowin con il campo descrittivo!
+	<a href='https://docs.telerik.com/kendo-ui/api/javascript/ui/autocomplete' target="_blank">docs.telerik</a>
+	<i>MinFilterLength</i> = The minimum number of characters the user must type before a search is performed. Set to higher value than 1 if the search could match a lot of items.
+	
+	Lato JS 
+		(uso l'id "completo"!)
+		
+		-per ottenere il valore del textbox devo fare:
+		$find('ctl00_content_txtCodTipoContainer1').get_entries().getEntry(0).get_value();
+		
+		-per ripulire il textbox:
+		$find('ctl00_content_txtCodTipoContainer1').get_entries().clear();;
+	
+	Lato VB 
+		- per ottenere il valore del textbox devo fare:
+		txtCodTipoContainer1.Entries(0).Value
+		
+		- per vedere se il textbox è compilato devo fare il controllo:
+		txtCodTipoContainer1.Entries.Count > 0
+ITEM <label class="argomento VB"></label> 	
+function setAutoCompleteFocus(id) {
+    var autoComplete = $find(id);
+    autoComplete._inputElement.focus();
+}	
 ITEM <label class="argomento VB"></label> 	
 	Non funziona l'update di un campo datetime, ci scrive NULL ma passo una data corretta: ho usato 
 	cDBUtility.GetDate(connessione, cDBUtility.FormatoData.DataOra)
@@ -4700,6 +4731,37 @@ Public m_DictStampate As Dictionary(Of String, String())
 			item("CassoniMaturati").Text = FormatNumber(cFunzioni.Nz(arr(1), "0"), 0, , , TriState.True)
 		End If
 	End Sub
+ITEM <label class="argomento CSS"></label>CSS notevoli:
+	<b>overflow-x: hidden;</b> 	  /*evita lo scroll orizzontale*/
+	<b>white-space: pre;</b>  	 /*gestione a capi*/
+	<b>outline: none;</b>       /*quando metto il fuoco non mostra i bordi della textarea*/ 
+	<b>pointer-events:none</b> /*rimuove click*/
+	<b>scale: 1.1;</b>
+	<b>text-decoration: underline;</b>
+	<b>filter: drop-shadow(1px 2px 1px #ccc);</b>
+	
+	/*gestione immagine come sfondo del div*/
+	<b>background-image: url("Images/PressaStilizzata.svg");
+	background-size: contain;
+	background-repeat: no-repeat;</b>
+	
+	/*effetto grafico del loading:*/
+	.rotazione {
+		animation: rotation 2s infinite linear;
+	}
+	@keyframes rotation {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(359deg);
+		}
+	}
+ITEM <label class="argomento CSS"></label>Svg che ruota:
+	<svg class="rotazione" width="30" height="30" viewBox="0 0 160 160" style="margin-right: 80px;">
+		<circle r="70" cx="80" cy="80" fill="transparent" stroke="#FFFFFF" stroke-width="12px"></circle>
+		<circle r="70" cx="80" cy="80" fill="transparent" stroke="#057b5f" stroke-width="12px" stroke-dasharray="439.6px" stroke-dashoffset="109.9px"></circle>
+	</svg>
 ITEM <label class="argomento VB"></label>Invio mail con link per aprire pagina:	
     Private Shared Sub pInviaMailTermineVerifica(ByRef oConnessione As CCboConnection, ByRef oConnessioneMaster As CCboConnection, ByVal sEmail As String, ByVal codPersona As String, ByRef opverifica As cProprieta)
 		Dim sTestoMail As String = ""
@@ -5015,6 +5077,98 @@ Park_Tipologia='',Park_TargaSemiRimorchio='',CodPark_Area= 0
       ,[CodPark_Area], *
 	  from tnk_MovimentiTest
    where Park_Altezza <>''
+ITEM <label class="argomento VB"></label>Esempio di funzione SQL ed uso del Cursore.
+I parametri @CodArt_Evidenzia_1 Varchar(20) = '' sono opzionali 
+
+USE [ARDES_Produzione]
+GO
+/****** Object:  UserDefinedFunction [dbo].[GetComponentiDBaseConcatenati]    Script Date: 04/09/2023 15:36:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER FUNCTION  [dbo].[GetComponentiDBaseConcatenati](@CodArt Varchar(20), 
+						@CodArt_Evidenzia_1 Varchar(20) = '', @CodArt_Evidenzia_2 Varchar(20) = '', @CodArt_Evidenzia_3 Varchar(20) = '',
+						@CodArt_Evidenzia_4 Varchar(20) = '', @CodArt_Evidenzia_5 Varchar(20) = '')
+	RETURNS VARCHAR(MAX)
+	BEGIN
+	DECLARE @ConcatenatedValues NVARCHAR(MAX) = '';
+	DECLARE @CurrentValue NVARCHAR(MAX);
+
+	/*il cursor da errore se la tabella ha 0 righe, e nelle SQL Function non si possono usare i blocchi Try...Catch,
+	pertanto faccio un controllo prima di aprire il cursore: */
+	DECLARE @RowCount INT;
+
+	SELECT @RowCount = (	SELECT COUNT(*)
+		 FROM ARDES.dbo.mas_DBase
+		 WHERE CodArt = @CodArt
+		 AND Riga > 0 /*escludo la riga con l'articolo stesso*/
+		 AND ISNULL(CodDbase, '') <> '')
+	
+	IF @RowCount = 0
+		RETURN ''
+
+	DECLARE table_cursor CURSOR FOR
+		SELECT 
+			CASE WHEN CodDbase = @CodArt_Evidenzia_1 OR CodDbase = @CodArt_Evidenzia_2 OR
+				CodDbase = @CodArt_Evidenzia_3 OR CodDbase = @CodArt_Evidenzia_4 OR CodDbase = @CodArt_Evidenzia_5
+			THEN 
+				'<b class="evidenziato">'+CodDbase+'</b>'+'&nbsp;&nbsp;&nbsp;&nbsp;'+ UM + '&nbsp;' + CAST(Qta AS varchar(10))
+			ELSE				
+				'<b>'+CodDbase+'</b>'+'&nbsp;&nbsp;&nbsp;&nbsp;'+ UM + '&nbsp;' + CAST(Qta AS varchar(10))
+			END 
+		FROM ARDES.dbo.mas_DBase
+		WHERE CodArt = @CodArt
+		AND Riga > 0 /*escludo la riga con l'articolo stesso*/
+		AND ISNULL(CodDbase, '') <> ''
+
+		OPEN table_cursor;
+
+		FETCH NEXT FROM table_cursor INTO @CurrentValue;
+
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			SET @ConcatenatedValues = @ConcatenatedValues + @CurrentValue + '#####';
+			FETCH NEXT FROM table_cursor INTO @CurrentValue;
+		END
+
+		SET @ConcatenatedValues = LEFT(@ConcatenatedValues, LEN(@ConcatenatedValues) - 5);
+    
+		CLOSE table_cursor;
+		DEALLOCATE table_cursor;
+ 
+	RETURN  @ConcatenatedValues
+ END
+ITEM <label class="argomento VB"></label>SU Master la colonna FTipo è il tipo riga:
+A = Anagrafica, L = libero, D = Descrittiva
+ITEM <label class="argomento VB"></label>Installare Master
+<li> Andare su serverAdnCDMasternSetupMaster e prendere gli eseguibili
+per Server e Client del 2013
+<li> Su MasterHR ! Versionni Master veriicare se il cliente ha già una versione
+Master installata e nel caso quale. Copiarsi in locale gli eseguibili
+di questa versione.
+<li> Lancio prima il setup per Server del 2013
+<li> va bene installare in italiano, non ha importanza se la lingua del server
+è inglese
+<li> installazione tipica
+<li> installo il ParserMSXML (installazione tipica, nome utente = utente)
+<li> installo anche le DLL esterne ed ignoro l'errore che da sempre dopo
+<li> Setup in Apps Install
+<li>lancio l'update server
+<li> apro la cartella con l'eseguibile e coniguro Master.UDL facendolo puntare
+al database TTW
+<li> coniguro TTW in modo che punti al corretto database
+<li> lancio l'eseguibile per vedere si apra correttamente
+<li> Installo i lCliente e l'aggiornamento
+<li> Coniguro anche per il client il ile Master.UDL
+<li> restore di un backup e prove funzionamento
+OSS: su Leostation/Materialeleonardo/ArchiviClientiMaster trovo i backup
+del cliente
+ITEM <label class="argomento VB"></label>Query personalizzate:
+1) devo creare la nuova sigla "abc" (da cboUtility) [crea la tabella abc_RBO_WIN]
+2) se la sigla dell'rboWin che voglio sostituire è "xyz", nel campo Form devo scrivere xyz:~/Viaggi_B.aspx
+<img class='ImgAppunti' loading='lazy' style='width: auto;' src='Immagini\\imgCboUtility.png'/>
 ITEM <label class="argomento VB"></label>
 ITEM <label class="argomento VB"></label>
 ITEM <label class="argomento VB"></label>
