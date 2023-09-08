@@ -39,12 +39,16 @@ function TestFast(){
 	$('#txtPagina').val('PaginaTest');
 	$('#txtClasse').val('MyClass');
 	$('#txtSigla').val('KAI');
-	$('#txtSigla').val('SELECT * FROM Database.dbo.Tabella WHERE Chiavi = $Chiavi$');
+	$('#txtIClassiSsql').val('SELECT * FROM Database.dbo.Tabella WHERE Chiavi = $Chiavi$');
 	$('#txtNumeroFiltri').val(2);
 	creaFiltri($('#txtNumeroFiltri').val()); $('.btnfiltri').removeClass('hidden'); 
+	$('#txtId_1').val('aaaaaaa');
+	$('#txtDataField_1').val('aaaDATAFIELD');
 	$('#cmbTipoDati_1').val('1');
 	$('#chkCreaFiltro_1').prop('checked');
 	$('#chkIsKey_1').prop('checked', true) ;
+	$('#txtId_2').val('bbbbbbbb');
+	$('#txtDataField_2').val('bbbDATAFIELD');
 	$('#cmbTipoDati_2').val('2');
 	$('#chkCreaFiltro_2').prop('checked');
 	$('#chkIsKey_2').prop('checked', false);
