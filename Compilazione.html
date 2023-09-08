@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+ 
+	<style>
+	@import url('https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@300&display=swap');
+	</style>
+	<link rel="stylesheet" href="Aggiornamenti.css" ></link>
+	<script src="app.js" ></script>
+	<script src="Aggiornamenti.js" ></script>
+	<link rel="icon" type="image/x-icon" src="https://drive.google.com/file/d/1GqvK_O28n_CfQOmr08z6ZBNBJpDI8AWL/view?usp=sharing">
+	
+	<link rel="icon" href="BeS_favicon.png" sizes="32x32"/>
+	<link rel="icon" href="BeS_favicon.png" sizes="192x192"/>
+	<link rel="apple-touch-icon" href="BeS_favicon.png"/>
+	<link rel="manifest" href="manifest.json">
+</head>
+ 
+<body  style = "background-color:#16293c; color:#ffffff;"  >
+
+<style>.evidenziato{COLOR: YELLOW;}
+</style>
+<script>
+function setEvidenziato(){
+$('.evidenziato').removeClass("evidenziato");
+$(this).addClass("evidenziato");
+}
+</SCRIPT>
+
+
+
+<div class="container-fluid" style="margin-left: 100px; margin-right: 100px;"> 
+	<h2 class="btn-titolo" onclick='window.location.reload(true);' style="text-align:center; margin-top: 0px; color: white; cursor:pointer; ">
+		Come compilare una versione
+	</h2>	
+	<div class='col-xs-12 text-right'>	
+		<a href="CreaFileVB.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Crea BeS</i></a>
+		<a href="Errori.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Errori comuni</i></a>
+		<a href="UpdateGithub.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Carica su GitHub</i></a>
+		 
+	</div>
+	<div class='col-xs-12' style='font-size: 20px;'>
+		<ol>
+			<li onclick='setEvidenziato();'>
+			Archiviare il sorgente
+			</li>
+			<li onclick='setEvidenziato();'>
+			Leggere l'ultima versione
+			</li>
+			<li onclick='setEvidenziato();'>
+			Lanciare il programma per vedere che, letta l'ultima versione, tutto funzioni
+			</li>
+			<li onclick='setEvidenziato();'>
+			Verificare che nelle RboWin non ci sia in chiaro il nome del database Master
+			</li>
+			<li onclick='setEvidenziato();'>
+			Se presente la cStart: aggiorno le la classe cStart con RboWin e Parametri					
+			</li>
+			<li onclick='setEvidenziato();'>
+			Compila -> Pubblica 			
+			</li>
+			<li onclick='setEvidenziato();'>
+			Nella cartella del progetto (\\serversviluppo\Resource-SourceSafe\AppWeb\ArdesProduzione\VersioniCongelate\2023) creo la Cartella di versione con il nome della versione yyyyMMdd:
+			all'interno le sotto cartelle Compilato e Sorgente
+			</li>
+			<li onclick='setEvidenziato();'>
+			Zippo eventuali cartelle precedenti
+			</li>
+			<li onclick='setEvidenziato();'>
+			Copio il sorgente nell'apposita cartella
+			</li>
+			Copio il compilato nell'apposita cartella
+			<li onclick='setEvidenziato();'>
+			Scollego il sorgente
+			</li>
+			<li onclick='setEvidenziato();'>
+			Dalla cboUtility pulisco la cartella del Sorgente (i.e. svuoto sottocartelle bin e obj)
+			</li>
+			<li onclick='setEvidenziato();'>
+			Veirfico che le Note Operative siano aggiornate ed indico il numero d Versione nelle ultime novità 
+			Copio le note operatiove nella cartella di versione
+			</li>			
+			<li onclick='setEvidenziato();'>
+			Dalla cboUtility creo il file .xml per l'allineamento del database e le copio nella cartella di versione
+			</li>
+			<li onclick='setEvidenziato();'>
+			Creo/Aggiorno la query per la gestione dei varchar(MAX) e la copio nella cartella di versione
+			<i style='white-space: pre-line;'>
+			USE ARDES_Produzione
+			/*   query di ricerc
+			SELECT  TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+			WHERE 
+			TABLE_CATALOG = 'ARDES_Produzione'
+			AND DATA_TYPE = 'text'
+			AND LEFT(TABLE_NAME, 4) = 'ard_'
+			*/
+
+			DECLARE @NomeTabella as varchar(100)
+			DECLARE @NomeCampo as varchar(100)
+
+			---
+			SET @NomeTabella='ard_ProduzioniBulk_D'
+			SET @NomeCampo='Note'
+			IF (SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = @NomeTabella AND COLUMN_NAME = @NomeCampo) = 'text'
+			BEGIN
+				exec ('ALTER TABLE ' + @NomeTabella + ' ALTER COLUMN ' + @NomeCampo + ' varchar(MAX) NULL' )
+			END
+			</i>
+			</li>
+			<li onclick='setEvidenziato();'>
+			Se presente una tabella tabEventi creo un file con la query di insert e lo copio nella cartella di versione
+			</li>					
+		</ol>
+		
+		
+	</div>
+	
+	<div class='col-xs-12' style='height:50px;'></div>	
+</div>
+  
+<script>
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js', { scope: '/' });
+}
+</script>
+
+</body>
+</html>
