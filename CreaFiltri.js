@@ -24,6 +24,7 @@
 				  <option value="1">RadComboBox</option>
 				  <option value="5">CheckBox</option>
 				  <option value="6">AspLabel</option>
+				  <option value="8">AutoComplete</option>
 				</select>				
 			</div>
 			<div class='col-xs-2'>				
@@ -145,6 +146,9 @@
 		 case '7'://TextArea
 			$('#txtAltreClassi_'+ i).val('form-control ');
 			break;
+		 case '8'://AutoComplete
+			$('#txtAltreClassi_'+ i).val('form-control ');
+			break;
 		 default: 
 			break;		 
 	 }
@@ -250,7 +254,19 @@
 				If txt${id}.Text <> "" Then
 					sReturn += ""
 				End If`					
-				break;			
+				break;	
+
+			case "8":	
+			//AutoComplete
+				/*let tipoDati2 = $('#cmbTipoDati_' + id).val();
+				filtri += generaTXT(id, datafield, datatextfield, datavaluefield,'','', iskey, classe.trim(), tipoDati2, 'TextMode="MultiLine" Rows="3"');
+				InizializzaFiltri += 'txt' + id + '.Text = m_Filtro' + id +'\n';
+				SalvaFiltri += 'm_Filtro' + id + ' = txt' + id + '.Text \n';				
+				CreaFiltro += `
+				If txt${id}.Text <> "" Then
+					sReturn += ""
+				End If`	*/				
+				break;							
 		 }	
 		 //debugger;
 		 if ($('#Cerchio_' + i).attr('fill') != 'red'){
@@ -408,6 +424,23 @@ return DropDownList;
 			</div>`
 return DropDownList;
  }
+ 
+ ////DA FINIRE!!!! 4/9/2023
+ function generaAutoComplete(id, datafield='', datatextfield='', datavaluefield='', OnF2=''){
+	 	 
+	 if (datafield != ''){
+		 datafield = 'DataValueField="' + datafield + '"';	 
+	 }
+	 
+	 let s = `<cbo:RadAutoCompleteBox ID="txt${id}" runat="server" TypeControl="TextBox" TypeData="Text" Width="100%" style="white-space: nowrap;"               
+             ${datafield} DataTextField="${datatextfield}" DataValueField="${datavaluefield}"  OnF2="{OnF2}" MinFilterLength="3"
+		    InputType="Text" TextSettings-SelectionMode="Single" HighlightFirstMatch="true" >
+        </cbo:RadAutoCompleteBox>`
+	 
+	 return s;
+	 
+ }
+ 
  
  function formatta(id){
 	 
