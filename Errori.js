@@ -2,7 +2,13 @@ var filtro;
 
 $(document).ready(function(){	 
 	filtro = '';
+	pInizializzaRicercheNotevoli();
+	
 }());
+
+document.addEventListener("DOMContentLoaded", (event) => {
+     CreaElencoRicercheNotevoli();
+  });
  
  var array
 function crea(){	  
@@ -79,7 +85,10 @@ function Ricerca(){
 				try{
 					let aux_str = str.substring(/label>/.exec(str).index+6).trim()
 					let auxRegex = new RegExp(TestoRicerca, "ig")
-					let new_str = `<b>${i})</b> ` + aux_str.replaceAll(auxRegex, '<b class="evidenziato">' + pFormattaEvidenziazione(TestoRicerca) +'</b>');
+					//let new_str = `<b>${i})</b> ` + aux_str.replaceAll(auxRegex, '<b class="evidenziato">' + pFormattaEvidenziazione(TestoRicerca) +'</b>');
+					let new_str = `<b>${i})</b> ` + aux_str.replace(auxRegex, function(match) {					
+						return '<b class="evidenziato2">' + pFormattaEvidenziazione(match) +'</b>';
+					});
 					$(`#sp${i}`).html(new_str)
 				}	catch(exc){
 					debugger;
@@ -111,11 +120,17 @@ function Ricerca2(){
 			let str = array[arrTrovati[i]];
 			//splitto la stringa	
 			try{
-					let aux_str = str.substring(/label>/.exec(str).index+6).trim()
+				let aux_str = str.substring(/label>/.exec(str).index+6).trim()
 				let auxRegex0 = new RegExp(pFormattaPerRegex($('#txtCerca').val()), "ig");
 				let auxRegex1 = new RegExp(TestoRicerca, "ig");
 				let aux_str_postRicerca1 = aux_str.replaceAll(auxRegex0, '<b class="evidenziato">' + $('#txtCerca').val() +'</b>');
-				let new_str = `<b>${i})</b> ` + aux_str_postRicerca1.replaceAll(auxRegex1, '<b class="evidenziato2">' + pFormattaEvidenziazione(TestoRicerca) +'</b>');
+				// let new_str = `<b>${i})</b> ` + aux_str_postRicerca1.replaceAll(auxRegex1, '<b class="evidenziato2">' + pFormattaEvidenziazione(TestoRicerca) +'</b>');
+					
+				let new_str = `<b>${i})</b> ` + aux_str_postRicerca1.replace(auxRegex1, function(match) {					
+					return '<b class="evidenziato2">' + pFormattaEvidenziazione(match) +'</b>';
+				});
+
+														
 				$(`#sp${arrTrovati[i]}`).html(new_str);	
 			}catch(exc){
 				debugger;				
@@ -262,3 +277,79 @@ function pFormattaPerRegex(s){
 function pFormattaEvidenziazione(s){	
 	return s.replaceAll('\\(', '(').replaceAll('\\)', ')').replaceAll('\\[', '\\[').replaceAll('\\]', ']').replaceAll('\\.', '.').replaceAll('\\\'', '\'').replaceAll('\\"', '"').replaceAll('\\,', ',')	
 }
+
+////////////////////////
+///gestione ricerche notevoli /////
+function pInizializzaRicercheNotevoli(){	
+	if(localStorage["olo_RicercheNotevoli"]){
+					
+	}else{
+		localStorage["olo_RicercheNotevoli"] = JSON.stringify([]);			
+	}	
+}
+
+function SalvaRicerca(){
+	let oRicerca = {};
+	if($('#txtCerca').val() != ''){
+		oRicerca["Ricerca1"] = NZ($('#txtCerca').val());
+		oRicerca["TestoEtichetta"] = NZ(oRicerca["Ricerca1"])
+	}
+	if($('#txtCerca2').val() != ''){
+		oRicerca["Ricerca2"] = NZ($('#txtCerca2').val());
+		oRicerca["TestoEtichetta"] = oRicerca["TestoEtichetta"] + ' + ' + NZ(oRicerca["Ricerca2"]);
+	}
+		
+	let arr = JSON.parse(localStorage["olo_RicercheNotevoli"]);
+	arr.push(oRicerca);	
+	localStorage["olo_RicercheNotevoli"] = JSON.stringify(arr);
+	//grafica:
+	$('.glyphicon-bookmark').css('display', 'none'); 
+	setTimeout(function(){
+		$('.glyphicon-bookmark').fadeIn();
+		CreaElencoRicercheNotevoli();
+		}, 500
+	);
+}
+
+function CreaElencoRicercheNotevoli(){
+	let obj;
+	if(localStorage["olo_RicercheNotevoli"] == undefined){
+		$('#ElencoRicercheNotevoli').html('');
+		return false;
+	}
+	
+	let arr = JSON.parse(localStorage["olo_RicercheNotevoli"]);
+	if(arr.length > 0){
+		let sHTML = '';
+		
+		for(let i = 0; i<arr.length; ++i){
+			obj = arr[i];
+			sHTML += `<li onclick='RicercaNotevole("${NZ(obj["Ricerca1"])}", "${NZ(obj["Ricerca2"])}")'>
+			${NZ(obj["TestoEtichetta"])}
+			</li>`			
+		}
+		$('#ElencoRicercheNotevoli').html(sHTML);
+	}	else{
+		$('#ElencoRicercheNotevoli').html('');
+	}
+}
+
+function NZ(a){
+	if(a === undefined || a === null){
+		return "";
+	}
+	return a;
+}
+
+function RicercaNotevole(search1, search2){	
+	if(search1 && search1 != ''){
+		$('#txtCerca').val(search1); 
+		Ricerca(); 
+	}
+	if(search2 && search2 != ''){
+		$('#txtCerca2').val(search2); 
+		Ricerca2();  
+	}	 
+}
+
+//$('#txtCerca').val('browse'); Ricerca(); $('#txtCerca2').val('screeen'); Ricerca2(); 
