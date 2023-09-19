@@ -342,11 +342,15 @@ function NZ(a){
 }
 
 function RicercaNotevole(search1, search2){	
-	if(search1 && search1 != ''){
+	if(NZ(search1) == '' && NZ(search2) == ''){
+		alert('Campi ricerca non compilati!')
+		return false;
+	}
+	if(NZ(search1) != ''){
 		$('#txtCerca').val(search1); 
 		Ricerca(); 
 	}
-	if(search2 && search2 != ''){
+	if(NZ(search2) != ''){
 		$('#txtCerca2').val(search2); 
 		Ricerca2();  
 	}	 
