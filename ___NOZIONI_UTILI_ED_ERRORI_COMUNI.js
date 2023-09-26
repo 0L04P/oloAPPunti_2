@@ -402,9 +402,10 @@ ITEM <label class="argomento"></label> Nell'update da l'errore "Connessione chiu
 ITEM <label class="argomento"></label> Per fare un "update a mano" tramite IClassi_Update, nel caso debba passare un decimale scriverlo nell'IClassi_Proprieta come "3,14" 
    <br>anzichè nel formato "3.14" (che è la formattazione che si usa su SQL...)
 ITEM <label class="argomento"></label> Errori con i riferimenti: i Framework non sono uguali nei vari progetti		
-ITEM <label class="argomento JS"></label> Il Bactick è ALT+96
-La e accentata maiuscola È è ALT+0200
-La tilde ~ è ALT+126
+ITEM <label class="argomento JS"></label> Cartteri speciali utili:
+- il Bactick è ALT+96
+- la e accentata maiuscola È è ALT+0200
+- la tilde ~ è ALT+126
 ITEM <label class="argomento"></label> Al conferma del Form Dialog passa dall'F10 ma non entra nell'AferUpdate ---> uso un Overrides Function IClassi_Update che non fa andare a buon fine l'update!
 ITEM <label class="argomento"></label> Non compila l'AggID/Da errore sull'AggId ---> il tipo non èp Timestamp!!
 ITEM <label class="argomento"></label> Aggiornare la griglia di una cBrowseToscreen:
@@ -1205,6 +1206,8 @@ ITEM <label class="argomento VB"></label> cwinDef nascondere colonna
 		m_GrigliaWeb.Columns.FindByDataField("Numero").HeaderStyle.CssClass = "nascosto"
         m_GrigliaWeb.Columns.FindByDataField("Numero").ItemStyle.CssClass = "nascosto"
         m_GrigliaWeb.Columns.FindByDataField("Numero").Display = False
+ITEM <label class="argomento VB"></label> Per personalizzare la scritta "nessuna riga trovata" nella griglia (nella browse/cBrowseToScreen/cwinDef)
+	grdProduzioni.MasterTableView.NoMasterRecordsText = "Nessuna riga da visualizzare"		
 ITEM <label class="argomento JS"></label> Disabilitare scroll orizzontale della pagina
 	html, body {
 		max-width: 100%;
@@ -1258,6 +1261,7 @@ Chiara Calabretta (CF genova): 328/9069370
 Ferretti Luca (CBOX genova): 0104074238
 INVAT : 0143 823358
 ARDES : 0109643197
+Marco Storti: 338/7165444
 Marco Pace (Pittaluga): 010/2750739
 	    				010/2750731
 ANDREA SCALABRINI : 329/7786400
@@ -2797,6 +2801,7 @@ Per gestire la somma in fondo alle browse/cBrowseToScreen devo fare nella cWinDe
 ITEM <label class="argomento VB"></label> 	
 Formattare una data
 CDate(oLavaggio.TIME_OUT).ToString("dd/MM/yyyy HH:mm:ss.fff")
+Per avere la data 12:34 devo fare DataOraCorrente.ToString("HH\\:mm"), se faccio DataOraCorrente.ToString("HH:mm") senza lo slash restituisce 12.34!
 ITEM <label class="argomento JS"></label> 
 In javascript per gestire campi numerici formattandoli come 3,14 anzichè 3.14:
 function FormattaNumeriInput(){
@@ -4093,7 +4098,8 @@ ITEM <label class="argomento VB"></label> "Lunghezza obbligatoria" ---> sto usan
 ITEM <label class="argomento VB"></label> Percorso del progetto:
 	System.Web.HttpContext.Current.Request.PhysicalApplicationPath
 ITEM <label class="argomento VB"></label> Quante volte passa nell'InitializeComponent del subReport?
-ITEM <label class="argomento VB"></label> Aggiungere icona al sito: nella MasterPage.aspx
+ITEM <label class="argomento VB"></label> Aggiungere icona (Favicon) al sito
+Nella MasterPage.aspx nel tag <i>head</i>:
 	&lt;link rel="icon" href="Images/icon32.png" sizes="32x32"/&gt;
 	&lt;link rel="icon" href="Images/icon192.png" sizes="192x192"/&gt;
 	&lt;link rel="apple-touch-icon" href="Images/icon180.png"/&gt;
@@ -4739,6 +4745,7 @@ ITEM <label class="argomento CSS"></label>CSS notevoli:
 	<b>scale: 1.1;</b>
 	<b>text-decoration: underline;</b>
 	<b>filter: drop-shadow(1px 2px 1px #ccc);</b>
+	<b>box-shadow: 8px -3px 11px 1px #44444454;</b>
 	
 	/*gestione immagine come sfondo del div*/
 	<b>background-image: url("Images/PressaStilizzata.svg");
@@ -4757,11 +4764,25 @@ ITEM <label class="argomento CSS"></label>CSS notevoli:
 			transform: rotate(359deg);
 		}
 	}
-ITEM <label class="argomento CSS"></label>Svg che ruota:
-	<svg class="rotazione" width="30" height="30" viewBox="0 0 160 160" style="margin-right: 80px;">
-		<circle r="70" cx="80" cy="80" fill="transparent" stroke="#FFFFFF" stroke-width="12px"></circle>
-		<circle r="70" cx="80" cy="80" fill="transparent" stroke="#057b5f" stroke-width="12px" stroke-dasharray="439.6px" stroke-dashoffset="109.9px"></circle>
-	</svg>
+ITEM <label class="argomento CSS"></label>svg che ruota:
+/*effetto grafico del loading:*/
+	.rotazione {
+		animation: rotation 2s infinite linear;
+	}
+	@keyframes rotation {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(359deg);
+		}
+	}
+	
+	&lt;svg class="rotazione" width="30" height="30" viewBox="0 0 160 160" style="margin-right:0px;"&gt;
+		&lt;circle r="70" cx="80" cy="80" fill="transparent" stroke="#FFFFFF" stroke-width="12px"&gt;&lt;/circle&gt;
+		&lt;circle r="70" cx="80" cy="80" fill="transparent" stroke="#057b5f" stroke-width="12px" 
+					stroke-dasharray="439.6px" stroke-dashoffset="109.9px"&gt;&lt;/circle&gt;
+	&lt;/svg&gt;
 ITEM <label class="argomento VB"></label>Invio mail con link per aprire pagina:	
     Private Shared Sub pInviaMailTermineVerifica(ByRef oConnessione As CCboConnection, ByRef oConnessioneMaster As CCboConnection, ByVal sEmail As String, ByVal codPersona As String, ByRef opverifica As cProprieta)
 		Dim sTestoMail As String = ""
@@ -5169,10 +5190,104 @@ ITEM <label class="argomento VB"></label>Query personalizzate:
 1) devo creare la nuova sigla "abc" (da cboUtility) [crea la tabella abc_RBO_WIN]
 2) se la sigla dell'rboWin che voglio sostituire è "xyz", nel campo Form devo scrivere xyz:~/Viaggi_B.aspx
 <img class='ImgAppunti' loading='lazy' style='width: auto;' src='Immagini\\imgCboUtility.png'/>
-ITEM <label class="argomento VB"></label>
-ITEM <label class="argomento VB"></label>
-ITEM <label class="argomento VB"></label>
-ITEM <label class="argomento VB"></label>
+ITEM <label class="argomento VB"></label>Messaggi alert di matteo:
+1) nella masterpage/appHeader aggiungere 
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div id="myModalHead" runat="server" class="modal-header">				
+				<h4 class="modal-title " id="myModalLabel"></h4>
+			</div>
+			<div class="modal-body">
+				<asp:Label ID="lblModalBody" runat="server" style="font-size:20px;"></asp:Label>                    
+			</div>
+			<div class="modal-footer" id="myModalFooter">
+				<button type="button" class="btn btn-default" onclick="$('#myModal').modal('hide');" style="font-size:20px;">Chiudi</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+2) 
+//Uso la funzione js già presente ed evito il postback
+function VisualizzaMsg(testo, tipo, tempo, redirect = '') {  
+    switch (tipo.toString()) {
+        case "1": 
+            $('#ctl00_myModalHead').attr('class', 'modal-header modal-header-success')
+            break;
+        case "2":
+            $('#ctl00_myModalHead').attr('class', 'modal-header modal-header-danger')
+            break;    
+        case "3":
+            $('#ctl00_myModalHead').attr('class', 'modal-header modal-header-warning')
+            break;            
+    }
+    
+    $('#ctl00_lblModalBody').text(testo).css('color', '#000');
+    VisualizzaMessaggio(tempo, redirect == '', redirect);    
+}
+
+
+function VisualizzaMessaggio() {
+	$('#myModal').modal({ backdrop: 'static', keyboard: false });
+
+	var t = 2000;
+	if (arguments[0] != undefined) {
+		if (arguments[0] != '') { t = arguments[0]; }
+	}
+
+	var f = false;
+	if (arguments[1] != undefined) {
+		if (arguments[1] == true) { f = true; }
+	}
+
+	var url = '';
+	if (arguments[2] != undefined) {
+		if (arguments[2] != '') { url = arguments[2]; }
+	}
+	
+	if (f == true) {
+		//visualizzo il footer
+		$('#myModalFooter').css('display', 'block');
+	}
+	else {
+		//chiudo automaticamente
+		$('#myModalFooter').css('display', 'none');
+		setTimeout(function () {
+			$('#myModal').modal('hide');
+			if (url != '') {                            
+				window.location.href = url;
+			};
+		}, t);
+	}
+}
+ITEM <label class="argomento VB"></label>Aggiornare MasterLift sul proprio PC:
+1) lanciare l'update client
+2) eseguendolo come amministratore, lanciare l'aggiorna MLift
+ (eseguibile punta a \\serverad\APPS\MasterLift\MI_Aggiorna32.bat)
+ITEM <label class="argomento VB"></label>In SQL la funzione STUFF sostituisce in una stringa (dati gli indice di partenza e fine della sottostringa)
+con la nuova stringa data:
+indice partenza = 1, indice fine = 13, nuova stringa = 'ZZZ'
+SELECT STUFF('DASOSTITUIRE2345', 1, 13, 'ZZZ')
+<a href='https://stackoverflow.com/questions/31211506/how-stuff-and-for-xml-path-work-in-sql-server'>Stackoverflow</a>
+ITEM <label class="argomento VB"></label>Per arrotondare al k-esimo decimale:
+	Math.Round(CDbl(OEE), k, MidpointRounding.ToEven))
+ITEM <label class="argomento VB"></label>Per avere cartella senza nome posso usare il carattere ALT+0160
+ITEM <label class="argomento VB"></label>MasterTrasporti: query allineamento filiali (CarBox)
+UPDATE trs_Viaggi
+SET trs_Viaggi.CodFiliale = trs_Filiali.CodFiliale
+FROM  trs_Viaggi Viaggi
+LEFT JOIN trs_Filiali ON Viaggi.NumViaggio >= trs_Filiali.LDVNumDa AND
+						 Viaggi.NumViaggio <= trs_Filiali.LDVNumA
+ITEM <label class="argomento JS"></label>Dato un array Arr per rimuovere un elemento in posizione i
+		Arr.splice(i,1)
+per rimuoverne k consecutivi 	
+		Arr.splice(i,k) 		
+ITEM <label class="argomento VB"></label>Su flamor non mi importa un lotto nella mas_tabLottoA:
+verificare che l'articolo abbia
+	- Lotti = 1
+	- TipoArticolo = 'M'
 ITEM <label class="argomento VB"></label>
 ITEM <label class="argomento VB"></label>
 `
