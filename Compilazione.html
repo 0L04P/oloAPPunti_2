@@ -24,7 +24,16 @@
  
 <body  style = "background-color:#16293c; color:#ffffff;"  >
 
-<style>.evidenziato{COLOR: YELLOW;}
+<style>
+	.evidenziato{
+		color: yellow;
+	}
+	input[type=checkbox] {
+		transform: scale(1.5);
+		margin-right: 10px;
+		margin-left: 5px;
+		vertical-align: -5px;
+	}
 </style>
 <script>
 function setEvidenziato(){
@@ -47,49 +56,49 @@ $(this).addClass("evidenziato");
 	</div>
 	<div class='col-xs-12' style='font-size: 20px;'>
 		<ol>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Archiviare il sorgente
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Leggere l'ultima versione
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Lanciare il programma per vedere che, letta l'ultima versione, tutto funzioni
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Verificare che nelle RboWin non ci sia in chiaro il nome del database Master
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Se presente la cStart: aggiorno le la classe cStart con RboWin e Parametri					
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Compila -> Pubblica 			
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Nella cartella del progetto (\\serversviluppo\Resource-SourceSafe\AppWeb\ArdesProduzione\VersioniCongelate\2023) creo la Cartella di versione con il nome della versione yyyyMMdd:
 			all'interno le sotto cartelle Compilato e Sorgente
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Zippo eventuali cartelle precedenti
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Copio il sorgente nell'apposita cartella
 			</li>
 			Copio il compilato nell'apposita cartella
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Scollego il sorgente
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Dalla cboUtility pulisco la cartella del Sorgente (i.e. svuoto sottocartelle bin e obj)
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Veirfico che le Note Operative siano aggiornate ed indico il numero d Versione nelle ultime novità 
 			Copio le note operatiove nella cartella di versione
 			</li>			
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Dalla cboUtility creo il file .xml per l'allineamento del database e le copio nella cartella di versione
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Creo/Aggiorno la query per la gestione dei varchar(MAX) e la copio nella cartella di versione
 			<i style='white-space: pre-line;'>
 			USE ARDES_Produzione
@@ -113,7 +122,7 @@ $(this).addClass("evidenziato");
 			END
 			</i>
 			</li>
-			<li onclick='setEvidenziato();'>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Se presente una tabella tabEventi creo un file con la query di insert e lo copio nella cartella di versione
 			</li>					
 		</ol>
