@@ -852,6 +852,17 @@ FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_CATALOG = @NomeDatabase
 AND DATA_TYPE = 'varchar'
 AND CHARACTER_MAXIMUM_LENGTH = '-1'
+
+/***** Cerca tutte le colonne di tipo Text **********/
+SELECT  TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+WHERE 
+TABLE_CATALOG = 'ARDES_Produzione'
+AND DATA_TYPE = 'text'
+AND LEFT(TABLE_NAME, 4) = 'ard_'
+
+/***** Verifica se c'è un a capo nella stringa **********/
+SELECT * FROM AnaPersone
+WHERE FiltroUtente LIKE '%'+CHAR(13)+'%' OR FiltroUtente LIKE '%'+CHAR(10)+'%'
 </div><br>
 ITEM <label class="argomento SQL"></label>Esempi Query Insert/Update:
 /********INSERT INTO***********/
@@ -1517,6 +1528,28 @@ function Copia(id){
 }
 
 ondblclick="Copia()"
+ITEM <label class="argomento SQL"></label>Creare una function SQL:
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE FUNCTION  [dbo].[FormattaTempoMinuti](@minuti Varchar(20))
+	RETURNS VARCHAR(MAX)
+	BEGIN
+
+	DECLARE @tempo as varchar(MAX)
+	
+	SET @tempo = (
+	SELECT 
+	CASE WHEN @Minuti < 60 THEN CAST(@Minuti%60 as varchar(10)) + ' min'
+	ELSE CAST(CAST(@Minuti/60 as numeric(9,0)) as varchar(10)) + ' h ' +  CAST(@Minuti%60 as varchar(10)) + ' min'
+	END AS [t]
+	)
+
+	RETURN @tempo
+
+ END
 ITEM <label class="argomento VB"></label> Se in un oggetto cMsg scrivo nello show il path di un form, 
 viene mostrato l'alert e viene eseguito un redirect alla pagina indicata!
 ITEM <label class="argomento JS"></label> Property di tipo cProprieta:
@@ -1856,7 +1889,7 @@ An ORDER BY clause is required when working with LEAD and LAG functions, but a P
 
 In sql per restituire il valore della riga precedente:	
 SELECT t.Value,
-        LAG(t.Value) AS [ValorePrec] OVER (ORDER BY t.ID)
+        LAG(t.Value) OVER (ORDER BY t.ID) AS [ValorePrec]
  FROM table AS t
  Utilizzare questa funzione analitica in un'istruzione SELECT (nel WHERE non posso).
 ITEM <label class="argomento SQL"></label> 
@@ -2948,7 +2981,7 @@ Aggiungere le Stampe:
 ITEM <label class="argomento SQL"></label> 
 In SQL appiccicare data e ora 
 CONVERT(varchar(10), DATEADD(day,1, pre_RepTur.Giorno), 111) + ' ' + CONVERT(varchar(12), pre_TabTurni.Ora_End, 114)
-ITEM <label class="argomento JS"></label> Aggiungere tooltip
+ITEM <label class="argomento JS"></label> Aggiungere tooltip Bootstrap:
 i) per aggiungere il tooltip base usare l'attributo title
 ii) per personalizzarlo usare popper.min.js:
 	a) aggiungo il file al progetto
@@ -3431,7 +3464,7 @@ ITEM <label class="argomento VB"></label> Per installare il certificato su IIS (
 4) IIS -> nome del server -> Server Certificates (icona nel pezzo IIS) -> doppio click -> Import 
 -> "Select certificate Store" = Personal e tango la spunta "Allow this certificate to be exported" checkata
 
-ITEM <label class="argomento VB"></label> Appunti vari
+ITEM <label class="argomento VB"></label> Appunti vari per installare IIS e SQL:
 \\serverad\Archivi\LEO\INTERNI\Master\Documenti Master\_Documentazione Moduli Master\Installazione Master - SQL - IIS
 ITEM <label class="argomento VB"></label> Forzare un Refresh (control + F5) da javascript  location.reload()
 ITEM <label class="argomento VB"></label> CSAL11 Salvarezza Piero Luigi (= dottor salvarezza su MasterHR)
@@ -3451,10 +3484,6 @@ nuovo nodo:
 	- Identity: webuser.leonardo + cercare la pwd!!!
 	- Idle Time-out (minutes): 0
 Sites -> add Websites 
-
-==============================
-\\serverad\Archivi\LEO\INTERNI\Master\Documenti Master\_Documentazione Moduli Master
-==============================
 ITEM <label class="argomento JS"></label>     
 function GetPosizione() {
         debugger;
@@ -3686,9 +3715,18 @@ ITEM <label class="argomento VB"></label>
                                           Server.UrlEncode(CboUtil.Cryptography.cCryptography.EncryptTo3DES(cDBUtility.GetDate(Connessione, cDBUtility.FormatoData.DataOra), CBO.CRYPTKEY))
             cWindowHelper.Create(Me, sRedirect, "")
         End If 
-ITEM <label class="argomento VB"></label> Riordinare un datatable:
-DataTable.DefaultView.Sort = "ColumnName ASC"
-DataTable = DataTable.DefaultView.ToTable
+ITEM <label class="argomento VB"></label> Riordinare un datatable VB.NET:
+	DataTable.DefaultView.Sort = "ColumnName ASC"
+	DataTable = DataTable.DefaultView.ToTable
+
+es.
+	Dim sSort As String = "Articolo DESC" 		' OSS deve essere il nome della colonna del dt, non su SQL!
+	Dim dt As DataTable = m_dtUtilizzi
+	dt.DefaultView.Sort = sSort
+	m_dtUtilizzi = dt.DefaultView.ToTable
+
+	grdUtilizzi.DataSource = m_dtUtilizzi
+	grdUtilizzi.DataBind()
 ITEM <label class="argomento VB"></label> Non riconosce il My.Settings.Proprieta ma nel web.Config è compilato =&gt; aprire il MyProject, così tutto torna a funzionare
 ITEM <label class="argomento VB"></label> Impostare manualmente i valori del RadComboBox
 			&lt;telerik:radcomboBox ID="cmbStatoOrd" runat="server" Width="100%" TypeControl="ComboBox" TypeData="Text" AccettaTesto="false" CheckBoxes="true" AllowCustomText="false" CheckedItemsTexts="DisplayAllInInput" &gt;
