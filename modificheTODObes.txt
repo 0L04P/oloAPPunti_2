@@ -1,0 +1,23 @@
+///nella BeS:
+Se c'è la spunta FormDialog:
+	Case System.Windows.Forms.Keys.F5
+                ApriFormDialog()
+
+    Private Sub ApriFormDialog()
+        Dim IdLinea As String
+        Dim IdRiga As String
+
+        IdLinea = m_oBrowse.GetRigaSelezionata.Leggi("IdLinea")
+        IdRiga = m_oBrowse.GetRigaSelezionata.Leggi("IdRiga")
+
+        Dim pTag As New cProprieta
+        pTag.Scrivi("Browse", "MOD")
+        pTag.Scrivi("IdLinea", IdLinea)
+        pTag.Scrivi("IdRiga", IdRiga)
+        
+        Dim pv As New PageValueType
+        pv.Add("Tag", pTag.Leggi)
+
+        AddFuturePageValue("~/FormDialog/NOME.aspx", pv)
+        cWindowHelper.Create(Me, "FormDialog/NOME.aspx", "document.forms[0].submit();", "95%,95%")
+    End Sub
