@@ -1213,10 +1213,6 @@ lato vb
             'ScriptPagina += sScript
 			   oppure
  - Response.Redirect(sPathFile)
-ITEM <label class="argomento VB"></label> cwinDef nascondere colonna
-		m_GrigliaWeb.Columns.FindByDataField("Numero").HeaderStyle.CssClass = "nascosto"
-        m_GrigliaWeb.Columns.FindByDataField("Numero").ItemStyle.CssClass = "nascosto"
-        m_GrigliaWeb.Columns.FindByDataField("Numero").Display = False
 ITEM <label class="argomento VB"></label> Per personalizzare la scritta "nessuna riga trovata" nella griglia (nella browse/cBrowseToScreen/cwinDef)
 	grdProduzioni.MasterTableView.NoMasterRecordsText = "Nessuna riga da visualizzare"		
 ITEM <label class="argomento JS"></label> Disabilitare scroll orizzontale della pagina
@@ -1224,7 +1220,8 @@ ITEM <label class="argomento JS"></label> Disabilitare scroll orizzontale della 
 		max-width: 100%;
 		overflow-x: hidden;
 	}
-	
+ITEM <label class="argomento SQL"></label>Stored procedure:
+exec sp_DistintaBase @CodArtPrincipale = '$CodArt$', @CodArticolo = '$CodArt$', @Qta = $Qta$  	
 ITEM <label class="argomento JS"></label> 
 Se un acartella è nascosta facendoIncludi nel progetto non è più nascosta
 ITEM <label class="argomento"></label> Se all'apertura di un Form Dialog da error javascript sul GetRadWindow, aggiornare il metodo della functions.js con  il seguente:
@@ -1234,8 +1231,9 @@ ITEM <label class="argomento"></label> Se all'apertura di un Form Dialog da erro
         //else if (window.frameElement.radWindow) oWindow = window.frameElement.radWindow;
     else if (window.frameElement) { if (window.frameElement.radWindow) oWindow = window.frameElement.radWindow; }
     return oWindow;
-ITEM <label class="argomento JS"></label> Se nel report compare il messaggio di errore CommandText è perchè non è passato ancora una datasource valida
-
+ITEM <label class="argomento JS"></label> Se nel report compare il messaggio di errore 
+ExecuteReader: la proprietà CommandText non è stata inizializzata
+---> non è passato ancora una datasource valida
 ITEM <label class="argomento"></label> Query utili per ArdesProduzione:
 
 SELECT * FROM ard_Produzioni_D WHERE NumeroLotto LIKE '%%'
@@ -1391,9 +1389,16 @@ Negli F2 ho due eventi distinti:
 - XCP: nel caso fosse abilitata la possibilità di scrivere nell'F2 è generato all'invio
 ITEM <label class="argomento VB"></label> F2: cose utili
 1) txt.F2Param = "&lt;CBOPAGESIZE&gt;8&lt;/CBOPAGESIZE&gt;&lt;ALLOWSORTING&gt;1&lt;/ALLOWSORTING&gt;&lt;ORDER&gt;CodAna&lt;/ORDER&gt;&lt;VALUE&gt;" & DbMaster & "&lt;/VALUE&gt;"
+
 2) Nella query dell'F2 devo usare 
 	- LIKE '%$txtRicercaF2$%' e non l'id del mio campo per poter eseguire le ricerche
 	- $txtValueHid$ che andrà sostituito con il nome del database master specificato nel tag &lt;Value&gt;  
+
+per cercare gli F2 in cui non posso eseguire la ricerca perchè uso il textbox sbagliato:
+	SELECT * FROM ard_RBO_WIN
+	WHERE StringaSQL NOT LIKE '%$txtRicercaF2$%'
+	AND LEFT(Campo,3) = 'txt'
+
 3)  //nascondo i pulsanti degli F2
 	 (function () {
 		 $('#ctl00_body_btnF2_txtCodArt').css('display', 'none');            
@@ -3102,44 +3107,59 @@ ITEM <label class="argomento VB"></label> FormattaTempoSecondi
     End Function	
 
 altra versione
-Public Shared Function FormattaTempoSecondi(ByVal sSecondi As String, Optional ByVal bVisualizzaSecondi As Boolean = False, Optional ByVal ArrotondaNMinuti As Integer = 0) As String
+nuova formatattemposecondi
+
+ ''' <summary>
+    ''' Metodo che preso in input il numero di secondi restituisce una stringa formattata come XXg XXh XXm. Se le ore sono 0 scrive solo i minuti
+    ''' </summary>
+    ''' <param name="sSecondi"></param>
+    ''' <param name="bVisualizzaSecondi">Opzionale, se impostato formatta il tempo come XXg XXh XXm XXs</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Shared Function FormattaTempoSecondi(ByVal sSecondi As String, Optional ByVal bVisualizzaSecondi As Boolean = False) As String
         If sSecondi IsNot Nothing Then
             'nel caso un decimale sia formattato come 3.14 lo trasformo in 3,14
             sSecondi = sSecondi.Replace(".", ",")
 
-            If CInt(sSecondi) < 0 Then
+            Dim intSecondi As Integer = CInt(sSecondi)
+
+            If intSecondi < 0 Then
                 Return "0"
             Else
-                Dim iOreStima As Integer = Math.Floor(CInt(sSecondi) / 3600)
-                Dim iMinStima As Integer = Math.Floor((CInt(sSecondi) - 3600 * iOreStima) / 60)
-                Dim iSecondi As Integer = sSecondi - 3600 * iOreStima - 60 * iMinStima
-                If ArrotondaNMinuti > 0 Then
-                    Dim secondiArrotondamento As Integer = 60 * ArrotondaNMinuti
-                    'arrotondamento
-                    If bVisualizzaSecondi = False Then
+                Dim iGiorni As Integer = Math.Floor(intSecondi / 86400)
+                Dim iOreStima As Integer = Math.Floor((intSecondi - 86400 * iGiorni) / 3600)
+                ' iOreStima As Integer = Math.Floor(intSecondi / 3600)
+                Dim iMinStima As Integer = Math.Floor((intSecondi - 3600 * iOreStima - 86400 * iGiorni) / 60)
+                Dim iSecondi As Integer = intSecondi - 86400 * iGiorni - 3600 * iOreStima - 60 * iMinStima
 
-                        Dim iSecArrotondati As Integer = iSecondi Mod secondiArrotondamento
-                        If iSecArrotondati > (secondiArrotondamento / 2) Then
-                            iSecondi += (secondiArrotondamento - iSecArrotondati)
-                        End If
+                'Paolo 28/4
+                'arrotondamento
+                If iSecondi > 30 AndAlso bVisualizzaSecondi = False Then
+                    'ricalcolo: modifico il tempo 
+                    'se 43 secondi aggiungo al totale 17sec e ricalcolo ore e minuti (i secondi no perchè non li vado a presentare, bVisualizzaSecondi = False)
+                    intSecondi += (60 - iSecondi)                   
+                    iGiorni = Math.Floor(intSecondi / 86400)
+                    iOreStima = Math.Floor((intSecondi - 86400 * iGiorni) / 3600)
+                    iMinStima = Math.Floor((intSecondi - 3600 * iOreStima - 86400 * iGiorni) / 60)
+                    iSecondi = intSecondi - 86400 * iGiorni - 3600 * iOreStima - 60 * iMinStima
+                End If
 
-                        iOreStima = Math.Floor(CInt(sSecondi) / 3600)
-                        iMinStima = Math.Floor((CInt(sSecondi) - 3600 * iOreStima) / 60)
+                If iGiorni > 0 Then
+                    FormattaTempoSecondi = iGiorni & "g " & iOreStima.ToString & "h " & iMinStima.ToString & "m"
+                Else
+                    If iOreStima > 0 Then
+                        FormattaTempoSecondi = iOreStima.ToString & "h " & iMinStima.ToString & " m"
+                    Else
+                        FormattaTempoSecondi = iMinStima.ToString & " m"
                     End If
                 End If
 
-                If iOreStima > 0 Then
-                    FormattaTempoSecondi = iOreStima.ToString & "h " & iMinStima.ToString & " min"
-                Else
-                    FormattaTempoSecondi = iMinStima.ToString & " min"
-                End If
-
                 If bVisualizzaSecondi Then
-                    FormattaTempoSecondi = FormattaTempoSecondi & " " & iSecondi.ToString & "sec"
+                    FormattaTempoSecondi = FormattaTempoSecondi & " " & iSecondi.ToString & "s"
                 End If
-                End If
+            End If
         Else
-                Return "0"
+            Return "0"
 
         End If
     End Function	
@@ -3311,13 +3331,14 @@ Per nascondere una tasca della screen posso fare
 		ScriptPagina += "$('#btnNOMETASCA').parent().css('display', 'none'); "
 ITEM <label class="argomento VB"></label> Per aggiungere in una cBrowseToScreen il conferma sull'elimina, nella cWinDef:
 		
-'aggiungo un confirm sull'elimina se c'è
-If item.Cells(item.Cells.Count - 1).Controls(0).GetType.ToString = "CBO.Web.UI.WebControls.ImageButton" Then
-	Dim btnElimina As CBO.Web.UI.WebControls.ImageButton = item.Cells(item.Cells.Count - 1).Controls(0)
-	item.Cells(item.Cells.Count - 1).Controls.Clear()
-	btnElimina.OnClientClick = "if (!confirm('Eliminare la protezione selezionata?')){return false;}"
-	item.Cells(item.Cells.Count - 1).Controls.Add(btnElimina)	
-End If
+        'aggiungo un confirm sull'elimina se c'è
+        Dim cellaElimina As System.Web.UI.WebControls.TableCell = item.Cells(item.Cells.Count - 1)
+        If cellaElimina.Controls(0).GetType.ToString = "CBO.Web.UI.WebControls.ImageButton" Then
+            Dim btnElimina As CBO.Web.UI.WebControls.ImageButton = cellaElimina.Controls(0)
+            cellaElimina.Controls.Clear()
+            btnElimina.OnClientClick = "if (!confirm('Eliminare la protezione selezionata?')){return false;}"
+            cellaElimina.Controls.Add(btnElimina)
+        End If
 ITEM <label class="argomento VB"></label>
 Per aggiungere in una esportazione Excel con Telerik delle pagine
 		'creo il file excel
@@ -3805,7 +3826,7 @@ function SetGraficaFormDialog() {
     if (rwScheda) {
 		rwScheda.set_height(350); //imposto altezza
 		rwScheda.set_width(700); //imposto altezza           
-		rwScheda.set_visibleTitlebar(true);
+		rwScheda.set_visibleTitlebar(false);
 		rwScheda.set_visibleStatusbar(false);
 		rwScheda.set_centerIfModal(true);
 		rwScheda).set_modal(true);		
@@ -3828,6 +3849,12 @@ function SalvaQta() {
         alert('Anomalia in fase di forzatura orario');
     }
 }
+
+CSS:
+	//serve per eviatre probelmi di garfica dopo i postback
+	.RadWindow, .RadWindow *, .RadWindow .rwTitleBar * {
+		box-sizing: border-box;
+	}
 
 ITEM <label class="argomento JS"></label> $('#ctl00_corpo_lblNoFoto').is(':visible')
 ITEM <label class="argomento JS"></label> Usare queryString per la login su html:
@@ -4776,7 +4803,10 @@ Public m_DictStampate As Dictionary(Of String, String())
 		End If
 	End Sub
 ITEM <label class="argomento CSS"></label>CSS notevoli:
-	<b>overflow-x: hidden;</b> 	  /*evita lo scroll orizzontale*/
+	<b>html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }</b> 	  				  /*evita lo scroll orizzontale*/
 	<b>white-space: pre;</b>  	 /*gestione a capi*/
 	<b>outline: none;</b>       /*quando metto il fuoco non mostra i bordi della textarea*/ 
 	<b>pointer-events:none</b> /*rimuove click*/
@@ -4784,9 +4814,10 @@ ITEM <label class="argomento CSS"></label>CSS notevoli:
 	<b>text-decoration: underline;</b>
 	<b>filter: drop-shadow(1px 2px 1px #ccc);</b>
 	<b>box-shadow: 8px -3px 11px 1px #44444454;</b>
+	<b>transform: rotate(180deg)</b>
 	
 	/*gestione immagine come sfondo del div*/
-	<b>background-image: url("Images/PressaStilizzata.svg");
+	<b>background-image: url("Images/nome.svg");
 	background-size: contain;
 	background-repeat: no-repeat;</b>
 	
@@ -5322,12 +5353,71 @@ ITEM <label class="argomento JS"></label>Dato un array Arr per rimuovere un elem
 		Arr.splice(i,1)
 per rimuoverne k consecutivi 	
 		Arr.splice(i,k) 		
-ITEM <label class="argomento VB"></label>Su flamor non mi importa un lotto nella mas_tabLottoA:
+ITEM <label class="argomento VB"></label>Su Flamor non mi importa un lotto nella mas_tabLottoA:
 verificare che l'articolo abbia
 	- Lotti = 1
 	- TipoArticolo = 'M'
+ITEM <label class="argomento VB"></label>Su Master nelle referenze articolo ho tra le chiavi CodAna, CodArt e Codice ( = codice articolo del cliente), le query le posso fare sulle prima due chiavi!
+ITEM <label class="argomento JS"></label>Funzione javascript asincrona:
+	function FunzioneAsync() {
+		$.ajax({
+			type: "POST",
+			async: true,
+			url: "pagina.aspx" + "/" + "metodoWS",
+			data: "",
+			dataType: "json",
+			contentType: "application/json; charset=utf-8",
+			success: function (dati) {
+				myJavascriptFunction(dati.d) ;
+			},
+			error: function (richiesta, stato, errori) {            
+				console.log('ERRORE ')          
+			}
+		});
+	}
+ITEM <label class="argomento VB"></label>Aggiungere spunta in una query:
+
+'&lt;input type="checkbox" ' + CASE WHEN ISNULL(FlagChiuso, 0) = 1 THEN 'checked' else '' END + ' disabled/&gt;' 
+ITEM <label class="argomento VB"></label>//contatore con uno showloading caricato asincrono:
+
+	&lt;div id="divContatoreCassoniVuoti"&gt;
+		 &lt;%--come placeholder metto un glyphicon che ruota--%&gt;
+		&lt;svg class="rotazione" width="30" height="30" viewBox="0 0 160 160" style="margin-top: 30px;"&gt;
+			&lt;circle r="70" cx="80" cy="80" fill="transparent" stroke="#FFFFFF" stroke-width="12px"&gt;&lt;/circle&gt;
+			&lt;circle r="70" cx="80" cy="80" fill="transparent" stroke="#057b5f" stroke-width="12px" stroke-dasharray="439.6px" stroke-dashoffset="109.9px"&gt;&lt;/circle&gt;
+		&lt;/svg&gt;
+	&lt;/div&gt;
+
+function CheckContatori() {
+
+    $.ajax({
+        type: "POST",
+        async: true,
+        url: "Stampaggio_B.aspx" + "/" + "PopolaContatoreWS",
+        data: "",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function (dati) {
+            pPopolaContatore(dati.d) ;
+        },
+        error: function (richiesta, stato, errori) {            
+            console.log('ERRORE ')          
+        }
+    });
+
+}
+
+function pPopolaContatore(i) {
+    /*let i = eseguiPageMethod('Stampaggio_B.aspx', 'PopolaContatoreWS', '{ }');*/
+    let sHTML = '';
+    sHTML += '<h3 style="margin-bottom:0; margin-top:-10px; padding-top: 15px;"><span class="glyphicon glyphicon-indent-left" style="font-size:23px;color:green;"></span>';
+    sHTML += '  <asp:Label id="lblContatoreCassoniVuoti" runat="server" style="color:Green;">' + i + ' Cassoni vuoti</asp:Label>';
+    sHTML += '</h3>';
+    $('#divContatoreCassoniVuoti').html(sHTML);
+}
 ITEM <label class="argomento VB"></label>
 ITEM <label class="argomento VB"></label>
+ITEM <label class="argomento VB"></label>	
 `
 /*
 ITEM <label class="argomento VB"></label> 
