@@ -636,9 +636,29 @@ dal codice:
   ES: lato js posso fare
     $('#txt').change(function () {
         $('#txt').val($('#txt').val().replaceAll('\\', '-').replaceAll(/\uFFFD/g, ''));
-    });
-	
-	
+    });	
+ITEM <label class="argomento VB"></label> F2: cose utili
+1) txt.F2Param = "&lt;CBOPAGESIZE&gt;8&lt;/CBOPAGESIZE&gt;&lt;ALLOWSORTING&gt;1&lt;/ALLOWSORTING&gt;&lt;ORDER&gt;CodAna&lt;/ORDER&gt;&lt;VALUE&gt;" & DbMaster & "&lt;/VALUE&gt;"
+
+2) Nella query dell'F2 devo usare 
+	- LIKE '%$txtRicercaF2$%' e non l'id del mio campo per poter eseguire le ricerche
+	- $txtValueHid$ che andrà sostituito con il nome del database master specificato nel tag &lt;Value&gt;  
+
+per cercare gli F2 in cui non posso eseguire la ricerca perchè uso il textbox sbagliato:
+	SELECT * FROM ard_RBO_WIN
+	WHERE StringaSQL NOT LIKE '%$txtRicercaF2$%'
+	AND LEFT(Campo,3) = 'txt'
+
+3)  //nascondo i pulsanti degli F2
+	-->la cosa migliore è usare il CSS(così se si apre un alert durante il caricamento della pagina sono sicuro che sia nascosto, sennò si vede!):
+		#ctl00_content_btnF2_txtOrdine {        
+			display:none;
+		}
+		
+	di solito invece si fa:
+	 (function () {
+		 $('#ctl00_content_btnF2_txtOrdine').css('display', 'none');            
+	 })();	
 ITEM <label class="argomento"></label> FILTRI CON MULTISELEZIONE
 1) lato .ASPX
 	&lt;telerik:RadComboBox ID="cmb" runat="server" Width="100%" LarghezzaColonne="90;250" TypeControl="ComboBox" TypeData="Text" DataValueField="" DataTextField="" AccettaTesto="false"
@@ -1123,18 +1143,12 @@ ITEM <label class="argomento"></label> Per connettersi in FTP:
 <b>Pwd</b>      Leonzio!01
 <b>Porta</b>     21 (standard)
 
-ITEM <label class="argomento SQL"></label> RowNumber:
-SELECT 
-ROW_NUMBER() OVER(ORDER BY xxxxx ASC) AS RowNumber,
-......
-FROM
-....
-WHERE
-...
-ORDER BY xxxxx
-__________________________________________________________________________________
-è fondamentale la clausola OVER(ORDER BY xxxxx ASC)
+ITEM <label class="argomento SQL"></label>
+SELECT
+ROW_NUMBER() OVER (PARTITION BY DataPrevProd ORDER BY IdProdBulk) 
+FROM ard_ProduzionibuLK_D
 
+è fondamentale la clausola OVER(ORDER BY xxxxx ASC)
 ITEM <label class="argomento JS"></label> // uso il selettore Javascript anzichè quello Html poichè contempla la gestione del parametro di priorità !important
 document.getElementsByClassName("LDV")[i].style.setProperty('background-color', '#e35f5d', 'important');
 ITEM <label class="argomento JS"></label> Jquery focus:
@@ -1322,7 +1336,7 @@ Lato JS:
 Lato VB.NET
 			ToLower, toUpper
 Le Regex con flag i sono case insensitive
-
+ITEM <label class="argomento JS"></label>
 Un replace javascript insensitive è
 	let auxRegex = new RegExp(TestoRicerca, "ig")
 	let new_str = aux_str.replaceAll(auxRegex, newText);	
@@ -1387,22 +1401,6 @@ ITEM <label class="argomento VB"></label> F2
 Negli F2 ho due eventi distinti:
 - F2code generato dopo aver selezionato la riga (passando alla lente di ingrandiemento)
 - XCP: nel caso fosse abilitata la possibilità di scrivere nell'F2 è generato all'invio
-ITEM <label class="argomento VB"></label> F2: cose utili
-1) txt.F2Param = "&lt;CBOPAGESIZE&gt;8&lt;/CBOPAGESIZE&gt;&lt;ALLOWSORTING&gt;1&lt;/ALLOWSORTING&gt;&lt;ORDER&gt;CodAna&lt;/ORDER&gt;&lt;VALUE&gt;" & DbMaster & "&lt;/VALUE&gt;"
-
-2) Nella query dell'F2 devo usare 
-	- LIKE '%$txtRicercaF2$%' e non l'id del mio campo per poter eseguire le ricerche
-	- $txtValueHid$ che andrà sostituito con il nome del database master specificato nel tag &lt;Value&gt;  
-
-per cercare gli F2 in cui non posso eseguire la ricerca perchè uso il textbox sbagliato:
-	SELECT * FROM ard_RBO_WIN
-	WHERE StringaSQL NOT LIKE '%$txtRicercaF2$%'
-	AND LEFT(Campo,3) = 'txt'
-
-3)  //nascondo i pulsanti degli F2
-	 (function () {
-		 $('#ctl00_body_btnF2_txtCodArt').css('display', 'none');            
-	 })();
 ITEM <label class="argomento VB"></label> L'evento F2 o F2CODE non viene scatenato poichè sono in una screen e c'è scritto Handles m_oBrowse.F2CODE
 ITEM <label class="argomento VB"></label> F2 con MULTISELEZIONE:
 1) nella cWinDef creo il solito metodo 
@@ -2774,10 +2772,10 @@ ITEM <label class="argomento VB"></label> Gestione cartella Tmp/#Region "Gestion
         Return sPathTemp
     End Function
 
-    ' <summary>
+    ' &lt;summary&gt;
     ' Depth-first recursive delete, with handling for descendant 
     ' directories open in Windows Explorer.
-    ' </summary>
+    ' &lt;/summary&gt;
     Public Shared Sub DeleteDirectory(ByVal path As String)
         For Each directory As String In System.IO.Directory.GetDirectories(path)
             DeleteDirectory(directory)
@@ -3109,13 +3107,13 @@ ITEM <label class="argomento VB"></label> FormattaTempoSecondi
 altra versione
 nuova formatattemposecondi
 
- ''' <summary>
+	''' &lt;summary&gt;
     ''' Metodo che preso in input il numero di secondi restituisce una stringa formattata come XXg XXh XXm. Se le ore sono 0 scrive solo i minuti
-    ''' </summary>
-    ''' <param name="sSecondi"></param>
-    ''' <param name="bVisualizzaSecondi">Opzionale, se impostato formatta il tempo come XXg XXh XXm XXs</param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
+    ''' &lt;/summary&gt;
+    ''' &lt;param name="sSecondi"&gt;&lt;/param&gt;
+    ''' &lt;param name="bVisualizzaSecondi"&gt;Opzionale, se impostato formatta il tempo come XXg XXh XXm XXs&lt;/param&gt;
+    ''' &lt;returns&gt;&lt;/returns&gt;
+    ''' &lt;remarks&gt;&lt;/remarks&gt;
     Public Shared Function FormattaTempoSecondi(ByVal sSecondi As String, Optional ByVal bVisualizzaSecondi As Boolean = False) As String
         If sSecondi IsNot Nothing Then
             'nel caso un decimale sia formattato come 3.14 lo trasformo in 3,14
@@ -3315,8 +3313,7 @@ $(document).ready(function () {
     // Register event handler
     pageRequestManager = Sys.WebForms.PageRequestManager.getInstance();
     Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(pageLoaded);
-,,
-}
+});
 
 /// Executed when all page content is refreshed, full page or async postback
 function pageLoaded(sender, args) {
@@ -3591,7 +3588,7 @@ ITEM <label class="argomento VB"></label> Auto Complete
 		$find('ctl00_content_txtCodTipoContainer1').get_entries().getEntry(0).get_value();
 		
 		-per ripulire il textbox:
-		$find('ctl00_content_txtCodTipoContainer1').get_entries().clear();;
+		$find('ctl00_content_txtCodTipoContainer1').get_entries().clear();
 	
 	Lato VB 
 		- per ottenere il valore del textbox devo fare:
@@ -3820,15 +3817,15 @@ function ChiudiFormDialog() {
     $find('ctl00_content_RadWindow').SetOffsetElementId('');
 }
 
-function SetGraficaFormDialog() {
+function SetGraficaFormDialog(id, bModal = true, height = '', width = '') {
     //Configuro graficamente il form
-	let rwScheda = $find('ctl00_content_RadWindow');
+	let rwScheda = $find(id);
     if (rwScheda) {
-		rwScheda.set_height(350); //imposto altezza
-		rwScheda.set_width(700); //imposto altezza           
+		rwScheda.set_height(height || 350); //imposto altezza
+		rwScheda.set_width(width || 700); //imposto altezza           
 		rwScheda.set_visibleTitlebar(false);
 		rwScheda.set_visibleStatusbar(false);
-		rwScheda.set_centerIfModal(true);
+		rwScheda.set_centerIfModal(bModal);
 		rwScheda).set_modal(true);		
 	}   
 }
@@ -4008,8 +4005,8 @@ N'UPDATE ARDES_Produzione.dbo.ard_ArticoliDati SET CodArt = ''$NewCodArt$'' WHER
 
 
 ITEM <label class="argomento VB"></label> Regex in VB.NET
- Dim rgx As Regex = New Regex("\.xml", RegexOptions.IgnoreCase)
- sNomeFile = rgx.Replace(sNomeFile, "")
+	Dim rgx As Regex = New Regex("\\.xml", RegexOptions.IgnoreCase)
+	sNomeFile = rgx.Replace(sNomeFile, "")
 ITEM <label class="argomento VB"></label> Posso fare
 CDate(opDati.Leggi("OperationEnd").Replace(".", "/")).ToString("dd/MM/yyyy 00:00:00")
 ITEM <label class="argomento VB"></label> textbox ora
@@ -4484,14 +4481,27 @@ AND CodArt = ''$txtCodArt$''
 '
 EXEC (@StrSql)
 ITEM <label class="argomento VB"></label>Eliminare riga dal datatable di una cBrowseToScreen:
-        m_Articoli.DtSchedeProdotto.AcceptChanges()
+    Private Sub m_oGridDistintaBaseNuova_FCODE(ByRef keyPress As Integer) Handles m_oGridDistintaBaseNuova.FCODE
+        Select Case keyPress
+            Case System.Windows.Forms.Keys.F11
+                EliminaRigaDt(Connessione, m_oGridDistintaBaseNuova.GetRigaSelezionata.Leggi("CodDbase"))
+        End Select
+    End Sub
+	
+    Public Sub EliminaRigaDt(ByRef connessione As CCboConnection, ByVal sCodDbase As String)
+        Dim op As New cProprieta
+
+        m_dtNuovaDbase.AcceptChanges()
         Dim Counter As Integer = 0
-        For Each row In m_Articoli.DtSchedeProdotto.Rows               
-            m_Articoli.DtSchedeProdotto.Rows(Counter).Delete()
+        For Each row In m_dtNuovaDbase.Rows
+            If row("CodDBase") = sCodDbase Then
+                m_dtNuovaDbase.Rows(Counter).Delete()
+            End If
             Counter += 1
         Next
-        m_Articoli.DtSchedeProdotto.AcceptChanges()
-       
+        m_dtNuovaDbase.AcceptChanges()
+
+    End Sub
 ITEM <label class="argomento VB"></label>	
 	&lt;div class="col-xs-6 col-sm-3 col-md-3 col-lg-2" style="padding-left:20px"&gt;                                       
 		&lt;asp:LinkButton id="btnEsportaExcel" runat="server" CssClass="btn btn-warning" Width="160"&gt;
@@ -4610,7 +4620,7 @@ Poi lato VB aggiungo
     End Sub
 Qualora mancasse la seconda parte avrei l'errore CommandText
 ITEM <label class="argomento VB"></label> Nei report per aggiungere un raggruppamento &rarr; tasto destro sul report Group:
-<img class='ImgAppunti' loading='lazy' src='Immagini\\groups.png'/>
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img555.png'/>
 ITEM <label class="argomento VB"></label>Se sono in un dominio per accedere ad un disco (es. C) per cui non ho gli accessi posso fare
 \\\\INDIRIZZO_IP\\c$
 (il $ serve a forzare l'apertura senza i permessi)
@@ -4633,7 +4643,7 @@ cf
 cbox
 de negri
 ITEM <label class="argomento VB"></label>Per mettere gli a capo in Notepad++
-<img class='ImgAppunti' loading='lazy' src='Immagini\\acapo.png'/>
+<img class='ImgAppunti' loading='lazy' src='Immagini\\1221.png'/>
 ITEM <label class="argomento VB"></label>nel base.css
 /************Nascondo il testo in fondo al FormDialog *******/
 .rwStatusBar {
@@ -4733,6 +4743,9 @@ ITEM <label class="argomento VB"></label> Passare da codice un ReportParameter:
 	Dim rp As ReportParameter
 	rp = Me.ReportParameters("DbMaster")
 	Dim dbMaster As String = rp.Value
+	
+	4) Nel report o sottoreport posos fare:
+	Me.IStampe_StringoneParam.Leggi("QueryDbase")
 ITEM <label class="argomento VB"></label> Array in VB.NET
 Nel costruttore passo n -> crea un array di lunghezza n+1
 
@@ -5081,6 +5094,10 @@ ITEM <label class="argomento VB"></label>Creare menu a discesa in cascata:
         cmbNumero.SelectedValue = "0"
         cmbNumero.AggiornaDataSource()
     End Sub
+ITEM <label class="argomento VB"></label>Servizio Windows, comandi da prompt:
+sc create MasterTrasportiServiceFlussi binpath= "E:\Progetti\MasterTrasporti\MasterTrasportiServiceFlussi\bin\Debug\MasterTrasportiServiceFlussi.exe cma" start= auto
+sc delete MasterTrasportiServiceFlussi
+sc description MasterTrasportiServiceFlussi "***Servizio Flussi***"
 ITEM <label class="argomento VB"></label>In un servizio Windows per gestire un parametro di avvio
 Nell'OnStart:
 	If My.Application.CommandLineArgs.Count <> 1 Then
@@ -5100,12 +5117,12 @@ ITEM <label class="argomento VB"></label>cWinDef regione base
 
     '    End Sub
     '#End Region
-ITEM <label class="argomento VB"></label>        ''' <summary>
+ITEM <label class="argomento VB"></label>        ''' &lt;summary&gt;
     ''' Funzione che conta quanti a capo ci sono
-    ''' </summary>
-    ''' <param name="sStringa"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
+    ''' &lt;/summary&gt;
+    ''' &lt;param name="sStringa"&gt;&lt;/param&gt;
+    ''' &lt;returns&gt;&lt;/returns&gt;
+    ''' &lt;remarks&gt;&lt;/remarks&gt;
     Private Function pCountACapi(ByVal sStringa As String) As Integer
         Dim iRet As Integer
         iRet = System.Text.RegularExpressions.Regex.Matches(sStringa, "\n").Count() + 1 'conto anche l'a capo di fine stringa
@@ -5258,7 +5275,7 @@ del cliente
 ITEM <label class="argomento VB"></label>Query personalizzate:
 1) devo creare la nuova sigla "abc" (da cboUtility) [crea la tabella abc_RBO_WIN]
 2) se la sigla dell'rboWin che voglio sostituire è "xyz", nel campo Form devo scrivere xyz:~/Viaggi_B.aspx
-<img class='ImgAppunti' loading='lazy' style='width: auto;' src='Immagini\\imgCboUtility.png'/>
+<img class='ImgAppunti' loading='lazy' style='width: auto;' src='Immagini\\3434.png'/>
 ITEM <label class="argomento VB"></label>Messaggi alert di matteo:
 1) nella masterpage/appHeader aggiungere 
 
@@ -5415,8 +5432,88 @@ function pPopolaContatore(i) {
     sHTML += '</h3>';
     $('#divContatoreCassoniVuoti').html(sHTML);
 }
-ITEM <label class="argomento VB"></label>
-ITEM <label class="argomento VB"></label>
+ITEM <label class="argomento VB"></label>Aggiungere riferimento al servizio MasterNetWs
+1) Faccio partire il masternetWS poi MyProject->Riferimenti->Aggiungi riferimento al servizio
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img1900.png'/>
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img1901.png'/>
+2)Nel Global.asx aggiungo in fondo al createSession
+	Try
+		'istanzio il ws di Master
+		Comune.g_MasterNetWS = New MasterNetWSClient
+		Comune.g_MasterNetWS.StartMaster(CboUtil.BO.cFunzioni.CboAppSetting("UtenteMasterDefault"), Nothing)
+	Catch ex As Exception
+
+	End Try
+3) nell ClassVB aggiungo una classe Comune.db
+	Imports ArdesProduzione.MasterNetWS
+
+	Public Class Comune
+		Public Shared Property g_MasterNetWS As MasterNetWSClient
+			Get
+				Return System.Web.HttpContext.Current.Session("g_MasterNetWS")
+			End Get
+			Set(value As MasterNetWSClient)
+				System.Web.HttpContext.Current.Session("g_MasterNetWS") = value
+			End Set
+		End Property
+	End Class
+4) posso ora fare le chiamate al servizio del tipo
+Comune.g_MasterNetWS.EliminaDocumento(oDocDaEliminare, Utente.UserID)
+ITEM <label class="argomento VB"></label>Problemi vari con MasterNetWS
+
+1) Verificare la connessione al database di MasterNetWS
+2) Verificare la connessione al database di eventuali Servizi Windows
+3) Verificare che il database Master e l'installazione di Master sul pc abbiano la stessa versione
+(SELECT * FROM TTW_LoginDatabase	colonna HTTP_REFERER)
+ITEM <label class="argomento VB"></label>  Convertire PDF in immagini (usa la libreria SautinSoft):      
+		''' &lt;summary&gt;
+        ''' Convert PDF to Images (file to file).
+        ''' &lt;/summary&gt;
+        ''' &lt;remarks&gt;
+        ''' Details: https://sautinsoft.com/products/document/help/net/developer-guide/convert-pdf-to-images-in-csharp-vb.php
+        ''' &lt;/remarks&gt;
+        Private Shared Sub ConvertPDFtoImages(ByVal sPath As String, ByRef img As Telerik.Reporting.Processing.PictureBox, ByVal sPathTMP As String, ByVal sPathImg As String)
+            If Not System.IO.File.Exists(sPath) Then
+                Exit Sub
+            End If
+            Dim dc As SautinSoft.Document.DocumentCore = SautinSoft.Document.DocumentCore.Load(sPath)
+
+            ' PaginationOptions allow to know, how many pages we have in the document.
+            Dim dp As SautinSoft.Document.DocumentPaginator = dc.GetPaginator(New SautinSoft.Document.PaginatorOptions())
+
+            ' Each document page will be saved in its own image format: PNG, JPEG, TIFF with different DPI.
+            If Not System.IO.Directory.Exists(sPathTMP) Then System.IO.Directory.CreateDirectory(sPathTMP)
+            If System.IO.File.Exists(sPathImg) Then
+                System.IO.File.Delete(sPathImg)
+            End If
+            Dim DPI As Int16 = 200 ' per valori maggiori da errore quando poi provo a scaricare il PDF
+
+            dp.Pages(0).Rasterize(DPI, SautinSoft.Document.Color.White).Save(sPathImg)
+        End Sub
+ITEM <label class="argomento VB"></label>     ''' &lt;/summary&gt;
+    ''' Funzione che rimuove gli spazi all'inizio, alla fine e (se c'è più di 1 spazio) in mezzo alla stringa 
+    ''' &lt;/summary&gt;
+    ''' &lt;param name="sStringa"&gt;&lt;/param&gt;
+    ''' &lt;returns&gt;&lt;/returns&gt;
+    ''' &lt;remarks&gt;&lt;/remarks&gt;
+    Private Shared Function pRimuoviSpaziExtra(ByVal sStringa) As String
+        Dim sRet As String = ""
+        Dim sPattern As String = "(\s\s+)"
+        Dim rgx As System.Text.RegularExpressions.Regex = New System.Text.RegularExpressions.Regex(sPattern)
+        sRet = rgx.Replace(sStringa, " ")
+
+        Return sRet.Trim()
+    End Function
+ITEM <label class="argomento VB"></label>Aggiungere progetto A SourceSafe
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img510.png'/>
+ITEM <label class="argomento VB"></label>Import vs Export
+Dal porto arriva la nave che scarica un container, da lì trasporta il container pieno in ditta e lo scarica (IMPORT)
+
+Va in un'altra ditta e prende un vuoto usando il numero di prenotazione booking e lo porta da qualche parte (EXPORT)
+ITEM <label class="argomento VB"></label>Per eseguire Debug sul VB.NET posso fare
+Debug.WriteLine("aaaa")
+
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img32.png'/>
 ITEM <label class="argomento VB"></label>	
 `
 /*
