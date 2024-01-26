@@ -1,0 +1,5 @@
+per avere su ChatGpt i blocchi di codice più grandi:
+
+.xl\:max-w-\[48rem\] {
+    max-width: 100rem;
+}
