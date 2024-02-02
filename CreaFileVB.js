@@ -587,20 +587,23 @@ function GestioneTasche(pagina){
 			
 			for(let i = 0; i< $('#txtNumTasche').val(); ++i){	
 				let nome = document.getElementById("txtNomeTasca"+i).value;
-				htmlaux1 += `<li><a id="btnTab` + nome +`" href="#tab` + nome +`" onclick="ClickTab('tab` + nome + `');">`  + nome +` </a></li>\n`;
+				htmlaux1 += `<li><a id="btnTab` + nome +`" href="#tab` + nome +`" data-toggle="tab" onclick="ClickTab('tab` + nome + `');">`  + nome +` </a></li>\n`;
 				
 				if(i==1){
-					htmlaux2 += `<div class="tab-content responsive">
+					htmlaux2 += `
 									<div class="tab-pane active" id="tab${nome}" style="margin-left:5px; margin-right:5px;">
 													
 									</div>
-								 </div>`;
+								 `;
 				}else{
 					htmlaux2 += `<div class="tab-pane" id="tab${nome}" style="margin-left:5px; margin-right:5px;">
 								
 								 </div>`;																				
 				}
 			}
+			
+			htmlaux2 = `<div class="tab-content responsive">` + htmlaux2 + `</div>`;
+			
 			htmlaux1 += '</ul>\n';
 			
 			$('#txtTestoHtmlTasche').val(htmlaux1 +'\n'+ htmlaux2);
