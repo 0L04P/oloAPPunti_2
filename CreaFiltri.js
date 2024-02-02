@@ -258,14 +258,14 @@
 
 			case "8":	
 			//AutoComplete
-				/*let tipoDati2 = $('#cmbTipoDati_' + id).val();
-				filtri += generaTXT(id, datafield, datatextfield, datavaluefield,'','', iskey, classe.trim(), tipoDati2, 'TextMode="MultiLine" Rows="3"');
+				filtri += generaAutoComplete(id, datafield, datatextfield, datavaluefield,'','', iskey, classe.trim());			
 				InizializzaFiltri += 'txt' + id + '.Text = m_Filtro' + id +'\n';
 				SalvaFiltri += 'm_Filtro' + id + ' = txt' + id + '.Text \n';				
 				CreaFiltro += `
 				If txt${id}.Text <> "" Then
 					sReturn += ""
-				End If`	*/				
+				End If`	 
+					
 				break;							
 		 }	
 		 //debugger;
@@ -432,9 +432,10 @@ return DropDownList;
 		 datafield = 'DataValueField="' + datafield + '"';	 
 	 }
 	 
-	 let s = `<cbo:RadAutoCompleteBox ID="txt${id}" runat="server" TypeControl="TextBox" TypeData="Text" Width="100%" style="white-space: nowrap;"               
-             ${datafield} DataTextField="${datatextfield}" DataValueField="${datavaluefield}"  OnF2="{OnF2}" MinFilterLength="3"
-		    InputType="Text" TextSettings-SelectionMode="Single" HighlightFirstMatch="true" >
+	let s = `<cbo:RadAutoCompleteBox ID="txt${id}" runat="server" TypeControl="TextBox" TypeData="Text" Width="100%" style="white-space: nowrap; margin-top: -5px;"               
+             ${datafield} DataTextField="${datatextfield}" DataValueField="${datavaluefield}"  OnF2="${id}" MinFilterLength="2"
+		    InputType="Text" TextSettings-SelectionMode="Single" HighlightFirstMatch="true" 
+			OnClientTextChanged="......">
         </cbo:RadAutoCompleteBox>`
 	 
 	 return s;
