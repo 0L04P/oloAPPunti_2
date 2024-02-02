@@ -342,6 +342,7 @@ function NZ(a){
 }
 
 function RicercaNotevole(search1, search2){	
+	$('#txtCerca').val(''); $('#txtCerca2').val('');
 	if(NZ(search1) == '' && NZ(search2) == ''){
 		alert('Campi ricerca non compilati!')
 		return false;
