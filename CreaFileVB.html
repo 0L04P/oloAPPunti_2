@@ -27,6 +27,7 @@
 			text-align: center;
 			font-size: 18px;
 			}
+			textarea{}		
 	</style>	
 </head>
  
@@ -39,10 +40,11 @@
 	<div class='col-xs-6'>
 		<label id='lblErrori'></label>
 	</div>
-	<div class='col-xs-12 text-right'>	
+	<div class='col-xs-12 text-right' stye='width: 120%;margin-left: -10%;text-align: left;'>	
 		<a href="CreaFileVB.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Crea BeS</i></a>
 		<a href="Errori.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Errori comuni</i></a>
 		<a href="UpdateGithub.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Carica su GitHub</i></a>
+		<a href="Aggiornamenti.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Aggiornamenti</i></a>
 		<a href="Compilazione.html" style="margin-left:100px; color: #ccc; font-size:18px;"><i>Compilazione versione</i></a>
 	</div>
 
@@ -340,18 +342,18 @@
 			<div class='col-xs-8'>
 				<button id="btnGeneraHTMLfiltri" class="btn btnBROWSE " onclick="generaHTMLfiltri();">Genera HTML filtri</button></button>
 				<button id="btnGeneraJS" class="btn btnBROWSE " onclick="generaJS();">Copia javascript</button></button><br>
-				<textarea id="txtJSFiltri" class='hidden'></textarea>
-				<textarea id="txtHTMLFiltri" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>	
+				<textarea id="txtJSFiltri" class='hidden' spellcheck="false";></textarea>
+				<textarea id="txtHTMLFiltri" spellcheck="false"; style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>	
 			</div>
 			
 			<div class='col-xs-4'>
 				<button id="btnGeneraHTMLfiltri" class="btn btnBROWSE " onclick="copiaproperty();">Copia Property</button></button><br>
-				<textarea id="txtPropertyFiltri" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+				<textarea id="txtPropertyFiltri" spellcheck="false"; style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
 			</div>
 			
-			<textarea id="txtSalvaFiltri" class= 'hidden' style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
-			<textarea id="txtCreaFiltro" class= 'hidden' style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
-			<textarea id="txtInizializzaFiltri" class= 'hidden' style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<textarea id="txtSalvaFiltri" class= 'hidden' spellcheck="false"; style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<textarea id="txtCreaFiltro" class= 'hidden' spellcheck="false"; style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<textarea id="txtInizializzaFiltri" spellcheck="false"; class= 'hidden' style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
 			
 		</div>		
 	</div>
@@ -369,17 +371,17 @@
 			<div class="col-xs-3">
 				<button id="btnGeneraClasse" class="btn btn-warning" onclick="generaClasse();" style="background-color: #5db718bd; box-shadow: 3px 3px #5db718;">Crea classe</button>&nbsp;&nbsp;
 			</div>			
-			<textarea id="txtTesto" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<textarea id="txtTesto" spellcheck="false"; style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
 			<div style="height:10px;"></div>
-			<textarea id="txtTestoAspx" style="color:#000000;width:90%;height:80px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<textarea id="txtTestoAspx" spellcheck="false"; style="color:#000000;width:90%;height:80px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
 			<button class='btn btnBROWSE ' onclick="copia_ById('txtTestoAspx');" style="float: right; margin-top: 35px; background-color: #5db718bd; box-shadow: 3px 3px #5db718;">Copia Aspx</button>
 			<div style="height:10px;"></div>
 			<h4>Html Tasche</h4><h5>Aggiungere <i>responsive-tabs.js</i></h5>
 			<button class="btn btn-warning"id="btnCopiaHtml" onclick="copia_ById('txtTestoHtmlTasche')">Copia html</button>
-			<textarea id="txtTestoHtmlTasche" class="hidden tasche" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<textarea id="txtTestoHtmlTasche" spellcheck="false"; class="hidden tasche" style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
 			<div style="height:10px;"></div>
 			<h4>Script Tasche</h4><button class="btn btn-warning" id="btnCopiaHtml" onclick="copia_ById('txtTestoScriptTasche')">Copia script</button>
-			<textarea id="txtTestoScriptTasche" class="hidden tasche"  style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
+			<textarea id="txtTestoScriptTasche" spellcheck="false"; class="hidden tasche"  style="color:#000000;width:100%;height:150px; border-radius:10px; padding:10px 5px 5px 5px;margin-top:10px;"></textarea>
 			<div style="height:10px;"></div>
 		</div>		
 	</div>
