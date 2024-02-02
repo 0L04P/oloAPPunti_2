@@ -304,7 +304,7 @@ ITEM <label class="argomento"></label>  nell'RBOWIN ho commentato con i trattini
 ITEM <label class="argomento"></label>  la query funziona su SQL perchè è scritta giusta, ma su VB non ho usato DBMaster e non funziona più!!
  <br>OPPURE la query su sql funziona perche mi metto sul db giusto, ma su vb uso un altro db!!! 
 ITEM <label class="argomento"></label>   se non funziona un nuovo progetto perchè da errore LC.exe ==> svuotare il file licenses
-ITEM <label class="argomento"></label> quando uso una cbrowsetoscreen devo ricordarmi che i campi presenti devono avere isKey="true" per essere editabili! 
+ITEM <label class="argomento"></label> quando uso una cBrowseToScreen devo ricordarmi che i campi presenti devono avere isKey="true" per essere editabili! 
 ITEM <label class="argomento"></label> Presa una data per impostare la formattazione castandola a stringa devo fare attenzione al fatto che MM indica i MESI, invece mm indica i minuti!!!
  (.toString("yyyy-mm-dd") concatenerà l'anno, i minuti e i giorni!!)
 ITEM <label class="argomento"></label> non aggiungo l'inherits nel form creato!! 
@@ -375,7 +375,7 @@ ITEM <label class="argomento"></label> Errore Internal server Error:
 	<br>- ho scritto male (case sensitive) i parametri nel js rispetto al vb
 	<br>- nel parametro json sono presenti a capo (o caratteri che non vanno bene, non saprei quali ad ora)
 		<br>es.  op.Scrivi('', oScreen.CreaStringone().replaceAll("\n", "\\n"));    //per evitare problemi nel json sostituisco gli a capo 
-ITEM <label class="argomento"></label> in una cbrowsetoscreen non crea una colonna nella griglia ---> quando la ho creata ho messo uno spazio nel primo valore(es. m_oGridFasi.Column.Add("Stato ", "Stato")	ANZICHè m_oGridFasi.Column.Add("Stato", "Stato")		)		
+ITEM <label class="argomento"></label> in una cBrowseToScreen non crea una colonna nella griglia ---> quando la ho creata ho messo uno spazio nel primo valore(es. m_oGridFasi.Column.Add("Stato ", "Stato")	ANZICHè m_oGridFasi.Column.Add("Stato", "Stato")		)		
 ITEM <label class="argomento"></label> errore login s database non demo: non ho cambiato il value di  HR usato dal cliente!	
 ITEM <label class="argomento"></label> schermata gialla in un form con griglia di griglia: è dovuto all'itemexpand (cfr Ardes SchedaLottoProduzione)
 ITEM <label class="argomento"></label> nonostante nell'F5 apra un form dialog va comuqnue alla screen senza (pagina che non esiste): ho lasciato nell'init della browse tale valore! sovrascrive il mio redirect dell'FCODE
@@ -408,7 +408,7 @@ ITEM <label class="argomento JS"></label> Cartteri speciali utili:
 - la tilde ~ è ALT+126
 ITEM <label class="argomento"></label> Al conferma del Form Dialog passa dall'F10 ma non entra nell'AferUpdate ---> uso un Overrides Function IClassi_Update che non fa andare a buon fine l'update!
 ITEM <label class="argomento"></label> Non compila l'AggID/Da errore sull'AggId ---> il tipo non èp Timestamp!!
-ITEM <label class="argomento"></label> Aggiornare la griglia di una cBrowseToscreen:
+ITEM <label class="argomento"></label> Aggiornare la griglia di una cBrowseToScreen:
 		PopolaDtProduzioni()
 		grdProduzioni.DataSource = m_dtProduzioni
 		grdProduzioni.Rebind()
@@ -1033,7 +1033,8 @@ ITEM <label class="argomento"></label> COnnessione MAster nel reportDim CnnStrin
 ITEM <label class="argomento"></label> Report info utili:
 Note Report:
 1) i valori tirati su tramite =Fields.[nomecampo] sono i valori indicati nel select della query che si esegue al clik del pulsante Stampa!
-
+   posso usare una funzione direttamente nella pagina di progettazione, ad esempio:
+   =Truncate(Fields.[zzz])
 1.5) 
 se creoDim section As Telerik.Reporting.Processing.DetailSection = TryCast(sender, Telerik.Reporting.Processing.DetailSection)
 
@@ -2950,10 +2951,14 @@ Come si crea un Enumeratore
         Aperta = 1
         Chiusa = 2
         Archiviata = 99
-    End Enum	
-ITEM <label class="argomento JS"></label> 	
-Gestione dell'altezza della textarea:
-$('#ctl00_corpo_txtNote').css('height', $('#ctl00_corpo_txtNote').prop('scrollHeight'));
+    End Enum 	
+ITEM <label class="argomento VB"></label>TextArea:	
+<cbo:TextBox ID="txtNoteQualita" runat="server" TypeControl="TextBox" TypeData="Text" TextMode="MultiLine" Rows="3" DataField="NoteQualita" IsKey="false" 
+             CssClass="form-control" CssClassDisable="cboTextBoxDisable" width="100%"></cbo:TextBox>  
+
+ //Gestione dell'altezza della textarea
+    $('#txtNoteQualita').css('height', $('#txtNoteQualita').prop('scrollHeight')*1.1); //*1.1 server ad evitare che si veda la scrollbar sulla destra, sennò sembra ci siano ancora delle righe
+
 ITEM <label class="argomento VB"></label> 
 Aggiungere le Stampe:
 
@@ -2964,21 +2969,29 @@ Aggiungere le Stampe:
    Nel ProgettoDLL aggiungo il riferimento al ProgettoRPT
 4) Nel ProgettoDLL Aggiungo la cStampa
 5) Tasto dx sul ProgettoRPT Aggiungi Nuovo Elemento Telerik Report (Blank)
-6) Aggiungo nel file appena creato la sqlDataSource: qui compilo la query e svuoto la connection string (non serve)
-7) Nella classe base per cui creo il report devo definire il metodo 
-		
+6) Aggiungo nel file appena creato la sqlDataSource (OSS: aggiungere le connection string nel ProgettoRPT!)
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img2224.png'/>
+7) Nella classe base per cui creo il report devo definire un metodo 		
 		Public Function GeneraReport
-8) Nel codice del report aggiungere dopo l'InizializeComponent
+8) Nel codice del report devo avere quindi:
+	Partial Public Class rMyReport
+		Inherits CBOStampe.iStampe
+
+		Public Sub New()
+			InitializeComponent()
+		End Sub
+
+		Private Sub rDettaglioProduzione_ItemDataBinding(sender As Object, e As EventArgs) Handles Me.ItemDataBinding
+			Dim sSql As String = Me.SqlDataSource1.SelectCommand
+
+			sSql = sSql.Replace("$DbMaster$", IStampe_StringoneParam.Leggi("IdSegnalazione"))
+
+			Dim dtSource As DataTable = cDBUtility.GetDataTable(sSql, Me.CboConnection)
+			TryCast(sender, Telerik.Reporting.Processing.Report).DataSource = dtSource
+		End Sub
+	End Class
     
-	Private Sub rSegnalazione_Default_ItemDataBinding(sender As Object, e As EventArgs) Handles Me.ItemDataBinding
-        Dim sSql As String = Me.SqlDataSource1.SelectCommand
-
-        sSql = sSql.Replace("$DbMaster$", IStampe_StringoneParam.Leggi("IdSegnalazione"))
-
-        Dim dtSource As DataTable = cDBUtility.GetDataTable(sSql, Me.CboConnection)
-        TryCast(sender, Telerik.Reporting.Processing.Report).DataSource = dtSource
-    End Sub		
-9) per la visualizzazione deve essere installato pdfjs
+9) Per la visualizzazione può essere installato pdfjs
 10) Verificare che anche nella cboWebResource ci siano le stesse DLL Telerik!
 11) <b>Attenzione</b>: se non funziona niente verificare che i riferimenti puliti nel WebConfig!!!
 ITEM <label class="argomento SQL"></label> 
@@ -3308,12 +3321,12 @@ Nel js;
 			}
 		}
 ITEM <label class="argomento JS"></label> 
-Per eseguire un javascript in seguito ad un postback parziale posso fare
+Per eseguire un javascript in seguito ad un postback parziale di un UpdatePanel, posso fare
 $(document).ready(function () {
     // Register event handler
     pageRequestManager = Sys.WebForms.PageRequestManager.getInstance();
     Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(pageLoaded);
-});
+   });
 
 /// Executed when all page content is refreshed, full page or async postback
 function pageLoaded(sender, args) {
@@ -3531,8 +3544,13 @@ function GetPosizione() {
 
 ITEM <label class="argomento VB"></label> La ZDBL per Stefano va fatta sia che aggiunga un campo sia una tabella (script allegato) sia un parametro
 ITEM <label class="argomento VB"></label> Se nelle traduzioni non traduce un elemento figlio ---> al padre macano id e runat='server'
-ITEM <label class="argomento VB"></label>  Refresh del solo update panel                      
-__doPostBack('upSchedeProdott', '');
+ITEM <label class="argomento VB"></label>  Refresh del solo update panel id='upPanel'
+lato JS:                     
+__doPostBack('upPanel', '');
+
+lato VB:
+<b>se l'Update Panel ha UpdateMode="Conditional"</b> posso fare
+upPanel.Update()
 ITEM <label class="argomento VB"></label> Se in gestione tabelle devo verificare l'eliminazione con una tabella di Master, se <b>vistata</b> posso a mano scrivere i valori nella ElencoTabelle_C,
 ITEM <label class="argomento VB"></label> Nei report Telerik per avere una nuova pagina occorre andare sul detail -> proprietà -> PageBreak BeforeAndAfter
 ITEM <label class="argomento VB"></label> Certifor: come creare intervento + evaderlo con report
@@ -3580,6 +3598,13 @@ ITEM <label class="argomento VB"></label> Auto Complete
 	IMPORTANTE: valorizzare il valore Ritorno dell'rbowin con il campo descrittivo!
 	<a href='https://docs.telerik.com/kendo-ui/api/javascript/ui/autocomplete' target="_blank">docs.telerik</a>
 	<i>MinFilterLength</i> = The minimum number of characters the user must type before a search is performed. Set to higher value than 1 if the search could match a lot of items.
+	
+	Lato CSS per colorarlo se disabilitato (come faccio per gli altri controlli)
+		.RadAutoCompleteBox[disabled="disabled"] {
+            background-color: #ccc;
+            cursor: text;
+        }
+	
 	
 	Lato JS 
 		(uso l'id "completo"!)
@@ -3745,6 +3770,14 @@ es.
 
 	grdUtilizzi.DataSource = m_dtUtilizzi
 	grdUtilizzi.DataBind()
+ITEM <label class="argomento VB"></label> Sommare una colonna di un datatable VB.NET:
+	Dim sum As String = Convert.ToDecimal(m_DtDistintaBase.Compute("SUM([*PercIngrediente])", String.Empty)).ToString()
+	lblTotPercentuale.Text = sum
+	
+	oppure 
+	
+	Dim result As Decimal = m_DtElencoFasi.AsEnumerable().Sum(Function(row) row.Field(Of Decimal)("impiego"))
+	lblTotPercentuale.Text = result			
 ITEM <label class="argomento VB"></label> Non riconosce il My.Settings.Proprieta ma nel web.Config è compilato =&gt; aprire il MyProject, così tutto torna a funzionare
 ITEM <label class="argomento VB"></label> Impostare manualmente i valori del RadComboBox
 			&lt;telerik:radcomboBox ID="cmbStatoOrd" runat="server" Width="100%" TypeControl="ComboBox" TypeData="Text" AccettaTesto="false" CheckBoxes="true" AllowCustomText="false" CheckedItemsTexts="DisplayAllInInput" &gt;
@@ -4731,11 +4764,11 @@ ITEM <label class="argomento VB"></label> Passare da codice un ReportParameter:
 	
 2) Sul report lo passo poi al subreport:
 
-	Dim sReportParamater As String = "DbMaster"
-	If Not SrRigheProduzione1.ReportParameters.Contains(sReportParamater) Then
+	Dim sReportParameter As String = "DbMaster"
+	If Not SrRigheProduzione1.ReportParameters.Contains(sReportParameter) Then
 		Dim p As New ReportParameter
-		p.Value = IStampe_StringoneParam.Leggi(sReportParamater)
-		p.Name = sReportParamater
+		p.Value = IStampe_StringoneParam.Leggi(sReportParameter)
+		p.Name = sReportParameter
 		SrRigheProduzione1.ReportParameters.Add(p)
 	End If  
 	
@@ -4819,12 +4852,13 @@ ITEM <label class="argomento CSS"></label>CSS notevoli:
 	<b>html, body {
             max-width: 100%;
             overflow-x: hidden;
-        }</b> 	  				  /*evita lo scroll orizzontale*/
-	<b>white-space: pre;</b>  	 /*gestione a capi*/
-	<b>outline: none;</b>       /*quando metto il fuoco non mostra i bordi della textarea*/ 
-	<b>pointer-events:none</b> /*rimuove click*/
+        }</b>                                    /*evita lo scroll orizzontale*/
+	<b>white-space: pre;</b>  	       /*gestione a capi*/
+	<b>outline: none;</b>               /*quando metto il fuoco non mostra i bordi della textarea*/ 
+	<b>pointer-events:none</b>      /*rimuove click*/
 	<b>scale: 1.1;</b>
 	<b>text-decoration: underline;</b>
+	<b>text-transform: uppercase;</b>
 	<b>filter: drop-shadow(1px 2px 1px #ccc);</b>
 	<b>box-shadow: 8px -3px 11px 1px #44444454;</b>
 	<b>transform: rotate(180deg)</b>
@@ -4834,7 +4868,7 @@ ITEM <label class="argomento CSS"></label>CSS notevoli:
 	background-size: contain;
 	background-repeat: no-repeat;</b>
 	
-	/*effetto grafico del loading:*/
+	/*effetto grafico del loading:*/<b>
 	.rotazione {
 		animation: rotation 2s infinite linear;
 	}
@@ -4845,7 +4879,18 @@ ITEM <label class="argomento CSS"></label>CSS notevoli:
 		to {
 			transform: rotate(359deg);
 		}
-	}
+	}</b>
+	
+	    /*attributi necessario per avere lo sliding orizzontale*/
+    white-space: nowrap;
+    overflow-x: auto;
+    /*grafica*/
+    height: 120px;
+    margin-top: 10px;
+    padding: 5px 10px 10px 20px;
+    border: 1px solid rgb(159, 191, 145);
+    border-radius: 10px;
+	
 ITEM <label class="argomento CSS"></label>svg che ruota:
 /*effetto grafico del loading:*/
 	.rotazione {
@@ -5356,6 +5401,14 @@ ITEM <label class="argomento VB"></label>In SQL la funzione STUFF sostituisce in
 con la nuova stringa data:
 indice partenza = 1, indice fine = 13, nuova stringa = 'ZZZ'
 SELECT STUFF('DASOSTITUIRE2345', 1, 13, 'ZZZ')
+
+pwer concatenare separati da virgola dei valori:
+SELECT ID, 
+    abc = STUFF(
+                 (SELECT ',' + name FROM temp1 FOR XML PATH ('')), 1, 1, ''
+               ) 
+FROM temp1 GROUP BY id
+
 <a href='https://stackoverflow.com/questions/31211506/how-stuff-and-for-xml-path-work-in-sql-server'>Stackoverflow</a>
 ITEM <label class="argomento VB"></label>Per arrotondare al k-esimo decimale:
 	Math.Round(CDbl(OEE), k, MidpointRounding.ToEven))
@@ -5514,7 +5567,117 @@ ITEM <label class="argomento VB"></label>Per eseguire Debug sul VB.NET posso far
 Debug.WriteLine("aaaa")
 
 <img class='ImgAppunti' loading='lazy' src='Immagini\\img32.png'/>
-ITEM <label class="argomento VB"></label>	
+ITEM <label class="argomento VB"></label>Come passare i dati da Access a SQL:
+
+0) Prerequisiti: database Access
+
+1) Creo la query per filtrare i dati ed ottenere i dati che voglio visualizzare in tabella
+
+2) Salvo la query 
+
+3) Creo su SQL le tabelle che mi servono se ancora non esistono
+
+4) Collego le tabelle di SQL su Access in modo che popolandole su Access siano popolate su SQL e viceversa.
+   Le tabelle in questione inizieranno per 'dbo_' ed avranno il logo del mondo.
+   
+	<img class='ImgAppunti' loading='lazy' src='Immagini\\img1919.png'/> 
+	<img class='ImgAppunti' loading='lazy' src='Immagini\\img1217.png'/>
+	
+	Dopo che ho creato un DSN (Data Source Name) per linkare altre tabelle di quello stesso database posso riutilizare il DSN già presente!
+
+5) Usando la query creata in (1) accodo i dati nella tabella relativa linkata con SQL
+ITEM <label class="argomento VB"></label>Per importare dati da un excel su Access:
+1) Nuovo Database vuoto
+2) Collegao le tabelle (Db ODBC Collega)
+3) Importo su Access i dati da un file Excel:
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img1918.png'/> 
+ITEM <label class="argomento VB"></label>Aprire un form di MasterWeb in un iFrame:
+
+&lt;asp:Content ID="Content2" ContentPlaceHolderID="body" runat="server"&gt;
+    &lt;iframe id="frmMW" runat="server" style="border: none; width:100%; "&gt;&lt;/iframe&gt;
+&lt;/asp:Content&gt;
+
+Imports CboUtil.BO
+
+Public Class ElencoCliFor
+    Inherits MasterTrasporti.Web.UI.Page
+
+    Private Sub ElencoCliFor_Init(sender As Object, e As EventArgs) Handles Me.Init
+        Dim opParam As New cProprieta
+        opParam.Scrivi("UserId", Utente.UserID)
+        opParam.Scrivi("Password", CboUtil.Cryptography.cCryptography.DecryptFrom3DES(Utente.Password, CBO.Comune.CRYPTKEY))
+        opParam.Scrivi("Pagina", "FabbisogniCalcolo_S.aspx")
+
+        Dim sUrlMW As String = MasterTrasportiDLL.cParametri.rilParT("MWB", Connessione)
+        If Right(sUrlMW, 1) &lt;&gt; "/" Then sUrlMW += "/"
+        sUrlMW += "Login.aspx?cboValue=" & HttpUtility.UrlEncode(CboUtil.Cryptography.cCryptography.EncryptTo3DES(opParam.Leggi, CBO.Comune.CRYPTKEY))
+
+        frmMW.Src = sUrlMW
+    End Sub
+
+End Class
+
+$(document).ready(function () {
+    //Imposto la sola altezza, la width è già impostata a 100%
+    $('#ctl00_content_frmMW').css('height', $(window).height() - 80);
+});	
+ITEM <label class="argomento VB"></label> 
+ Private Function pGetFaseNumericaFromLettera(ByVal sFase As String)
+        'in sLettera ho un carattere del tipo 'B'
+        'ne prendo il valore ASCII 66 e tolgo 64 in modo che A = 1, B = 2, ...
+        sFase = sFase.ToUpper()
+        Return System.Text.Encoding.ASCII.GetBytes(sFase)(0) - 64
+    End Function
+	
+ITEM <label class="argomento VB"></label>WebMethod creati per eventuali test veloci di un servizio (sono quelli usati per la app Perizie)
+
+	#Region "TEST"
+    <OperationContract>
+    <WebInvoke(Method:="POST", ResponseFormat:=WebMessageFormat.Json)>
+    Public Function TestChiamataWS() As String
+        Dim m_ConnessioneTest As CCboConnection
+        Dim CnnProdString As String = "Data Source=serversviluppo;Initial Catalog=zzzz;Persist Security Info=True;User ID=sa;Password=sqlSviluppo!17;Current Language=US_English"
+        m_ConnessioneTest = New CCboConnection(CnnProdString)
+        m_ConnessioneTest.Open()
+
+        Dim sSQL As String = "   INSERT INTO tabTest (Istante) VALUES(GetDate()) "
+        Dim str As String = cDBUtility.EseguiQuery(sSQL, m_ConnessioneTest)
+
+        m_ConnessioneTest.Close()
+
+        Return "ccc " & str
+    End Function
+
+
+
+    <OperationContract>
+    <WebInvoke(Method:="POST", ResponseFormat:=WebMessageFormat.Json)>
+    Public Function TestUploadFoto(ByVal sBase64 As String) As String
+
+        Dim sNome As String = Now.ToString("HHmmssfff")
+        Dim sPath As String = "\\serversviluppo\Resource-SourceSafe\_perPaolo\TestUploadFoto\" & sNome & ".jpg"
+        System.IO.File.WriteAllBytes(sPath, Convert.FromBase64String(sBase64))
+
+        Dim b As Boolean = False
+        If System.IO.File.Exists(sPath) Then
+            b = True
+        End If
+
+        Return "upload foto: " & b
+    End Function
+#End Region
+ITEM <label class="argomento VB"></label> Posso avere una cBrowseToScreen a cui non passo un datatable, ma per cui creo una rboWin, esempio:
+
+	Private Sub pInitGridFabbisogni()
+		CBO.Web.Bootstrap.cGridFilterAll.AbilitaFiltroAll(grdFabbisogno, Telerik.Web.UI.GridCommandItemDisplay.Top, CBO.Web.Bootstrap.cGridFilterAll.enuEspandiFiltro.Espandi)
+
+		m_oGridFabbisogno = New Web.cBrowseToScreen
+		m_oGridFabbisogno.ImgButtonElimina = "~/Images/btnElimina.png"
+		m_oGridFabbisogno.WinDef = New cWinDef(IWinDef.enuAppPlatform.Web)
+		m_oGridFabbisogno.Init(Me, grdFabbisogno, , "IME", "mwb")
+	End Sub
+ITEM <label class="argomento VB"></label>  Sulle cBrowseToScreen più recenti il cerca in tutte le colonne è:
+CBO.Web.Bootstrap.cGridFilterAll.AbilitaFiltroAll(grdArticoli, Telerik.Web.UI.GridCommandItemDisplay.Top, CBO.Web.Bootstrap.cGridFilterAll.enuEspandiFiltro.Espandi)
 `
 /*
 ITEM <label class="argomento VB"></label> 
