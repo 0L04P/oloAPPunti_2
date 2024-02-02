@@ -75,8 +75,11 @@ $(this).addClass("evidenziato");
 			Compila -> Pubblica 			
 			</li>
 			<li onclick='setEvidenziato();'><input type='checkbox'/>
+			Se da compilare il Servizio: imposto su 'Release' + Compila e prendo il compilato		
+			</li>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Nella cartella del progetto (\\serversviluppo\Resource-SourceSafe\AppWeb\ArdesProduzione\VersioniCongelate\2023) creo la Cartella di versione con il nome della versione yyyyMMdd:
-			all'interno le sotto cartelle Compilato e Sorgente
+			all'interno le sotto cartelle Compilato e Sorgente e la cartella con il ServizioCompilato
 			</li>
 			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Zippo eventuali cartelle precedenti
@@ -84,25 +87,36 @@ $(this).addClass("evidenziato");
 			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Copio il sorgente nell'apposita cartella
 			</li>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Copio il compilato nell'apposita cartella
+			</li>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
+			Copio il Servizio nell'apposita cartella
+			</li>
 			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Scollego il sorgente
 			</li>
 			<li onclick='setEvidenziato();'><input type='checkbox'/>
-			Dalla cboUtility pulisco la cartella del Sorgente (i.e. svuoto sottocartelle bin e obj)
+			Riapro la soluzione e la rinomino con il numero di versione
 			</li>
 			<li onclick='setEvidenziato();'><input type='checkbox'/>
-			Veirfico che le Note Operative siano aggiornate ed indico il numero d Versione nelle ultime novità 
-			Copio le note operatiove nella cartella di versione
+			Dalla CboUtility pulisco la cartella del Sorgente (i.e. svuoto sottocartelle bin e obj)
+			</li>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
+			Verifico che le Note Operative siano aggiornate ed indico il numero di versione nelle ultime novità <br>
+			Copio le note operative nella cartella di versione
 			</li>			
 			<li onclick='setEvidenziato();'><input type='checkbox'/>
-			Dalla cboUtility creo il file .xml per l'allineamento del database e le copio nella cartella di versione
+			Dalla CboUtility creo il file .xml per l'allineamento del database e le copio nella cartella di versione
 			</li>
+			<li onclick='setEvidenziato();'><input type='checkbox'/>
+			Se presente una tabella tabEventi creo un file con la query di insert e lo copio nella cartella di versione
+			</li>	
 			<li onclick='setEvidenziato();'><input type='checkbox'/>
 			Creo/Aggiorno la query per la gestione dei varchar(MAX) e la copio nella cartella di versione
 			<i style='white-space: pre-line;'>
 			USE ARDES_Produzione
-			/*   query di ricerc
+			/*   query di ricerca:
 			SELECT  TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
 			WHERE 
 			TABLE_CATALOG = 'ARDES_Produzione'
@@ -122,9 +136,7 @@ $(this).addClass("evidenziato");
 			END
 			</i>
 			</li>
-			<li onclick='setEvidenziato();'><input type='checkbox'/>
-			Se presente una tabella tabEventi creo un file con la query di insert e lo copio nella cartella di versione
-			</li>					
+							
 		</ol>
 		
 		
