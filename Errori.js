@@ -277,63 +277,6 @@ function pFormattaPerRegex(s){
 function pFormattaEvidenziazione(s){	
 	return s.replaceAll('\\(', '(').replaceAll('\\)', ')').replaceAll('\\[', '\\[').replaceAll('\\]', ']').replaceAll('\\.', '.').replaceAll('\\\'', '\'').replaceAll('\\"', '"').replaceAll('\\,', ',')	
 }
-
-////////////////////////
-///gestione ricerche notevoli /////
-function pInizializzaRicercheNotevoli(){	
-	if(localStorage["olo_RicercheNotevoli"]){
-					
-	}else{
-		localStorage["olo_RicercheNotevoli"] = JSON.stringify([]);			
-	}	
-}
-
-function SalvaRicerca(){
-	let oRicerca = {};
-	if($('#txtCerca').val() != ''){
-		oRicerca["Ricerca1"] = NZ($('#txtCerca').val());
-		oRicerca["TestoEtichetta"] = NZ(oRicerca["Ricerca1"])
-	}
-	if($('#txtCerca2').val() != ''){
-		oRicerca["Ricerca2"] = NZ($('#txtCerca2').val());
-		oRicerca["TestoEtichetta"] = oRicerca["TestoEtichetta"] + ' + ' + NZ(oRicerca["Ricerca2"]);
-	}
-		
-	let arr = JSON.parse(localStorage["olo_RicercheNotevoli"]);
-	arr.push(oRicerca);	
-	localStorage["olo_RicercheNotevoli"] = JSON.stringify(arr);
-	//grafica:
-	$('.glyphicon-bookmark').css('display', 'none'); 
-	setTimeout(function(){
-		$('.glyphicon-bookmark').fadeIn();
-		CreaElencoRicercheNotevoli();
-		}, 500
-	);
-}
-
-function CreaElencoRicercheNotevoli(){
-	let obj;
-	if(localStorage["olo_RicercheNotevoli"] == undefined){
-		$('#ElencoRicercheNotevoli').html('');
-		return false;
-	}
-	
-	let arr = JSON.parse(localStorage["olo_RicercheNotevoli"]);
-	if(arr.length > 0){
-		let sHTML = '';
-		
-		for(let i = 0; i<arr.length; ++i){
-			obj = arr[i];
-			sHTML += `<li onclick='RicercaNotevole("${NZ(obj["Ricerca1"])}", "${NZ(obj["Ricerca2"])}")'>
-			${NZ(obj["TestoEtichetta"])}
-			</li>`			
-		}
-		$('#ElencoRicercheNotevoli').html(sHTML);
-	}	else{
-		$('#ElencoRicercheNotevoli').html('');
-	}
-}
-
 function NZ(a){
 	if(a === undefined || a === null){
 		return "";
@@ -341,20 +284,3 @@ function NZ(a){
 	return a;
 }
 
-function RicercaNotevole(search1, search2){	
-	$('#txtCerca').val(''); $('#txtCerca2').val('');
-	if(NZ(search1) == '' && NZ(search2) == ''){
-		alert('Campi ricerca non compilati!')
-		return false;
-	}
-	if(NZ(search1) != ''){
-		$('#txtCerca').val(search1); 
-		Ricerca(); 
-	}
-	if(NZ(search2) != ''){
-		$('#txtCerca2').val(search2); 
-		Ricerca2();  
-	}	 
-}
-
-//$('#txtCerca').val('browse'); Ricerca(); $('#txtCerca2').val('screeen'); Ricerca2(); 
