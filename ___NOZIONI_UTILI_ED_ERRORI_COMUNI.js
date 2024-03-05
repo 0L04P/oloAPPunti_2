@@ -1235,6 +1235,27 @@ ITEM <label class="argomento JS"></label> Disabilitare scroll orizzontale della 
 		max-width: 100%;
 		overflow-x: hidden;
 	}
+ITEM <label class="argomento SQL"></label>Creare una Stored procedure:
+	CREATE PROCEDURE dbo.GetEventi
+	(@TopRows integer = 100)
+	AS
+	BEGIN
+	   /*When you use SET NOCOUNT ON, the message that indicates the number of rows that are affected by the T-SQL statement is not returned 
+	   as part of the results. 
+	   When you use SET NOCOUNT OFF; the count is returned. Using SET NOCOUNT ON can improve performance because network traffic can be reduced.   */
+	   SET NOCOUNT ON
+		
+		SELECT top(@TopRows)
+		Id,Utente,Ora,ISNULL(DescEvento,'') AS DescEvento,Ambiente,Azione,NumeroLotto,IdProduzione,CodArt,CodFase,Riga     
+		,CodStrumentazione,IdLinea,CodCausale
+		FROM ARDES_Produzione.dbo.ard_EventiSw
+		LEFT JOIN ard_TabEventi ON ard_TabEventi.CodEvento  = ard_EventiSw.CodEvento
+		ORDER BY Id DESC
+	END
+	GO
+
+e per eseguirla:
+	exec dbo.GetEventi 100
 ITEM <label class="argomento SQL"></label>Stored procedure:
 exec sp_DistintaBase @CodArtPrincipale = '$CodArt$', @CodArticolo = '$CodArt$', @Qta = $Qta$  	
 ITEM <label class="argomento JS"></label> 
@@ -1428,12 +1449,12 @@ Dim oDbWin As CInfoDBWin = CInfoDBWin.GetInfoDBWin(enuAppPlatform.Web, Connessio
         dt = cDBUtility.GetDataTable(sSQL, Connessione)
 
         If Not dt Is Nothing AndAlso dt.Rows.Count > 0 Then
-            Dim sPathFile As String = Request.PhysicalApplicationPath & "Tmp\" & Utente.UserID & "\"
+            Dim sPathFile As String = Request.PhysicalApplicationPath & "Tmp\\" & Utente.UserID & "\\"
             If Not System.IO.Directory.Exists(sPathFile) Then System.IO.Directory.CreateDirectory(sPathFile)
             sPathFile += "EstrattoConto.xlsx"
 
             If cStampe.EsportaSuExcel(sPathFile, dt) Then
-                Response.Redirect("Tmp/" & Utente.UserID & "/EstrattoConto.xlsx")
+                Response.Redirect("Tmp\\\" & Utente.UserID & "\\\EstrattoConto.xlsx")
             Else
                 Dim oMsg As New cMsg(Me, "Impossibile esportare i dati su Excel")
                 MasterCertDLL.cEventi.Registra(Connessione, MasterCert.Web.UI.Page.Utente.UserID, Me.Path, "Anomalia: impossibile esportare i dati su Excel")
@@ -3210,7 +3231,7 @@ Private Sub m_oGridDocumenti_FCODE(ByRef KeyPress As Integer) Handles m_oGridDoc
         Response.Clear()
         Response.ContentType = "application/octet-stream"
         Response.AppendHeader("Content-Disposition", "attachment; filename=" + sNomeFile)
-        Response.TransmitFile(Request.PhysicalApplicationPath & "Tmp\" & Utente.UserID & "\" & sNomeFile)
+        Response.TransmitFile(Request.PhysicalApplicationPath & "Tmp\\" & Utente.UserID & "\" & sNomeFile)
         Response.End()
     End Sub		
 ITEM <label class="argomento VB"></label> Cercare in VB un elemento/oggetto della pagina:
@@ -5140,9 +5161,9 @@ ITEM <label class="argomento VB"></label>Creare menu a discesa in cascata:
         cmbNumero.AggiornaDataSource()
     End Sub
 ITEM <label class="argomento VB"></label>Servizio Windows, comandi da prompt:
-sc create MasterTrasportiServiceFlussi binpath= "E:\Progetti\MasterTrasporti\MasterTrasportiServiceFlussi\bin\Debug\MasterTrasportiServiceFlussi.exe cma" start= auto
-sc delete MasterTrasportiServiceFlussi
-sc description MasterTrasportiServiceFlussi "***Servizio Flussi***"
+<b>sc create MasterTrasportiServiceFlussi binpath= "E:\Progetti\MasterTrasporti\MasterTrasportiServiceFlussi\bin\Debug\MasterTrasportiServiceFlussi.exe cma" start= auto</b><br>
+<b>sc delete MasterTrasportiServiceFlussi</b><br>
+<b>sc description MasterTrasportiServiceFlussi "***Servizio Flussi***"</b>
 ITEM <label class="argomento VB"></label>In un servizio Windows per gestire un parametro di avvio
 Nell'OnStart:
 	If My.Application.CommandLineArgs.Count <> 1 Then
@@ -5564,7 +5585,7 @@ Dal porto arriva la nave che scarica un container, da lì trasporta il container
 
 Va in un'altra ditta e prende un vuoto usando il numero di prenotazione booking e lo porta da qualche parte (EXPORT)
 ITEM <label class="argomento VB"></label>Per eseguire Debug sul VB.NET posso fare
-Debug.WriteLine("aaaa")
+ Debug.WriteLine("-----------------------------------------------------1 - inizio PREINIT  " & DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff"))
 
 <img class='ImgAppunti' loading='lazy' src='Immagini\\img32.png'/>
 ITEM <label class="argomento VB"></label>Come passare i dati da Access a SQL:
@@ -5678,6 +5699,51 @@ ITEM <label class="argomento VB"></label> Posso avere una cBrowseToScreen a cui 
 	End Sub
 ITEM <label class="argomento VB"></label>  Sulle cBrowseToScreen più recenti il cerca in tutte le colonne è:
 CBO.Web.Bootstrap.cGridFilterAll.AbilitaFiltroAll(grdArticoli, Telerik.Web.UI.GridCommandItemDisplay.Top, CBO.Web.Bootstrap.cGridFilterAll.enuEspandiFiltro.Espandi)
+ITEM <label class="argomento VB"></label> 
+Master aprire un anno nuovo:
+1) Tabelle  progressivi seleziono l'anno vecchio -> Estrai e poi devo adegiare tutti i valori perchè iniziano con i numeri errati
+2) Contabilità -> esercizi e creo l'anno nuovo
+ITEM <label class="argomento VB"></label>Per velocizzare l'apertura di Master dopo che ho ripristinato il backup del cliente, devo impostare a 0 i seguenti CFG:
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img4448.png'/>
+ITEM <label class="argomento VB"></label>
+//Report snippets:
+
+Inherits CBOStampe.iStampe
+    Public Sub New()
+        InitializeComponent()
+    End Sub
+
+    Private Sub pageHeaderSection1_ItemDataBound(sender As Object, e As EventArgs) Handles pageHeaderSection1.ItemDataBound
+
+        Dim header As Telerik.Reporting.Processing.PageSection = TryCast(sender, Telerik.Reporting.Processing.PageSection)
+        Dim txt As Telerik.Reporting.Processing.TextBox
+        
+        txt = DirectCast(Telerik.Reporting.Processing.ElementTreeHelper.GetChildByName(header, "txtTest"), Telerik.Reporting.Processing.TextBox)
+        txt.Value = "test"
+    End Sub
+	
+	 Private Sub detail_ItemDataBound(sender As Object, e As EventArgs) Handles detail.ItemDataBound
+        Dim section As Telerik.Reporting.Processing.DetailSection = TryCast(sender, Telerik.Reporting.Processing.DetailSection)
+        Dim txt As Telerik.Reporting.Processing.TextBox
+        
+        txt = DirectCast(Telerik.Reporting.Processing.ElementTreeHelper.GetChildByName(section, "txtTest"), Telerik.Reporting.Processing.TextBox)
+        txt.Value = "test"
+	End Sub		
+End Class
+ITEM <label class="argomento VB"></label>
+Note sui report:
+1)Per nascondere un subreport nel detail
+ - se il subreport viene renderizzato una sola volta posso nasconderlo con 
+	<i>srSubReport.Visible = False</i>
+ - se il subreport viene renderizzato più volte NON posso nasconderlo direttamente nel detail, perchè li andrei a nascondere tutti!
+   devo passare dei valori al subreport e lì nell'ItemDataBinding fare <i>srSubReport.Visible = False</i>
+
+Per i tetbox invece posso fare txt.Visible = False nel detail! Con questi funziona! 
+ 
+ 
+2) NON passiamo più i reportParameter ai subReport,
+ invece nel detail facciamo; 
+ IStampe_StringoneParam.Scrivi("DettLotto", section.DataObject("Lotto"))
 `
 /*
 ITEM <label class="argomento VB"></label> 
