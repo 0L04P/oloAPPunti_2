@@ -451,7 +451,11 @@ ITEM <label class="argomento"></label> Nascondere colonna nella cwinDef
         m_GrigliaWeb.Columns(m_GrigliaWeb.Columns.Count - 2).Display = False		
 ITEM <label class="argomento"></label> L'ordinamento della colonna con una data non funziona: ordina come se fosse una stringa non una data!
 	OSS: Nelle query non usare mai i CONVERT/CAST per formattare la data perchè il risultato è un Varchar e quindi se volessi riordinare la colonna 
-	lka browse utilizzerebbe un ordinamento lessicografico anzichè quello temporale!
+	la browse utilizzerebbe un ordinamento lessicografico anzichè quello temporale, fare invece:
+	
+	If item("Data_Scadenza").Text <> "&nbsp;" Then
+		item("Data_Scadenza").Text = Format(CDate(item("Data_Scadenza").Text), "dd/MM/yyyy")
+	End If
 ITEM <label class="argomento"></label> Nel browser chrome della VM non visualizzo correttamente eventuali popup: disabilitare l'accelerazioen hardware!		
 ITEM <label class="argomento"></label> Per le righe che si esplodono servono:
 	<br>1) campo @ nella query
@@ -536,17 +540,17 @@ tasto dx sul subreport: Report Source
 (per ulteriori dettaglio appunti sul quadreno)
 ITEM <label class="argomento"></label> Per aggiungere lo showloading, devo aggiungere nella MasterPage
 
-<telerik:RadAjaxLoadingPanel runat="server" ID="raLoadingPanel">
-	</telerik:RadAjaxLoadingPanel> 
+&lt;telerik:RadAjaxLoadingPanel runat="server" ID="raLoadingPanel"&gt;
+	&lt;/telerik:RadAjaxLoadingPanel&gt; 
 
-</script>
+&lt;script&gt;
 	function ShowLoading() {
 		$find("ctl00_raLoadingPanel").show("aspnetForm");
 	}
 	function HideLoading() {
 		$find("ctl00_raLoadingPanel").show("aspnetForm");
 	}
-</script>
+&lt;/script&gt;
 ITEM <label class="argomento"></label> Scaricare uno .zip
 Prima creo/copio in una cartella tutti i file da zippare, con path del tipo "...\TMP\..." poi:
 aggiungere i riferimenti telerik 
@@ -2974,8 +2978,8 @@ Come si crea un Enumeratore
         Archiviata = 99
     End Enum 	
 ITEM <label class="argomento VB"></label>TextArea:	
-<cbo:TextBox ID="txtNoteQualita" runat="server" TypeControl="TextBox" TypeData="Text" TextMode="MultiLine" Rows="3" DataField="NoteQualita" IsKey="false" 
-             CssClass="form-control" CssClassDisable="cboTextBoxDisable" width="100%"></cbo:TextBox>  
+&lt;cbo:TextBox ID="txtNoteQualita" runat="server" TypeControl="TextBox" TypeData="Text" TextMode="MultiLine" Rows="3" DataField="NoteQualita" IsKey="false" 
+             CssClass="form-control" CssClassDisable="cboTextBoxDisable" width="100%"&gt;&lt;/cbo:TextBox&gt;  
 
  //Gestione dell'altezza della textarea
     $('#txtNoteQualita').css('height', $('#txtNoteQualita').prop('scrollHeight')*1.1); //*1.1 server ad evitare che si veda la scrollbar sulla destra, sennò sembra ci siano ancora delle righe
@@ -3615,8 +3619,8 @@ ITEM <label class="argomento VB"></label> Auto Complete
 		InputType="Text" TextSettings-SelectionMode="Single" HighlightFirstMatch="true" MinFilterLength="3"
 		DataValueField="TargaCnt" DataTextField="TargaCnt" OnF2="txtCtrl"&gt;&lt;/cbo:RadAutoCompleteBox&gt;
 	
-	Aggiungere una rbowin con controllo txtCtrl (specificato nell'ONF2) per tirare su la source (così posso avere più controlli ed 1 sola rbowin)
-	IMPORTANTE: valorizzare il valore Ritorno dell'rbowin con il campo descrittivo!
+	- Aggiungere una rbowin con controllo txtCtrl (specificato nell'ONF2) per tirare su la source (così posso avere più controlli ed 1 sola rbowin)
+	<b style='background-color:yellow; color:#000 !important;'>IMPORTANTE: valorizzare il valore Ritorno dell'rbowin con il campo descrittivo!</b>
 	<a href='https://docs.telerik.com/kendo-ui/api/javascript/ui/autocomplete' target="_blank">docs.telerik</a>
 	<i>MinFilterLength</i> = The minimum number of characters the user must type before a search is performed. Set to higher value than 1 if the search could match a lot of items.
 	
@@ -4440,6 +4444,10 @@ ITEM <label class="argomento VB"></label>Chiamare una API da VB.NET
 		opRet.Scrivi("Esito", "400")
 		opRet.Scrivi("Messaggio", ex.Message)
 	End Try
+	
+	Public Function AccettaTuttiIcertificati() As Boolean
+		Return True
+	End Function
 ITEM <label class="argomento VB"></label>        
 	''' Imposta la data secondo l'UTC e la restituisce formattata come "2023-03-24T15:56:32+00:00"
     ''' </summary>
@@ -5429,8 +5437,9 @@ SELECT ID,
                  (SELECT ',' + name FROM temp1 FOR XML PATH ('')), 1, 1, ''
                ) 
 FROM temp1 GROUP BY id
-
 <a href='https://stackoverflow.com/questions/31211506/how-stuff-and-for-xml-path-work-in-sql-server'>Stackoverflow</a>
+
+OSS:STRING_AGG funziona solo da SQL2017, per mantenere compatibilità con 2008R2 va usato STUFF
 ITEM <label class="argomento VB"></label>Per arrotondare al k-esimo decimale:
 	Math.Round(CDbl(OEE), k, MidpointRounding.ToEven))
 ITEM <label class="argomento VB"></label>Per avere cartella senza nome posso usare il carattere ALT+0160
@@ -5744,6 +5753,53 @@ Per i tetbox invece posso fare txt.Visible = False nel detail! Con questi funzio
 2) NON passiamo più i reportParameter ai subReport,
  invece nel detail facciamo; 
  IStampe_StringoneParam.Scrivi("DettLotto", section.DataObject("Lotto"))
+ 
+ITEM <label class="argomento VB"></label>cWinDef robe utili:
+
+Private Sub Pagina_B__grdGriglia__1(ByRef CboObject As Object)
+	'paginazione
+	m_GrigliaWeb.AllowPaging = True
+	m_GrigliaWeb.AllowSorting = True
+	m_GrigliaWeb.PageSize = 50
+	
+	'spengo paginazione
+	m_GrigliaWeb.ShowFooter = False
+	m_GrigliaWeb.AllowPaging = False
+	m_GrigliaWeb.PagerStyle.AlwaysVisible = False
+
+	'abilito multiselezione
+	m_Parametri.Scrivi("MULTISELEZIONE", "1")
+	m_Parametri.Scrivi("MULTISELEZIONE_COLONNE_CHIAVE", "CodControllo")
+
+	m_GrigliaWeb.Columns.FindByDataField("XXXXXX").HeaderStyle.HorizontalAlign = HorizontalAlign.Right
+	m_GrigliaWeb.Columns.FindByDataField("XXXXXX").ItemStyle.HorizontalAlign = HorizontalAlign.Right
+	m_GrigliaWeb.Columns.FindByDataField("XXXXXX").HeaderText = "Qtà"
+	m_GrigliaWeb.Columns.FindByDataField("XXXXXX").HeaderStyle.Width = New System.Web.UI.WebControls.Unit("30")
+	
+	'QUELLO NELL'INIT GRIGLIA VIENE SOVRASCRITTO DALLA CWINDEF! ---> VA CUSTOMIZZATO QUI!
+	m_GrigliaWeb.MasterTableView.NoMasterRecordsText = "Nessuna miscela trovata"
+
+End Sub
+
+Private Sub Pagina_B__grdGriglia__1__Righe(ByRef item As Telerik.Web.UI.GridDataItem, ByRef CboObject As Object)
+
+	If IsNumeric(item("Qta").Text) Then item("Qta").Text = FormatNumber(item("Qta").Text, 0, , , TriState.True)
+	
+	'-- evidenzio le righe 
+	If condizione = True Then
+		For Each c As System.Web.UI.WebControls.TableCell In item.Cells
+			c.Attributes.CssStyle.Add("background-color", "#FFB48A")
+			c.Attributes.CssStyle.Add("color", "#FFF")
+		Next
+	End If
+
+End Sub
+ITEM <label class="argomento VB"></label>
+Set focus on autocomplete
+    if ($('#ctl00_content_txtCodArt').val() == '') {
+        $('.racTokenList').addClass('racFocused');
+        $('#ctl00_content_txtCodArt_Input').focus()
+    }
 `
 /*
 ITEM <label class="argomento VB"></label> 
