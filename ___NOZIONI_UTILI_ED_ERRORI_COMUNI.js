@@ -2981,8 +2981,8 @@ ITEM <label class="argomento VB"></label>TextArea:
 &lt;cbo:TextBox ID="txtNoteQualita" runat="server" TypeControl="TextBox" TypeData="Text" TextMode="MultiLine" Rows="3" DataField="NoteQualita" IsKey="false" 
              CssClass="form-control" CssClassDisable="cboTextBoxDisable" width="100%"&gt;&lt;/cbo:TextBox&gt;  
 
- //Gestione dell'altezza della textarea
-    $('#txtNoteQualita').css('height', $('#txtNoteQualita').prop('scrollHeight')*1.1); //*1.1 server ad evitare che si veda la scrollbar sulla destra, sennò sembra ci siano ancora delle righe
+ //Gestione dell'altezza della textarea - la imposto a 10 e poi la metto giusta!
+    $('#txtNoteQualita').css('height', 10).css('height', $('#txtNoteQualita').prop('scrollHeight')*1.1); //*1.1 server ad evitare che si veda la scrollbar sulla destra, sennò sembra ci siano ancora delle righe
 
 ITEM <label class="argomento VB"></label> 
 Aggiungere le Stampe:
@@ -5800,6 +5800,37 @@ Set focus on autocomplete
         $('.racTokenList').addClass('racFocused');
         $('#ctl00_content_txtCodArt_Input').focus()
     }
+ITEM <label class="argomento VB"></label> Metodi js per i RadComboBox
+
+1) retrieve checked values
+	let elenco = $find('ctl00_content_cmbFaseMulti').get_checkedItems();
+	if (elenco.length == 0) {
+        console.log('Nessun valore!')        
+    }else{
+		elenco.forEach(function (el, index) {
+			valore =  + el._text; 
+			/****** oppure ******/		
+			valore = el.get_value()
+			descr =  el.get_text()
+		});					
+	}
+    
+2) per pulire i campi selezionati 
+$find('ctl00_content_cmbFaseMulti').clearSelection();
+
+su ardes Res_formule.js non funziona quindi lo faccio a mano come sotto
+
+	for(i = 0; i < $find('ctl00_content_cmbFaseMulti').get_items().get_count(); ++i){
+		$find('ctl00_content_cmbFaseMulti').get_items().getItem(i).set_checked(false); 
+	}
+	
+3) per impostare manualmente i valori delle spunte	
+ $find('ctl00_content_cmbLingue').findItemByValue(codice).set_checked(true);
+ 
+4) per disabilitare/abilitare
+ $find('ctl00_content_cmbLingue').enable();     
+ $find('ctl00_content_cmbLingue').disable(); 
+
 `
 /*
 ITEM <label class="argomento VB"></label> 
