@@ -1,0 +1,12 @@
+ @keyframes highlight {
+		to {
+			background-position: 0 0;
+		}
+	}
+
+	.c2xzTb .ILfuVd b {
+		background: linear-gradient(90deg,#d3e3fd 50%,#0000 50%) no-repeat 75% 0;
+		background-size: 200% 100%;
+		animation: 0.35s cubic-bezier(0.05,0.7,0.1,1) highlight 0.25s forwards;
+		color: #040c28
+	}
