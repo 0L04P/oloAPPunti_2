@@ -5830,7 +5830,11 @@ su ardes Res_formule.js non funziona quindi lo faccio a mano come sotto
 4) per disabilitare/abilitare
  $find('ctl00_content_cmbLingue').enable();     
  $find('ctl00_content_cmbLingue').disable(); 
-
+ITEM <label class="argomento VB"></label> 
+Usare una checkbox nella query della Browse o BrowseToScreen:
+'&lt;input type="checkbox" style="scale:1.4; cursor: not-allowed; pointer-events: none;" ' +  
+CASE WHEN ISNULL(FlagEtichetta, 0) = 1 
+THEN 'checked' else '' END +' /&gt;'  AS FlagEtichetta
 `
 /*
 ITEM <label class="argomento VB"></label> 
