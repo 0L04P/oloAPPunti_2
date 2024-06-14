@@ -1014,7 +1014,7 @@ CssClass="form-control"
 
 CssClassDisable="cboTextBoxDisable"
 ITEM <label class="argomento VB"></label> Gestire checkbox nei report:
-!!!NELL ItemDataBinding!!!
+        <b>!!!NELL ItemDataBinding!!!</b>
 1) imposto il TRUEVALUE a 1 (di default è "true")
 2) se non ancora impostato scrivo il test del checkbox NON in un txt a lato, ma nell'attributo Text del checkbox!
 3) se dipende dal field.[...] scrivo la condizione  (value) lato progettazione
@@ -1303,6 +1303,7 @@ Fare attenzione al fatto che sfoca lo sfondo quindi impostare per l'oggetto 'sop
 ITEM <label class="argomento JS"></label> Sostiyuire testo tramite Regex:
 p.replace(regex, 'testo')
 ITEM <label class="argomento telefono"></label> NUMERI DI TELEFONO RAPIDI:
+Anna Flamor: 377/1382018
 Migliorini (Lercari):	0105446690 / 3385802066
 Andrea De Caro (CF genova): 3427789387 / 0106121695
 G. Morlacchi (CF milano): 3357788179
@@ -4377,7 +4378,7 @@ System.Threading.Thread.CurrentThread.CurrentCulture = newCulture
 ‘MIEI METODI    
    m_TimerRefresh.Start()
 
-ITEM <label class="argomento VB"></label>Chiamare una API da VB.NET  
+ITEM <label class="argomento VB"></label>Chiamare una API o un WebService da VB.NET  
 	Dim myReader As StreamReader
 	Dim myReq As HttpWebRequest
 	Dim myResp As HttpWebResponse
@@ -4394,6 +4395,8 @@ ITEM <label class="argomento VB"></label>Chiamare una API da VB.NET
 			.Method = "POST"
 			.Accept = "*/*"
 			.ContentType = "application/x-www-form-urlencoded" o ""application/json"" 'DA VERIFICARE!
+			.Headers.Add("Authorization", "Bearer " & AccessToken)                                       
+			'Eventuali altri Headers, e.g.  .Headers.Add("Consumer-Key", ClientId)                   
 		End With
 		Dim postData As String = ""
 		
@@ -5835,6 +5838,77 @@ Usare una checkbox nella query della Browse o BrowseToScreen:
 '&lt;input type="checkbox" style="scale:1.4; cursor: not-allowed; pointer-events: none;" ' +  
 CASE WHEN ISNULL(FlagEtichetta, 0) = 1 
 THEN 'checked' else '' END +' /&gt;'  AS FlagEtichetta
+ITEM <label class="argomento VB"></label> In VB.NET un esempio di deserializzazione ed accesso agli attributi dell'oggetto 
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img1932.png'/>
+ITEM <label class="argomento VB"></label>
+In JS per creare una select:
+$('#divCambiaCodIntervento').html('');
+let MySelect = document.createElement('select');
+MySelect.id = 'MySelect';    
+$('#divCambiaCodIntervento').append(MySelect);
+$('#MySelect').html($('#ctl00_body_cmbCodIntervento').html());
+$('#MySelect').val(codInt);
+sReturn = $("#MySelect option:selected").text();
+ITEM <label class="argomento VB"></label>
+1)	Disabilitare il servizio Touch Keyboard and Handwriting Panel Service
+sc query TabletInputService
+sc config TabletInputService start=disabled
+
+
+1)	Per ogni utente loggato vengono creati dei processi TabTip , kill per tutti
+taskkill /IM "TabTip32.exe" /F
+taskkill /IM "TabTip.exe" /F
+
+2)	Per arrestare il servizio (se non si riesce da services.msc) kill del processo svchost corrispondente, oppure riavviare il server. 
+tasklist /svc | find "svchost.exe" | find " TabletInputService"
+taskkill /F /PID [pid_restituito_da_tasklist]
+sc query TabletInputService
+ITEM <label class="argomento SQL"></label> Esempio di rboWin in cui uso direttamente il valore del parametro testuale
+DECLARE @sSQL as varchar(MAX)
+DECLARE @DbMaster as varchar(50)
+DECLARE @Contropartite as varchar(MAX)
+
+SET @Contropartite = (SELECT ParT FROM Parametri WHERE CodPar = 'CTP')
+SET @DbMaster = '$DbMaster$'
+SET @sSQL = '
+SELECT '''' AS codana, '''' AS ragsoc1 
+
+UNION ALL
+
+SELECT Codana, Ragsoc1
+FROM ' + @DbMaster+ '.dbo.mas_Anagra
+WHERE ISNULL(Contropartita , '''') IN (' + @Contropartite + ')
+AND LEFT(Codana, 1) = ''F''
+ORDER BY Ragsoc1
+'
+exec(@sSQL)
+ITEM <label class="argomento VB"></label> Per mettere il cestino dell'elimina della browse ad inizio RIGA
+BtnEliminaInizioRigaWeb
+ITEM <label class="argomento VB"></label>Creare una classe base:
+	Imports CboUtil.Data
+
+	Public Class cMyClass
+		Inherits CBO.IClassi
+
+		Public Sub New()
+			IClassi_sSql = "SELECT * FROM Database.dbo.Tabella WHERE Chiavi = $Chiavi$"
+		End Sub
+
+		Public Overrides Function IClassi_Read(ByRef connessione As CboUtil.Data.CCboConnection) As Boolean
+
+			Return MyBase.IClassi_Read(connessione)
+		End Function
+
+		Public Overrides Function IClassi_Update(ByRef connessione As CCboConnection) As Boolean
+
+			Return MyBase.IClassi_Update(connessione)
+		End Function
+
+		Public Overrides Function IClassi_Delete(ByRef connessione As CCboConnection) As Boolean
+		  
+			Return MyBase.IClassi_Delete(connessione)
+		End Function
+	End Class
 `
 /*
 ITEM <label class="argomento VB"></label> 
