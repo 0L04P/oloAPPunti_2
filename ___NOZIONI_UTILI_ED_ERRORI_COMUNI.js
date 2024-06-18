@@ -808,10 +808,10 @@ DBCC FREEPROCCACHE
 </div>
 <button class='btn btnCopia' onclick='CopiaDaDiv("q2")'>copia</button>
 <div class='divCopia' id='q2'>
-/****** Cercare  NOME TABELLA con nome desiderato ***********/
+/****** Cercare  NOME TABELLA con nome desiderato nel database corrente ***********/
 SELECT TABLE_NAME  
 FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='Demo_MasterLift'
+WHERE TABLE_TYPE = 'BASE TABLE' 
 AND TABLE_NAME like '%contr%'
 </div>
 <button class='btn btnCopia' onclick='CopiaDaDiv("q3")'>copia</button>
@@ -5909,6 +5909,16 @@ ITEM <label class="argomento VB"></label>Creare una classe base:
 			Return MyBase.IClassi_Delete(connessione)
 		End Function
 	End Class
+	
+ITEM <label class="argomento VB"></label> Per convertire un numero decimale in stringa e NON avere la notazione sceintifica devo fare 
+
+CDec(numero_con_virgola).toString()
+
+OSS:
+Dim numero_con_virgola as string = "0.00000123"
+Console.WriteLine(CDbl(numero_con_virgola).toString()) ---> 1.23E-06
+Console.WriteLine(CDec(numero_con_virgola).toString()) ---> 0.00000123
+
 `
 /*
 ITEM <label class="argomento VB"></label> 
