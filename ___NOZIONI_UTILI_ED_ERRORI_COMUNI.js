@@ -1813,7 +1813,11 @@ ITEM <label class="argomento JS"></label>Per gestire la lettura di un qrcode:
             //metodo da eseguire alla lettura del qrcode
         }
     });
-    $('#anysearch-slidebox').css('display', 'none');	
+	
+3) Nel CSS 	
+	#anysearch-slidebox {
+		display: none;
+	}
 ITEM <label class="argomento VB"></label>Abilitare il Custom errors
        La sezione &lt;customErrors&gt; consente di configurare 
        l'operazione da eseguire in caso di errore non gestito 
@@ -3796,14 +3800,20 @@ es.
 
 	grdUtilizzi.DataSource = m_dtUtilizzi
 	grdUtilizzi.DataBind()
-ITEM <label class="argomento VB"></label> Sommare una colonna di un datatable VB.NET:
+ITEM <label class="argomento VB"></label> Operazioni di gruppo sul datatable
+    SOMMARE una colonna di un datatable VB.NET:
 	Dim sum As String = Convert.ToDecimal(m_DtDistintaBase.Compute("SUM([*PercIngrediente])", String.Empty)).ToString()
 	lblTotPercentuale.Text = sum
 	
 	oppure 
 	
 	Dim result As Decimal = m_DtElencoFasi.AsEnumerable().Sum(Function(row) row.Field(Of Decimal)("impiego"))
-	lblTotPercentuale.Text = result			
+	lblTotPercentuale.Text = result		
+	
+	Calcolare il MAX di una colonna
+	Dim sDataOraAttuale as string = dtViaggi.Compute( expression:="MAX(update_data_ora)", filter:="")
+	
+		
 ITEM <label class="argomento VB"></label> Non riconosce il My.Settings.Proprieta ma nel web.Config è compilato =&gt; aprire il MyProject, così tutto torna a funzionare
 ITEM <label class="argomento VB"></label> Impostare manualmente i valori del RadComboBox
 			&lt;telerik:radcomboBox ID="cmbStatoOrd" runat="server" Width="100%" TypeControl="ComboBox" TypeData="Text" AccettaTesto="false" CheckBoxes="true" AllowCustomText="false" CheckedItemsTexts="DisplayAllInInput" &gt;
@@ -4395,7 +4405,12 @@ ITEM <label class="argomento VB"></label>Chiamare una API o un WebService da VB.
 			.Method = "POST"
 			.Accept = "*/*"
 			.ContentType = "application/x-www-form-urlencoded" o ""application/json"" 'DA VERIFICARE!
-			.Headers.Add("Authorization", "Bearer " & AccessToken)                                       
+			'Se il tipo di autorizzazione è "Bearer auth"
+			.Headers.Add("Authorization", "Bearer " & AccessToken) 
+			'Se il tipo di autorizzazione è "Basic auth" (api per otenere poi il bearer token, vedi PayPal)
+			'-> richiede clientId e ClientSecret separati da due punti passato in base64!
+			'.Headers.Add("Authorization", "Basic " & ConvertStringToBase64(sClientID & ":" & sClientSecret))
+			
 			'Eventuali altri Headers, e.g.  .Headers.Add("Consumer-Key", ClientId)                   
 		End With
 		Dim postData As String = ""
@@ -4427,7 +4442,7 @@ ITEM <label class="argomento VB"></label>Chiamare una API o un WebService da VB.
 
 		Dim sResponse As String = myReader.ReadToEnd
 
-		'faccio il parsing del json      
+		'faccio il parsing del json --- necessita di System.Web.Extension       
 		Dim serializer As New System.Web.Script.Serialization.JavaScriptSerializer
 		Dim oResponse As Object = serializer.DeserializeObject(sResponse)
 
@@ -4436,11 +4451,17 @@ ITEM <label class="argomento VB"></label>Chiamare una API o un WebService da VB.
 		
 	Catch ex As WebException
 		Dim sError As String = ""
-		Using readerErr = New StreamReader(ex.Response.GetResponseStream)
-			sError = readerErr.ReadToEnd
-		End Using
+		If ex.Message IsNot Nothing Then
+			sError += ex.Message
+		End If
+		If ex.Response IsNot Nothing Then
+			Using readerErr = New StreamReader(ex.Response.GetResponseStream)
+				sError += ". " & readerErr.ReadToEnd
+			End Using
+		End If
+
 		opRet.Scrivi("Esito", "400")
-		opRet.Scrivi("Messaggio", ex.Message & ". " & sError)
+		opRet.Scrivi("Messaggio", sError)
 
 	Catch ex As Exception
 
@@ -5918,7 +5939,120 @@ OSS:
 Dim numero_con_virgola as string = "0.00000123"
 Console.WriteLine(CDbl(numero_con_virgola).toString()) ---> 1.23E-06
 Console.WriteLine(CDec(numero_con_virgola).toString()) ---> 0.00000123
+ITEM <label class="argomento VB"></label> Esportare in Word
+	Public Sub EsportaWord(ByVal nomeFile As String, ByVal dt As DataTable, Optional ByVal bIncludiPerc As Boolean = False)
+        If Not dt Is Nothing AndAlso dt.Rows.Count > 0 Then
+            Dim sTesto As String = pGetTestoFromDatatable(dt, bIncludiPerc)
+            Dim sPathFile As String = Request.PhysicalApplicationPath & "Tmp\" & Utente.UserID & "\"
+            If Not System.IO.Directory.Exists(sPathFile) Then System.IO.Directory.CreateDirectory(sPathFile)
+            sPathFile += nomeFile + ".docx"
 
+            Dim document As New Telerik.Windows.Documents.Flow.Model.RadFlowDocument
+            Dim provider As Telerik.Windows.Documents.Flow.FormatProviders.Docx.DocxFormatProvider = New Telerik.Windows.Documents.Flow.FormatProviders.Docx.DocxFormatProvider()
+
+            Using output As System.IO.FileStream = System.IO.File.OpenWrite(sPathFile)
+                document = CreateRadFlowDocument(sTesto)
+                provider.Export(document, output)
+            End Using
+
+            Response.Redirect("Tmp/" & Utente.UserID & "/" + nomeFile + ".docx")
+        End If
+    End Sub
+
+    Private Function CreateRadFlowDocument(ByVal sTesto As String) As Telerik.Windows.Documents.Flow.Model.RadFlowDocument
+
+
+        Dim document As RadFlowDocument = New RadFlowDocument()
+        Dim editor As RadFlowDocumentEditor = New RadFlowDocumentEditor(document)
+
+        editor = New RadFlowDocumentEditor(document)
+
+        editor.InsertText(sTesto)
+
+        Return document
+
+
+    End Function
+ITEM <label class="argomento "></label> Funzione usata su ARDES per copiare
+function copyTextFromElement(ID) {
+    let ctrl = document.getElementById(ID);
+    ctrl.select();
+    document.execCommand("copy");
+    ctrl.blur()
+    return false;
+}
+ITEM <label class="argomento VB"></label>Per aprire ula gestione tabelle di una specifica tabella:
+	If GestioneTabelle Is Nothing Then
+		GestioneTabelle = New CBO.Web.cGestioneTabelle(Connessione, "kai")
+	End If
+
+	GestioneTabelle.MenuSelezionato = "***NOMETABELLA***"
+	Dim pv As New PageValueType
+	pv.Add("m_ReturnUrl", System.Web.HttpContext.Current.Request.Url.AbsoluteUri)
+	AddFuturePageValue("~/frmGestioneTabelle_B.aspx", pv)
+	Response.Redirect("~/frmGestioneTabelle_B.aspx")
+ITEM <label class="argomento VB"></label>Stringa to Base64
+	Private Function ConvertStringToBase64(ByVal s As String) As String
+        Dim byteArray As Byte() = System.Text.Encoding.UTF8.GetBytes(s)
+        Dim sBase64 As String = Convert.ToBase64String(byteArray)
+        Return sBase64
+    End Function
+ITEM <label class="argomento "></label>CSS personalizzare btn disabilitato
+	#IdBtn[disabled] { 
+		 cursor: not-allowed; 
+		 opacity: .25;              
+	 }
+
+ITEM <label class="argomento JS"></label>////JS Promises 
+function pPromessa() {
+    return new Promise((resolve, reject) => {
+        /*il mio codice che ritorna qualcosa in resolve(...) o reject*/
+		if(1==1){
+			resolve(true);			
+		}else{
+			reject('ERRORE');
+		}		       
+    });
+}
+
+function Promessa() {
+    ShowLoading();
+    pPromessa()
+        .then((result) => {
+            HideLoading();
+        })
+        .catch((error) => {
+            HideLoading();
+            alert(error);
+            return "";
+        });
+}	 
+ITEM <label class="argomento"></label>PayPal:
+
+0) Dopo aver fatto l'accesso a PayPal developer
+https://developer.paypal.com/home/
+recupero ClientID e ClientSecret
+
+1) nuovo parametro PAY API PayPal
+ParN: non gestito
+ParT: <BASE_URL>https://api-m.sandbox.paypal.com</BASE_URL>
+<ENDPOINT_ACCESSTOKEN>/v1/oauth2/token</ENDPOINT_ACCESSTOKEN>
+<ENDPOINT_CHECKOUTORDER>/v2/checkout/orders</ENDPOINT_CHECKOUTORDER>
+<ENDPOINT_PAYMENT>/checkoutnow?</ENDPOINT_PAYMENT>
+<CLIENT_ID>****</CLIENT_ID>
+<CLIENT_SECRET>***</CLIENT_SECRET>
+
+2) Importo il PayPal.js nella pagina
+3) Sul js della pagina creo le funzioni js CreaOrdine e CompletaOrdine
+4) Creo i WebMethod CreaOrdineWS e CompletaOrdineWS
+5) Nella Load della pagina gestisco i query parameter per la chiamata al metodo di completamento ordine
+6) Controllando le notifiche per l'utente "personal" posso verificare se il pagamento è andato a buon fine
+
+Link utili
+https://developer.paypal.com/docs/api/orders/v2/
+https://medium.com/@lzyowen.it/paypal-how-to-create-and-capture-an-order-though-rest-api-order-v2-2a5d66b832a5
+ITEM <label class="argomento"></label>Manuali di IIS e SQL
+\\\\serverad\\Archivi\\LEO\\INTERNI\\Master\\Documenti Master\\_Documentazione Moduli Master\\Installazione Master - SQL - IIS
 `
 /*
 ITEM <label class="argomento VB"></label> 
