@@ -951,6 +951,20 @@ ITEM <label class="argomento"></label> passwordField.addEventListener( 'keydown'
   var caps = event.getModifierState && event.getModifierState( 'CapsLock' );
   console.log( caps ); // true when you press the keyboard CapsLock key
 });
+ITEM <label class="argomento VB"></label>RboWin personalizzata:
+1) creo la rbowin:
+	<img class='ImgAppunti' loading='lazy' src='Immagini\\img1848.png'/>
+
+2) Imposto il valore sul Web.Config: eventuali browse e screen si autogestiscono la personalizzazione
+	&lt;add key="NomeApplicazionePersonalizzata" value="***" /&gt;
+	<img class='ImgAppunti w600' loading='lazy' src='Immagini\\img1849.png'/>
+	
+3) Se tiro su a mano una rbowin, per gestire l'eventuale personalizzazione devo fare:
+
+Dim oDbWin As CInfoDBWin = CInfoDBWin.GetInfoDBWin(enuAppPlatform.Web, Connessione, "trs", CInfoDBWin.enuModalitaDBWin.Standard, "pagina", "controllo", "1", cFunzioni.CboAppSetting("NomeApplicazionePersonalizzata"))
+Dim sSQL As String = oDbWin.SQLString()
+
+
 ITEM <label class="argomento VB"></label> Per testare un progetto (es. HR) su un database diverso da quello standard devo effettuare 3 modifiche:
 
 1) Modificare le stringhe di connessione
