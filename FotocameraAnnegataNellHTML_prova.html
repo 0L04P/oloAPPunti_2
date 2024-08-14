@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Test fotocamera</title>
+	<meta name="viewport" content="width=device-width , user-scalable=no" />
+	<script src='FotocameraAnnegataNellHTML_prova.js'></script>
+</head>
+<body> 
+<style>
+#container {
+	margin: 0px auto;
+	width: 1000px;
+	height: 90px;	
+}
+#videoElement {
+    width: 90vw;
+    height: 70vh;
+    margin: 5vw;  
+}
+</style>
+<div class='container-fluid'>
+	<h4>TEST DELLA FOTOCAMERA</h4>
+	<!--<label id='lblEsito'>...</label>-->
+	<!--<div id="container">
+		 <video autoplay="true" id="videoElement">
+
+		</video>
+	</div>-->
+	<a href="appLogin.html">Torna alla Login</a><br />
+	<input id="txtFotoFile" type="file" accept="image/*" multiple style="display: block; text-align: center;" onchange="TEST()" />
+
+	<div class="camera">
+		<video id="video" style=" margin-left: 10vw;">Video stream not available.</video>
+		<button id="startbutton">SCATTA FOTO</button>
+	</div>
+	<b>CANVA</b>
+	<canvas id="canvas"> </canvas>
+	<b>OUTPUT</b>
+	<div class="output" style="display:none;">
+		<img id="photo" alt="The screen capture will appear in this box." />
+	</div>
+
+</div>
+
+<script>
+
+</script>
+		
+</body>
+
+</html>
