@@ -1,0 +1,8 @@
+DECLARE @NOMETABELLA varchar(100)
+DECLARE @SEARCH varchar(100)
+SET @NOMETABELLA = (SELECT top(1) name from sys.tables WHERE name LIKE '%_ElencoTabelle')
+SET @SEARCH = '..................'
+DECLARE @SSQL  varchar(MAX)
+SET @SSQL= 'SELECT * FROM ' + @NOMETABELLA + ' WHERE StringaSQL LIKE ''%' + @SEARCH + '%'' OR IClassi_SSql LIKE ''%' + @SEARCH + '%'''
+ 
+EXEC (@SSQL)
