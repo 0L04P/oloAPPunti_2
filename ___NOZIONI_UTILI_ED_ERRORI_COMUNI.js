@@ -229,6 +229,7 @@ Private Sub btnFiltra_Click(sender As Object, e As EventArgs) Handles btnFiltra.
 	
 	
 11) Per avere il filtro 'Cerca in tutte le colonne' 
+	0) in debug va, ma sul compilato se manca la "Telerik.WinControls.GridView.dll" potrebbe dare errore! nel caso aggiungerla!
 	i)aggiungo prima di istanziare la browse:
 
 	CBO.Web.Bootstrap.cGridFilterAll.AbilitaFiltroAll(grdGriglia, GridCommandItemDisplay.Top, CBO.Web.Bootstrap.cGridFilterAll.enuEspandiFiltro.SempreAperto)
@@ -443,12 +444,17 @@ ITEM <label class="argomento"></label> Nascondere colonna nella cwinDef
 - per nome:
 		m_GrigliaWeb.Columns.FindByDataField("DataChiusura").HeaderStyle.CssClass = "nascosto"
         m_GrigliaWeb.Columns.FindByDataField("DataChiusura").ItemStyle.CssClass = "nascosto"
-        m_GrigliaWeb.Columns.FindByDataField("DataChiusura").Display = False	
+        m_GrigliaWeb.Columns.FindByDataField("DataChiusura").Display = False			
+		'IMPORTANTE: SE AVESSI RAGGRUPPAMENTO DEVO NASCONDERE ANCHE IL FOOTER!
+		m_GrigliaWeb.Columns.FindByDataField("DataChiusura").FooterStyle.CssClass = "nascosto" 
+
 
 - per indice numerico:
         m_GrigliaWeb.Columns(m_GrigliaWeb.Columns.Count - 2).HeaderStyle.CssClass = "nascosto"
         m_GrigliaWeb.Columns(m_GrigliaWeb.Columns.Count - 2).ItemStyle.CssClass = "nascosto"
         m_GrigliaWeb.Columns(m_GrigliaWeb.Columns.Count - 2).Display = False		
+		'IMPORTANTE: SE AVESSI RAGGRUPPAMENTO DEVO NASCONDERE ANCHE IL FOOTER!
+		m_GrigliaWeb.Columns(m_GrigliaWeb.Columns.Count - 2).FooterStyle.CssClass = "nascosto" 
 ITEM <label class="argomento"></label> L'ordinamento della colonna con una data non funziona: ordina come se fosse una stringa non una data!
 	OSS: Nelle query non usare mai i CONVERT/CAST per formattare la data perchè il risultato è un Varchar e quindi se volessi riordinare la colonna 
 	la browse utilizzerebbe un ordinamento lessicografico anzichè quello temporale, fare invece:
@@ -835,7 +841,7 @@ ORDER BY    Colonna,TABELLA;
 </div>
 <button class='btn btnCopia' onclick='CopiaDaDiv("q4")'>copia</button>
 <div class='divCopia' id='q4'>
-/*******  Ritrovare la query in una finestra appena chiusa *****************/
+/*******  Ultime query eseguite / Ritrovare la query in una finestra appena chiusa *****************/
 SELECT txt.TEXT               AS [SQL Statement]
      , qs.LAST_EXECUTION_TIME AS [Last Time Executed]
 FROM SYS.DM_EXEC_QUERY_STATS  AS [qs]
@@ -867,15 +873,15 @@ HAVING COUNT(C.TABLE_NAME) = 0
 </div><br>
 <button class='btn btnCopia' onclick='CopiaDaDiv("q7")'>copia</button>
 <div class='divCopia' id='q7'>
-/***** Cerca tutte le colonne di tipo Varchar(MAX) **********/
+/***** Cerca tutte le colonne di tipo Varchar(MAX) o TEXT **********/
 DECLARE @NomeDatabase as varchar(100)
 SET @NomeDatabase = 'ARDES_Produzione'
 
 SELECT TABLE_NAME, COLUMN_NAME, *
 FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_CATALOG = @NomeDatabase
-AND DATA_TYPE = 'varchar'
-AND CHARACTER_MAXIMUM_LENGTH = '-1'
+AND DATA_TYPE = 'varchar'  AND CHARACTER_MAXIMUM_LENGTH = '-1'   
+/* oppure   AND DATA_TYPE =  'text' senza controllo su CHARACTER_MAXIMUM_LENGTH */
 
 /***** Cerca tutte le colonne di tipo Text **********/
 SELECT  TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
@@ -888,6 +894,18 @@ AND LEFT(TABLE_NAME, 4) = 'ard_'
 SELECT * FROM AnaPersone
 WHERE FiltroUtente LIKE '%'+CHAR(13)+'%' OR FiltroUtente LIKE '%'+CHAR(10)+'%'
 </div><br>
+/***** Query sulla struttra griglia con tipi delle colonne ***/
+select all_columns.name, TYPE_NAME(all_columns.system_type_id	)  + 
+case all_columns.system_type_id 
+WHEN 167 then '(' + cast(all_columns.max_length as varchar(20)) + ')'
+WHEN 108 THEN '(' + cast(all_columns.precision as varchar(20)) + ',' + cast(all_columns.scale as varchar(20)) + ')'
+ELSE ''
+END 
+AS GrandezzaCampo
+from sys.tables
+LEFT JOIN sys.all_columns ON all_columns.object_id = tables.object_id
+WHERE sys.tables.name = '*****'
+--AND all_columns.name like '%***%'
 ITEM <label class="argomento SQL"></label>Esempi Query Insert/Update:
 /********INSERT INTO***********/
 INSERT INTO fla_Produzioni_D
@@ -2228,9 +2246,11 @@ Aprire la screen in un form dialog:
                 AddFuturePageValue("~/FormDialog/RicezioneMerce_S.aspx", pv)
                 cWindowHelper.Create(Me, "~/FormDialog/RicezioneMerce_S.aspx", "document.forms[0].submit();", "90%,90%")
 ITEM <label class="argomento VB"></label> Nella table td sta per "table data"
-ITEM <label class="argomento VB"></label> 
-	divAttivita.Attributes.Add("style", "display:block")
-    divAttivita.Attributes.CssStyle("display") = "block"
+ITEM <label class="argomento VB"></label> Per nascondere da vb un elemento:	
+   usare il primo se possibile!
+    divAttivita.Attributes.CssStyle("display") = "block"   <b>/*aggiunge nello style questo valore!    */</b>
+	
+	divAttivita.Attributes.Add("style", "display:block")    <b>/*sovrascrive lo style con questo valore!*/</b>
 ITEM <label class="argomento VB"></label> 	
 Nella IClassi_Read per accodare altri campi a quelli che già ci sono:
 
@@ -2666,10 +2686,11 @@ UPDATE [Amministratori2] SET EMail = ''
 UPDATE [CERTIFOR_Masterlift].[dbo].[AnaPersone] SET [LavoroEmail] = ''
 UPDATE [CERTIFOR_Masterlift].[dbo].[AnaPersoneDati] SET [EMail] = ''
 UPDATE [CERTIFOR_Masterlift].[dbo].[kai_AmministratoriTelefoni] SET email = ''
+UPDATE [CERTIFOR_Masterlift].[dbo].[Parametri] SET ParT = '' WHERE CodPar = 'MRF'
 
-UPDATE mas_Sedi SET Email = ''
-UPDATE mas_Anagra SET Mail = ''
-UPDATE mas_Telefoni SET email = ''
+UPDATE [CERTIFOR].[dbo].mas_Sedi SET Email = ''
+UPDATE [CERTIFOR].[dbo].mas_Anagra SET Mail = ''
+UPDATE [CERTIFOR].[dbo].mas_Telefoni SET email = ''
 ITEM <label class="argomento VB"></label> 
 Errore system.servicemodel.serviceactivationexception:
 non è stato commentato/scommentato in HTTPS il pezzo di webconfig necessario!
@@ -3057,8 +3078,13 @@ ii) per personalizzarlo usare popper.min.js:
 	e) per personalizzare l'html: 
 		.tooltip{
            font-size: 16px;
-        }
-ITEM <label class="argomento VB"></label>  In Gestione Tabelle non compilare il Disabilita Tasti perchè da errore (non gestito nel codice...)
+        }		
+		.tooltip-inner {
+            max-width: 300px;            
+        }		
+ITEM <label class="argomento VB"></label>Per triggerare lato javascript il passaggio del mouse:		
+	$("#ctl00_content_lblDocuAnomalia").trigger('mouseenter');
+ITEM <label class="argomento VB"></label>In Gestione Tabelle non compilare il Disabilita Tasti perchè da errore (non gestito nel codice...)
 ITEM <label class="argomento VB"></label>
 Cambiare in real time datatable della griglia:
 For i As Integer = 1 To m_DescrizioniDocumenti.Count
@@ -3601,6 +3627,8 @@ ITEM <label class="argomento VB"></label> Certifor: come creare intervento + eva
 1) (Admin)Impianto nuova visita
 2) (Operatore) Pianif visite accetta + prgramma visita
 3) in griglia click sull'icona del rpt -> conferma in bozza -> rientro conferma & crea pdf
+   Tasca Riesame: carico il pdf
+4) (Admin): vedo la atsca reiesame e carico il pdf e lo approvo   
 ITEM <label class="argomento VB"></label> Se dopo aver aggiornato APP e Gestione non funziona corretamente il tutto, può essere che vada aggiornato il numero di versione nel WebService!
 ITEM <label class="argomento VB"></label> Spostare una pagina all'id indicato 
 function SpostaPagina() {
@@ -3643,23 +3671,21 @@ ITEM <label class="argomento VB"></label> Auto Complete
 	<a href='https://docs.telerik.com/kendo-ui/api/javascript/ui/autocomplete' target="_blank">docs.telerik</a>
 	<i>MinFilterLength</i> = The minimum number of characters the user must type before a search is performed. Set to higher value than 1 if the search could match a lot of items.
 	
-	Lato CSS per colorarlo se disabilitato (come faccio per gli altri controlli)
+	<b>Lato CSS</b> per colorarlo se disabilitato (come faccio per gli altri controlli)
 		.RadAutoCompleteBox[disabled="disabled"] {
             background-color: #ccc;
             cursor: text;
-        }
+        }	
 	
-	
-	Lato JS 
+	<b>Lato JS</b>
 		(uso l'id "completo"!)
 		
 		-per ottenere il valore del textbox devo fare:
 		$find('ctl00_content_txtCodTipoContainer1').get_entries().getEntry(0).get_value();
 		
 		-per ripulire il textbox:
-		$find('ctl00_content_txtCodTipoContainer1').get_entries().clear();
-	
-	Lato VB 
+		$find('ctl00_content_txtCodTipoContainer1').get_entries().clear();			
+	<b>Lato VB</b> 
 		- per ottenere il valore del textbox devo fare:
 		txtCodTipoContainer1.Entries(0).Value
 		
@@ -3729,6 +3755,29 @@ ITEM <label class="argomento VB"></label> Datatable to Dictionary
         Next
         Return dict
     End Function
+ITEM <label class="argomento"></label>DICTIONARY
+Dim dict As New Dictionary(Of String, Integer) 
+
+<b>Loop (iterare un Dictionary)</b>
+For Each kvp As KeyValuePair(Of String, Integer) In dict
+	Dim i As Integer = kvp.Key
+	Dim s As String = kvp.Value
+Next
+
+<b>Aggiunta/modifica</b>
+Dim sChiave as String
+Dim sValore as Integer
+If dict.ContainsKey(sChiave) Then
+	dict(sChiave) += sValore
+Else
+	dict.Add(sChiave, sValore)
+End If
+
+<b>Dictionary di array</b>	
+If dict.ContainsKey("chiave") Then
+	Dim arr As String() = dict("chiave")
+	e.Item.Cells(Indici.PrimaStampata).Text = arr(1)
+End If
 ITEM <label class="argomento"></label> Non va il click sulla voce di menù ----> mancano riferimenti al CSS o al JS di bootstrap!
 ITEM <label class="argomento VB"></label> Nuovo progetto con CBO del 2022: 
 - in CBO e CBOUtil verificare che non sia presente la spunta MyProject/COmpilazione Registra per interoperabilità COM
@@ -3999,16 +4048,15 @@ Lato VB devo avere poi del codice del tipo
 	End If
 ITEM <label class="argomento"></label> MasterLiftDesk: se dice Utente già collegato:
 scrivo nella login alfa/beta e premo invio --> si abilita il btn Pulisci file di log --> click e faccio la login con le mie credenziali
-ITEM <label class="argomento JS"></label>     //intercetto il click dell'invio
+ITEM <label class="argomento JS"></label>Intercetto il click dell'invio
     $("#divFiltri").keypress(function (e) {
-        if (e.which == 13) {
-            //click sul btnFiltra
+        if (e.which == 13) {            
             javascript: __doPostBack('ctl00$content$btnFiltra', '');
         }
         else {
             e.preventDefault
         }
-    });
+    });		
 ITEM <label class="argomento VB"></label> Report: numero di pagina
 		= PageNumber + ' / ' + PageCount
 ITEM <label class="argomento VB"></label> Il Report personalizzato non parte o non viene trovato: non ho messo il nome del Namespace!
@@ -4602,6 +4650,20 @@ ITEM <label class="argomento VB"></label>Eliminare riga dal datatable di una cBr
         m_dtNuovaDbase.AcceptChanges()
 
     End Sub
+	
+	----UTILE---16-12-2024---se ho l'errore columns is ReadOnly o sulla MaxLength----
+    Private Sub ImpostaCostiSfusiSuDtDiba()
+        m_DtDistintaBase.Columns("Costo").ReadOnly = False
+        m_DtDistintaBase.Columns("Costo").MaxLength = 20
+
+        Dim iRow As Integer = 0
+        For Each r As DataRow In m_DtDistintaBase.Rows
+            If cFunzioni.Nz(r("Tipo"), "") = "SL" AndAlso cFunzioni.Nz(r("Costo"), "0") = "0" Then                
+                m_DtDistintaBase.Rows(iRow)("Costo") = pGetCostoSfuso()
+            End If
+        Next
+
+    End Sub	
 ITEM <label class="argomento VB"></label>	
 	&lt;div class="col-xs-6 col-sm-3 col-md-3 col-lg-2" style="padding-left:20px"&gt;                                       
 		&lt;asp:LinkButton id="btnEsportaExcel" runat="server" CssClass="btn btn-warning" Width="160"&gt;
@@ -4852,15 +4914,7 @@ Nel costruttore passo n -> crea un array di lunghezza n+1
 Dim arr(2) As String
 	arr(0) = r("LottoProd")
 	arr(1) = r("Inizio")
-	arr(2) = r("UltimaStampata")
-ITEM <label class="argomento VB"></label>Dictionary di array:	
-m_DictStampate = New Dictionary(Of String, String())
-If m_DictStampate.ContainsKey("valore_chiave") Then
-	Dim arr As String() = m_DictStampate("valore_chiave")
-
-	e.Item.Cells(Indici.PrimaStampata).Text = arr(1)
-	...
-End If	
+	arr(2) = r("UltimaStampata")	
 ITEM <label class="argomento VB"></label>Se ho una query che va a toccare dati su due tabelle  che riseidono su server distinti:
 1) nella pagina
 Public m_DictStampate As Dictionary(Of String, String())
@@ -5580,12 +5634,30 @@ ITEM <label class="argomento VB"></label>Aggiungere riferimento al servizio Mast
 	End Class
 4) posso ora fare le chiamate al servizio del tipo
 Comune.g_MasterNetWS.EliminaDocumento(oDocDaEliminare, Utente.UserID)
-ITEM <label class="argomento VB"></label>Problemi vari con MasterNetWS
-
-1) Verificare la connessione al database di MasterNetWS
-2) Verificare la connessione al database di eventuali Servizi Windows
-3) Verificare che il database Master e l'installazione di Master sul pc abbiano la stessa versione
-(SELECT * FROM TTW_LoginDatabase	colonna HTTP_REFERER)
+ITEM <label class="argomento VB"></label>MasterWeb/MasterNetWS
+0) Installare su iis le 2 applicazioni MasterWeb e MasterNetWS
+1)Configurare il web.config di MasterWeb con i) CnnString
+											 ii) sigla in Applicaton (es. MWB)
+											 iii) (importantissimo) l'url del webService
+											 iv) l'utente UtenteMasterDefault!!!  (= SELECT Valore FROM mwb_Parametri WHERE Campo = 'UtenteMasterDefault')
+2)Configurare il web.config di MasterNetWS con i) CnnString 
+											   ii) (importantissimo) l'url del webService che deve essere uguale 
+											       a quella impostata nel web.config di MasterWeb											 
+3) Nella tabella mwb_Parametri è impostato l'utente di default (utente di Master) con il quale far partire il webService: 
+  ricordarsi di crearlo senza password
+  
+	SELECT Password FROM RBO_Utenti
+	WHERE UserId = (SELECT Valore FROM mwb_Parametri WHERE Campo = 'UtenteMasterDefault')
+4) Tutti gli utenti web, che devono accedere all'applicazione MasterWeb, bisogna che esistano (stessa userID) all'interno di Master (con o senza password, è indifferente).
+5) Ricordarsi inoltre della riga nella tabella TTW_LoginDatabase con OrdineElenco=99 
+  (non so a cosa serve perchè è perfettamente inutile, ma senza non funziona. Chiedere a ZULIAN/FABRIS per ulteriori chiarimenti)
+	SELECT *
+	FROM TTW_LoginDatabase
+	WHERE OrdineElenco = 99
+6) Verificare che il database Master e l'installazione di Master sul pc abbiano la stessa versione
+7) Verificare la connessione al database di eventuali Servizi Windows
+ 
+ Se tutto è corretto apro MasterWeb e visualizzo una griglia senza errori
 ITEM <label class="argomento VB"></label>  Convertire PDF in immagini (usa la libreria SautinSoft):      
 		''' &lt;summary&gt;
         ''' Convert PDF to Images (file to file).
@@ -5918,7 +5990,10 @@ ORDER BY Ragsoc1
 '
 exec(@sSQL)
 ITEM <label class="argomento VB"></label> Per mettere il cestino dell'elimina della browse ad inizio RIGA
-BtnEliminaInizioRigaWeb
+m_oBrowse = New CBO.CBrowse(CBO.enuAppPlatform.Web)
+m_oBrowse.ImgButtonEliminaWeb = "~/Images/btnElimina.png"
+<b>m_oBrowse.BtnEliminaInizioRigaWeb = True</b>
+m_oBrowse.Init(.....)
 ITEM <label class="argomento VB"></label>Creare una classe base:
 	Imports CboUtil.Data
 
@@ -6016,7 +6091,20 @@ ITEM <label class="argomento "></label>CSS personalizzare btn disabilitato
 		 cursor: not-allowed; 
 		 opacity: .25;              
 	 }
+ITEM <label class="argomento"></label> L'ordine in cui imposto IClassi_sSql e IClassi_Proprieta è rilevante!
+******FUNZIONA******
+Dim objViaggio As New CBO.IClassi
+objViaggio.IClassi_sSql = "SELECT * FROM trs_Viaggi WHERE IdViaggio = $IdViaggio$ "
+opViaggio.Scrivi("IdViaggio", sIdViaggio)
+objViaggio.IClassi_Proprieta = opViaggio
+objViaggio.IClassi_Update(oConnessione)  
 
+******NON FUNZIONA******
+Dim objViaggio As New CBO.IClassi
+opViaggio.Scrivi("IdViaggio", sIdViaggio)
+objViaggio.IClassi_Proprieta = opViaggio
+objViaggio.IClassi_sSql = "SELECT * FROM trs_Viaggi WHERE IdViaggio = $IdViaggio$ "
+objViaggio.IClassi_Update(oConnessione)  NON FUNZIONA
 ITEM <label class="argomento JS"></label>////JS Promises 
 function pPromessa() {
     return new Promise((resolve, reject) => {
@@ -6067,6 +6155,145 @@ https://developer.paypal.com/docs/api/orders/v2/
 https://medium.com/@lzyowen.it/paypal-how-to-create-and-capture-an-order-though-rest-api-order-v2-2a5d66b832a5
 ITEM <label class="argomento"></label>Manuali di IIS e SQL
 \\\\serverad\\Archivi\\LEO\\INTERNI\\Master\\Documenti Master\\_Documentazione Moduli Master\\Installazione Master - SQL - IIS
+ITEM <label class="argomento VB"></label> Aggiungere nuova VM su VMwARE
+<img class='ImgAppunti' loading='lazy' src='Immagini\\VM_0.png'/>
+<img class='ImgAppunti' loading='lazy' src='Immagini\\VM_1.png'/>
+ITEM <label class="argomento VB"></label> Salvare un pdf nella cartella TMP ed aprirlo in un'altra scheda:
+ASPX
+    &lt;asp:UpdatePanel ID="upStampa" runat="server" UpdateMode="Conditional"&gt;
+		&lt;ContentTemplate&gt;
+			&lt;asp:LinkButton runat="server" CssClass="btn btn-primary btnNoteNew" OnClientClick="pStampa()"&gt;
+		&lt;span class="glyphicon glyphicon-print"&gt;&lt;/span&gt;&nbsp;Stampa
+			&lt;/asp:LinkButton&gt;
+
+			&lt;asp:LinkButton runat="server" ID="btnStampa" CssClass="btn btn-primary hidden"&gt;&lt;/asp:LinkButton&gt;
+			
+		&lt;/ContentTemplate&gt;
+	&lt;/asp:UpdatePanel&gt;
+								
+VB								
+Private Sub btnStampa_Click(sender As Object, e As EventArgs) Handles btnStampa.Click
+        'Stampo il report in una nuova pagina
+
+        Dim sPathTmp = Request.PhysicalApplicationPath & "TMP\"
+        sPathTmp += Utente.UserID & "\"
+        If Not System.IO.Directory.Exists(sPathTmp) Then System.IO.Directory.CreateDirectory(sPathTmp)
+
+        Dim NomeRpt As String
+        NomeRpt = GeneraReport(Connessione, sPathTmp)
+
+        ' ScriptPagina += " window.open('TMP/" & Utente.UserID & "/" & System.IO.Path.GetFileName(NomeRpt) & "'); "
+        ' dato che sono in un updatePanel eseguo questo javascript nel pageloaded dopo aver compilato a mano il percorso in un txt nascosto sulla pagina, il codice sopra non verrebbe eseguito....
+    End Sub
+
+    Public Function GeneraReport(ByRef connessione As CboUtil.Data.CCboConnection, ByVal sPathTmp As String)
+        Dim sFilePdf As String
+
+        sFilePdf = sPathTmp & pFormattaNomeRpt(txtCodArtPerStampa.Text)
+
+        Dim opStampa As New cProprieta
+        opStampa.Scrivi("VIDSTA", "N")
+        opStampa.Scrivi("ESPORTAFORMATO", "PDF")
+        opStampa.Scrivi("ESPORTAFILE", sFilePdf)
+
+        Dim opParam As New cProprieta
+        opParam.Scrivi("DbMaster", dbMaster)
+        opParam.Scrivi("CodFormula", txtCodArtPerStampa.Text)
+
+        cStampa.GeneraStampa(connessione, "MES", "ReS", "Formule", opStampa, opParam)
+        Return sFilePdf '  
+    End Function
+
+    &lt;System.Web.Services.WebMethod()&gt; _
+    Public Shared Function GetPathTmpStampaWS(ByVal CodArt As String) As String
+        Dim NomeRpt As String = pFormattaNomeRpt(CodArt)
+        Return "TMP/" & Utente.UserID & "/" & System.IO.Path.GetFileName(NomeRpt)
+    End Function
+
+    Private Shared Function pFormattaNomeRpt(ByVal sCodArt As String) As String
+        Return "RPT_" & sCodArt.Replace(".", "_").Replace(",", "_").Replace(" ", "_").Replace("\", "_").Replace("/", "_") & ".pdf"
+    End Function
+	
+JS
+function pageLoaded(sender, args) {
+    $find("ctl00_raLoadingPanel").hide("ctl00_content_upStampa");
+    if($('#ctl00_content_txtPathRpt').val() != ''){                
+        $('#ctl00_content_txtPathRpt').val('');
+        window.open($('#ctl00_content_txtPathRpt').val();); 
+    }    
+   
+}	
+
+
+OSS:
+Dopo la login eseguo la 
+Public Function SvuotaTmpUtente(sUtente As String) As Boolean
+	Try          
+			Dim sPathTmpUtente As String = Request.PhysicalApplicationPath & "TMP\" & sUtente & "\"
+			If System.IO.Directory.Exists(sPathTmpUtente) Then
+				deleteDirectory(sPathTmpUtente)
+			End If
+
+	Catch ex As Exception
+		cEventi.Registra(ArdesProduzione.Page.Connessione, sUtente, "Login.aspx", "**Anomalia svuotamento cartella TMP per " & sUtente)
+
+	End Try
+	
+	Return True
+
+End Function
+
+ITEM <label class="argomento VB"></label> Per mantenere la sessione attiva o per disattivare la sessione:
+    Private Sub FatturazioneCrea_Init(sender As Object, e As EventArgs) Handles Me.Init
+        MantieniSessione = True
+ITEM <label class="argomento VB"></label>Telerik RadAsyncUpload:
+Init
+
+upAllegato.TemporaryFolder = "~/Tmp/" & Utente.UserID & "/upload"
+upAllegato.Localization.Select = "Sfoglia"
+
+aspx
+<div class="col-xs-12" style="padding: 0; margin: 0; padding-bottom: 10px">
+	<small>Seleziona file</small><br />
+	<telerik:RadAsyncUpload ID="upAllegato" runat="server" MaxFileInputsCount="1"></telerik:RadAsyncUpload>	
+</div>
+ITEM <label class="argomento VB"></label>file host 
+C:\Windows\System32\drivers\etc
+ITEM <label class="argomento"></label>Il file HOSTS si trova sul pc all'indirizzo
+C:\Windows\System32\drivers\etc
+ITEM <label class="argomento VB"></label>Cambiare il certificato sul server:
+1) MasterHr dalla documentazione copiare il .pfx sul desktop del server 
+   +
+   copiare la pawwsord del file pdx
+2) Apro IIS:
+
+seleziono il server e poi la voce "Server Certificates" ed aggiungo il file .pfx 
+
+Pper ogni sito che ha un https apro il binding:
+se ha https faccio seleziono dal menu a discesa l'altra voce e faccio view (check sulla data sacdenza) e poi ok
+(se anche mi dice iis che li mette a posto lui li controllo tutti lo stesso)
+
+Apro i siti e guardo in alto a sx il lucchetto per guardare se è ok la data scadenza
+
+ITEM <label class="argomento VB"></label> 
+   Public Sub EsportaTxt(ByVal nomeFile As String, ByVal sTesto As String)
+        Dim sPathFile As String = Request.PhysicalApplicationPath & "Tmp\" & Utente.UserID & "\"
+        If Not System.IO.Directory.Exists(sPathFile) Then System.IO.Directory.CreateDirectory(sPathFile)
+        sPathFile += nomeFile + ".txt"
+
+        If System.IO.File.Exists(sPathFile) Then System.IO.File.Delete(sPathFile)
+
+        Dim file As System.IO.StreamWriter
+        file = My.Computer.FileSystem.OpenTextFileWriter(sPathFile, True)
+        file.WriteLine(sTesto)
+        file.Close()
+
+        ScriptPagina += "window.open('" & "Tmp/" & Utente.UserID & "/" + nomeFile + ".txt" & "', '_blank');"
+    End Sub
+ ITEM <label class="argomento VB"></label>Per la gestione veloce dei calendarietti:
+     $('.hasDatepicker').each(function (i, e) { $('#' + e.id).datepicker('destroy'); $('#' + e.id).datepicker(); });
+ITEM <label class="argomento VB"></label>Per aggiungere un nuovo riferimento ad un servizio nel progetto
+<img class='ImgAppunti' loading='lazy' src='Immagini\\img9125.png'/> 
 `
 /*
 ITEM <label class="argomento VB"></label> 
